@@ -1,0 +1,20 @@
+{
+  "name": "js-map-sdk",
+  "version": "1.0.0",
+  "description": "UNL Map Javascript SDK ",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "maplibre-gl": "^2.1.9"
+  }
+}
