@@ -1,14 +1,22 @@
 import {
+  ControlPosition,
   DragPanOptions,
   LngLatBoundsLike,
   LngLatLike,
   Map,
   RequestTransformFunction,
 } from "maplibre-gl";
-import { getStyle } from "./style";
+import { GridControl } from "../controls";
+import { getStyle } from "./styles/here";
+import ZoomLevel from "./zoomLevels";
+
+const DEFAULT_GRID_CONTROL_POSITION = "top-right";
 
 export type UnlMapOptions = {
   apiKey: string;
+  vpmId: string;
+  gridControl?: boolean;
+  gridControlPosition?: ControlPosition;
   hash?: boolean | string;
   interactive?: boolean;
   container: HTMLElement | string;
@@ -57,9 +65,18 @@ class UnlMap extends Map {
     super({
       ...options,
       style: getStyle(options.apiKey),
+      minZoom: options.minZoom ?? ZoomLevel.MIN_ZOOM,
+      maxZoom: options.maxZoom ?? ZoomLevel.MAX_ZOOM,
       maplibreLogo: false,
       logoPosition: undefined,
     });
+
+    if (options.gridControl) {
+      this.addControl(
+        new GridControl(),
+        options.gridControlPosition ?? DEFAULT_GRID_CONTROL_POSITION
+      );
+    }
   }
 }
 
