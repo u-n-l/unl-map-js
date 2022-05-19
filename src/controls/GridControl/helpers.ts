@@ -1,6 +1,7 @@
-import { LngLatBounds } from "maplibre-gl";
+import { LngLat, LngLatBounds } from "maplibre-gl";
 import UnlCore from "unl-core";
 import ZoomLevel from "../../map/zoomLevels";
+import Cell from "./Cell";
 import CellPrecision from "./CellPrecision";
 
 const MAX_NUMBER_OF_LINES = 10000;
@@ -74,6 +75,43 @@ const lngLatBoundsToUnlCoreBounds = (
     e: lngLatBounds._ne.lng,
     w: lngLatBounds._sw.lng,
   };
+};
+
+export const getCell = (
+  coordinates: LngLat,
+  cellPrecision: CellPrecision
+): Cell => {
+  return {
+    locationId: UnlCore.encode(coordinates.lng, coordinates.lat, cellPrecision),
+    size: getFormattedCellDimensions(cellPrecision),
+  };
+};
+
+export const getFormattedCellDimensions = (cellPrecision: CellPrecision) => {
+  switch (cellPrecision) {
+    case CellPrecision.GEOHASH_LENGTH_1:
+      return "5,009.4km x 4,992.6km";
+    case CellPrecision.GEOHASH_LENGTH_2:
+      return "1,252.3km x 624.1km";
+    case CellPrecision.GEOHASH_LENGTH_3:
+      return "156.5km x 156km";
+    case CellPrecision.GEOHASH_LENGTH_4:
+      return "39.1km x 19.5km";
+    case CellPrecision.GEOHASH_LENGTH_5:
+      return "4.9km x 4.9km";
+    case CellPrecision.GEOHASH_LENGTH_6:
+      return "1.2km x 609.4m";
+    case CellPrecision.GEOHASH_LENGTH_7:
+      return "152.9m x 152.4m";
+    case CellPrecision.GEOHASH_LENGTH_8:
+      return "38.2m x 19m";
+    case CellPrecision.GEOHASH_LENGTH_9:
+      return "4.8m x 4.8m";
+    case CellPrecision.GEOHASH_LENGTH_10:
+      return "1.2m x 59.5cm";
+    default:
+      return "1.2m x 59.5cm";
+  }
 };
 
 export const lineFeatureCollection = (

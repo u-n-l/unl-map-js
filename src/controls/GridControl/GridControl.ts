@@ -4,10 +4,12 @@ import gridIcon from "../../icons/ts/GridIcon";
 import selectedGridIcon from "../../icons/ts/SelectedGridIcon";
 import {
   convertBoundsToGridLines,
+  getCell,
   getMinGridZoom,
   lineFeatureCollection,
 } from "./helpers";
 import CellPrecision from "./CellPrecision";
+import { MapMouseEvent } from "maplibre-gl";
 
 const GRID_LINES_SOURCE = "controls-grid-lines-source";
 const GRID_LINES_LAYER = "controls-grid-lines-layer";
@@ -43,6 +45,12 @@ export default class GridControl extends Base {
     this.addClassName("unl-grid-control");
     this.gridButton.onClick(this.handleGridButtonClick);
     this.addButton(this.gridButton);
+  };
+
+  handleMapClick = (e: MapMouseEvent) => {
+    const clickedCell = getCell(e.lngLat, this.precision);
+
+    console.log("Hello from clicked cell ", clickedCell);
   };
 
   updateGridLines = () => {
@@ -91,14 +99,16 @@ export default class GridControl extends Base {
     this.gridButton.setIcon(selectedGridIcon());
     this.isGridVisible = true;
     this.updateGridLines();
+    this.map.on("click", this.handleMapClick);
     this.map.on("moveend", this.updateGridLines);
   };
 
   hideGrid = () => {
     this.isGridVisible = false;
-
     this.gridButton.setIcon(gridIcon());
+
     this.map.off("moveend", this.updateGridLines);
+    this.map.off("click", this.handleMapClick);
     this.map.removeLayer(GRID_LINES_LAYER);
     this.map.removeSource(GRID_LINES_SOURCE);
   };
