@@ -1,26 +1,35 @@
+import { MapMouseEvent } from "maplibre-gl";
 import ControlButton from "../../ui/buttons/ControlButton/ControlButton";
-import Base from "../Base/Base";
 import gridIcon from "../../icons/ts/GridIcon";
 import selectedGridIcon from "../../icons/ts/SelectedGridIcon";
+import Base from "../Base/Base";
 import {
   convertBoundsToGridLines,
   getCell,
   getMinGridZoom,
   lineFeatureCollection,
+  locationIdToBoundsCoordinates,
+  polygonFeature,
 } from "./helpers";
 import CellPrecision from "./CellPrecision";
-import { MapMouseEvent } from "maplibre-gl";
 
 const GRID_LINES_SOURCE = "controls-grid-lines-source";
+const CELL_SOURCE = "controls-cell-source";
 const GRID_LINES_LAYER = "controls-grid-lines-layer";
+const CELL_FILL_LAYER = "controls-cell-fill-layer";
+const CELL_BORDER_LAYER = "controls-cell-border-layer";
 
-const DEFAULT_COLOR = "#C0C0C0";
+const DEFAULT_LINES_COLOR = "#C0C0C0";
+const DEFAULT_CELL_FILL_COLOR = "#FFB100";
+const DEFAULT_CELL_BORDER_COLOR = "#FFB100";
 const DEFAULT_WIDTH = 0.5;
 
 export interface GridControlOptions {
   precision?: CellPrecision;
   lineColor?: string;
   lineWidth?: number;
+  cellFillColor?: string;
+  cellBorderColor?: string;
 }
 
 export default class GridControl extends Base {
@@ -29,6 +38,8 @@ export default class GridControl extends Base {
   precision: CellPrecision;
   lineColor: string;
   lineWidth: number;
+  cellFillColor: string;
+  cellBorderColor: string;
 
   constructor(options?: GridControlOptions) {
     super();
@@ -37,12 +48,14 @@ export default class GridControl extends Base {
     this.isGridVisible = false;
 
     this.precision = options?.precision ?? CellPrecision.GEOHASH_LENGTH_9;
-    this.lineColor = options?.lineColor ?? DEFAULT_COLOR;
+    this.lineColor = options?.lineColor ?? DEFAULT_LINES_COLOR;
     this.lineWidth = options?.lineWidth ?? DEFAULT_WIDTH;
+    this.cellFillColor = options?.cellFillColor ?? DEFAULT_CELL_FILL_COLOR;
+    this.cellBorderColor =
+      options?.cellBorderColor ?? DEFAULT_CELL_BORDER_COLOR;
   }
 
   insert = () => {
-    this.addClassName("unl-grid-control");
     this.gridButton.onClick(this.handleGridButtonClick);
     this.addButton(this.gridButton);
   };
@@ -50,7 +63,16 @@ export default class GridControl extends Base {
   handleMapClick = (e: MapMouseEvent) => {
     const clickedCell = getCell(e.lngLat, this.precision);
 
-    console.log("Hello from clicked cell ", clickedCell);
+    const cellSource: maplibregl.GeoJSONSource = this.map.getSource(
+      CELL_SOURCE
+    ) as maplibregl.GeoJSONSource;
+
+    if (cellSource) {
+      const coordinates = locationIdToBoundsCoordinates(clickedCell.locationId);
+      const polygon = polygonFeature(coordinates);
+
+      cellSource.setData(polygon);
+    }
   };
 
   updateGridLines = () => {
@@ -81,6 +103,11 @@ export default class GridControl extends Base {
       data: lineFeatureCollection([]),
     });
 
+    this.map.addSource(CELL_SOURCE, {
+      type: "geojson",
+      data: polygonFeature([]),
+    });
+
     this.map.addLayer({
       id: GRID_LINES_LAYER,
       type: "line",
@@ -92,6 +119,27 @@ export default class GridControl extends Base {
       paint: {
         "line-color": this.lineColor,
         "line-width": this.lineWidth,
+      },
+      minzoom: getMinGridZoom(this.precision),
+    });
+
+    this.map.addLayer({
+      id: CELL_FILL_LAYER,
+      type: "fill",
+      source: CELL_SOURCE,
+      paint: {
+        "fill-color": this.cellFillColor,
+      },
+      minzoom: getMinGridZoom(this.precision),
+    });
+
+    this.map.addLayer({
+      id: CELL_BORDER_LAYER,
+      type: "line",
+      source: CELL_SOURCE,
+      paint: {
+        "line-color": this.lineColor,
+        "line-width": 1,
       },
       minzoom: getMinGridZoom(this.precision),
     });
@@ -109,8 +157,13 @@ export default class GridControl extends Base {
 
     this.map.off("moveend", this.updateGridLines);
     this.map.off("click", this.handleMapClick);
+
     this.map.removeLayer(GRID_LINES_LAYER);
     this.map.removeSource(GRID_LINES_SOURCE);
+
+    this.map.removeLayer(CELL_FILL_LAYER);
+    this.map.removeLayer(CELL_BORDER_LAYER);
+    this.map.removeSource(CELL_SOURCE);
   };
 
   handleGridButtonClick = () => {

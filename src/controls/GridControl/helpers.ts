@@ -114,20 +114,56 @@ export const getFormattedCellDimensions = (cellPrecision: CellPrecision) => {
   }
 };
 
+export const polygonFeature = (
+  coordinates: GeoJSON.Position[][]
+): GeoJSON.Feature => {
+  return {
+    type: "Feature",
+    properties: {},
+    geometry: {
+      type: "Polygon",
+      coordinates: coordinates,
+    },
+  };
+};
+
+export const lineFeature = (
+  coordinates: GeoJSON.Position[]
+): GeoJSON.Feature => {
+  return {
+    type: "Feature",
+    properties: {},
+    geometry: {
+      type: "LineString",
+      coordinates: coordinates,
+    },
+  };
+};
+
 export const lineFeatureCollection = (
   coordinates: GeoJSON.Position[][]
 ): GeoJSON.FeatureCollection => {
   return {
     type: "FeatureCollection",
-    features: coordinates.map((coords: GeoJSON.Position[]) => ({
-      type: "Feature",
-      properties: {},
-      geometry: {
-        type: "LineString",
-        coordinates: coords,
-      },
-    })),
+    features: coordinates.map((coords: GeoJSON.Position[]) =>
+      lineFeature(coords)
+    ),
   };
+};
+
+export const locationIdToBoundsCoordinates = (
+  geohash: string
+): GeoJSON.Position[][] => {
+  const unlCoreBounds: UnlCore.Bounds = UnlCore.bounds(geohash);
+  const coordinates = [];
+
+  coordinates.push([unlCoreBounds.n, unlCoreBounds.w]);
+  coordinates.push([unlCoreBounds.s, unlCoreBounds.w]);
+  coordinates.push([unlCoreBounds.s, unlCoreBounds.e]);
+  coordinates.push([unlCoreBounds.n, unlCoreBounds.e]);
+  coordinates.push([unlCoreBounds.n, unlCoreBounds.w]);
+
+  return [coordinates];
 };
 
 export const getMinGridZoom = (cellPrecision: CellPrecision) => {
