@@ -1,9 +1,10 @@
-import { MapMouseEvent } from "maplibre-gl";
+import { LngLat, MapMouseEvent } from "maplibre-gl";
 import ControlButton from "../../ui/buttons/ControlButton/ControlButton";
 import gridIcon from "../../icons/ts/GridIcon";
 import selectedGridIcon from "../../icons/ts/SelectedGridIcon";
 import Base from "../Base/Base";
 import {
+  cellInfoPopupTemplate,
   convertBoundsToGridLines,
   getCell,
   getMinGridZoom,
@@ -12,6 +13,7 @@ import {
   polygonFeature,
 } from "./helpers";
 import CellPrecision from "./CellPrecision";
+import Cell from "./Cell";
 
 const GRID_LINES_SOURCE = "controls-grid-lines-source";
 const CELL_SOURCE = "controls-cell-source";
@@ -40,6 +42,8 @@ export default class GridControl extends Base {
   lineWidth: number;
   cellFillColor: string;
   cellBorderColor: string;
+  cellInfoPopupNode?: HTMLDivElement;
+  clickedLngLat?: LngLat;
 
   constructor(options?: GridControlOptions) {
     super();
@@ -60,8 +64,38 @@ export default class GridControl extends Base {
     this.addButton(this.gridButton);
   };
 
+  updateCellPopupPosition = () => {
+    if (!this.cellInfoPopupNode || !this.clickedLngLat) {
+      return;
+    }
+
+    const popupPosition = this.map.project(this.clickedLngLat);
+    const canvasRect = this.map.getCanvas().getBoundingClientRect();
+
+    this.cellInfoPopupNode.style.left = `${
+      popupPosition.x - canvasRect.left
+    }px`;
+    this.cellInfoPopupNode.style.top = `${popupPosition.y - canvasRect.top}px`;
+  };
+
+  addCellInfoPopup = (cell: Cell) => {
+    this.cellInfoPopupNode = cellInfoPopupTemplate(cell);
+
+    this.map.getContainer().appendChild(this.cellInfoPopupNode);
+  };
+
+  removeCellInfoPopup = () => {
+    if (!this.cellInfoPopupNode) {
+      return;
+    }
+
+    this.map.getContainer().removeChild(this.cellInfoPopupNode!);
+    this.cellInfoPopupNode = undefined;
+  };
+
   handleMapClick = (e: MapMouseEvent) => {
-    const clickedCell = getCell(e.lngLat, this.precision);
+    this.clickedLngLat = e.lngLat;
+    const clickedCell = getCell(this.clickedLngLat, this.precision);
 
     const cellSource: maplibregl.GeoJSONSource = this.map.getSource(
       CELL_SOURCE
@@ -73,6 +107,10 @@ export default class GridControl extends Base {
 
       cellSource.setData(polygon);
     }
+
+    this.removeCellInfoPopup();
+    this.addCellInfoPopup(clickedCell);
+    this.updateCellPopupPosition();
   };
 
   updateGridLines = () => {
@@ -148,6 +186,7 @@ export default class GridControl extends Base {
     this.isGridVisible = true;
     this.updateGridLines();
     this.map.on("click", this.handleMapClick);
+    this.map.on("move", this.updateCellPopupPosition);
     this.map.on("moveend", this.updateGridLines);
   };
 
@@ -156,6 +195,7 @@ export default class GridControl extends Base {
     this.gridButton.setIcon(gridIcon());
 
     this.map.off("moveend", this.updateGridLines);
+    this.map.off("move", this.updateCellPopupPosition);
     this.map.off("click", this.handleMapClick);
 
     this.map.removeLayer(GRID_LINES_LAYER);
@@ -164,6 +204,8 @@ export default class GridControl extends Base {
     this.map.removeLayer(CELL_FILL_LAYER);
     this.map.removeLayer(CELL_BORDER_LAYER);
     this.map.removeSource(CELL_SOURCE);
+
+    this.removeCellInfoPopup();
   };
 
   handleGridButtonClick = () => {

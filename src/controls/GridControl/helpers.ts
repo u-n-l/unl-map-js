@@ -192,3 +192,15 @@ export const getMinGridZoom = (cellPrecision: CellPrecision) => {
       return ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_9;
   }
 };
+
+export const cellInfoPopupTemplate = (cell: Cell) => {
+  const root = document.createElement("div");
+  root.classList.add("mapbox-control-cell-popup");
+  const text = document.createTextNode(cell.locationId);
+  const content = document.createElement("p");
+  content.classList.add("mapbox-control-cell-content");
+  content.appendChild(text);
+  root.appendChild(content);
+
+  return root;
+};

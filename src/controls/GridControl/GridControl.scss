@@ -1,0 +1,18 @@
+.mapbox-control-cell {
+  &-popup {
+    position: absolute;
+    padding-top: 5px;
+    transform: translate(-50%, 0);
+  }
+
+  &-content {
+    position: relative;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-family: sans-serif;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+  }
+}
