@@ -10,6 +10,7 @@ import {
   getMinGridZoom,
   lineFeatureCollection,
   locationIdToBoundsCoordinates,
+  locationIdToLngLat,
   polygonFeature,
 } from "./helpers";
 import CellPrecision from "./CellPrecision";
@@ -25,6 +26,11 @@ const DEFAULT_LINES_COLOR = "#C0C0C0";
 const DEFAULT_CELL_FILL_COLOR = "#FFB100";
 const DEFAULT_CELL_BORDER_COLOR = "#FFB100";
 const DEFAULT_WIDTH = 0.5;
+
+const CELL_POPUP_OFFSET = {
+  left: 0,
+  top: 70,
+};
 
 export interface GridControlOptions {
   precision?: CellPrecision;
@@ -69,13 +75,21 @@ export default class GridControl extends Base {
       return;
     }
 
+    if (this.map.getZoom() < getMinGridZoom(this.precision)) {
+      this.cellInfoPopupNode.style.visibility = "hidden";
+    } else {
+      this.cellInfoPopupNode.style.visibility = "visible";
+    }
+
     const popupPosition = this.map.project(this.clickedLngLat);
     const canvasRect = this.map.getCanvas().getBoundingClientRect();
 
     this.cellInfoPopupNode.style.left = `${
-      popupPosition.x - canvasRect.left
+      popupPosition.x - canvasRect.left - CELL_POPUP_OFFSET.left
     }px`;
-    this.cellInfoPopupNode.style.top = `${popupPosition.y - canvasRect.top}px`;
+    this.cellInfoPopupNode.style.top = `${
+      popupPosition.y - canvasRect.top - CELL_POPUP_OFFSET.top
+    }px`;
   };
 
   addCellInfoPopup = (cell: Cell) => {
@@ -94,8 +108,8 @@ export default class GridControl extends Base {
   };
 
   handleMapClick = (e: MapMouseEvent) => {
-    this.clickedLngLat = e.lngLat;
-    const clickedCell = getCell(this.clickedLngLat, this.precision);
+    const clickedCell = getCell(e.lngLat, this.precision);
+    this.clickedLngLat = locationIdToLngLat(clickedCell.locationId);
 
     const cellSource: maplibregl.GeoJSONSource = this.map.getSource(
       CELL_SOURCE

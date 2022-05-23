@@ -204,3 +204,9 @@ export const cellInfoPopupTemplate = (cell: Cell) => {
 
   return root;
 };
+
+export const locationIdToLngLat = (locationId: string): LngLat => {
+  const decodedGeohash = UnlCore.decode(locationId);
+
+  return new LngLat(decodedGeohash.lat, decodedGeohash.lon);
+};
