@@ -19,7 +19,7 @@ class ControlButton {
     return this;
   };
 
-  setIcon = (icon: SVGElement, id?: string) => {
+  setIcon = (icon: SVGElement) => {
     if (this.icon) {
       this.node.removeChild(this.icon);
     }

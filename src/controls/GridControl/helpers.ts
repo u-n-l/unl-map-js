@@ -82,13 +82,13 @@ export const getCell = (
   cellPrecision: CellPrecision
 ): Cell => {
   return {
-    locationId: UnlCore.encode(coordinates.lng, coordinates.lat, cellPrecision),
+    locationId: UnlCore.encode(coordinates.lat, coordinates.lng, cellPrecision),
     size: getFormattedCellDimensions(cellPrecision),
   };
 };
 
 export const getFormattedCellDimensions = (cellPrecision: CellPrecision) => {
-  switch (cellPrecision) {
+  switch (+cellPrecision) {
     case CellPrecision.GEOHASH_LENGTH_1:
       return "5,009.4km x 4,992.6km";
     case CellPrecision.GEOHASH_LENGTH_2:
@@ -110,7 +110,7 @@ export const getFormattedCellDimensions = (cellPrecision: CellPrecision) => {
     case CellPrecision.GEOHASH_LENGTH_10:
       return "1.2m x 59.5cm";
     default:
-      return "1.2m x 59.5cm";
+      return "4.8m x 4.8m";
   }
 };
 
@@ -157,17 +157,18 @@ export const locationIdToBoundsCoordinates = (
   const unlCoreBounds: UnlCore.Bounds = UnlCore.bounds(geohash);
   const coordinates = [];
 
-  coordinates.push([unlCoreBounds.n, unlCoreBounds.w]);
-  coordinates.push([unlCoreBounds.s, unlCoreBounds.w]);
-  coordinates.push([unlCoreBounds.s, unlCoreBounds.e]);
-  coordinates.push([unlCoreBounds.n, unlCoreBounds.e]);
-  coordinates.push([unlCoreBounds.n, unlCoreBounds.w]);
+  coordinates.push([unlCoreBounds.w, unlCoreBounds.n]);
+  coordinates.push([unlCoreBounds.w, unlCoreBounds.s]);
+  coordinates.push([unlCoreBounds.e, unlCoreBounds.s]);
+  coordinates.push([unlCoreBounds.e, unlCoreBounds.n]);
+  coordinates.push([unlCoreBounds.w, unlCoreBounds.n]);
 
   return [coordinates];
 };
 
 export const getMinGridZoom = (cellPrecision: CellPrecision) => {
-  switch (cellPrecision) {
+  debugger;
+  switch (+cellPrecision) {
     case CellPrecision.GEOHASH_LENGTH_10:
       return ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_10;
     case CellPrecision.GEOHASH_LENGTH_9:
@@ -189,24 +190,13 @@ export const getMinGridZoom = (cellPrecision: CellPrecision) => {
     case CellPrecision.GEOHASH_LENGTH_1:
       return ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_1;
     default:
+      console.log("return default");
       return ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_9;
   }
-};
-
-export const cellInfoPopupTemplate = (cell: Cell) => {
-  const root = document.createElement("div");
-  root.classList.add("mapbox-control-cell-popup");
-  const text = document.createTextNode(cell.locationId);
-  const content = document.createElement("p");
-  content.classList.add("mapbox-control-cell-content");
-  content.appendChild(text);
-  root.appendChild(content);
-
-  return root;
 };
 
 export const locationIdToLngLat = (locationId: string): LngLat => {
   const decodedGeohash = UnlCore.decode(locationId);
 
-  return new LngLat(decodedGeohash.lat, decodedGeohash.lon);
+  return new LngLat(decodedGeohash.lon, decodedGeohash.lat);
 };
