@@ -1,6 +1,7 @@
-import { LngLatBounds } from "maplibre-gl";
+import { LngLat, LngLatBounds } from "maplibre-gl";
 import UnlCore from "unl-core";
 import ZoomLevel from "../../map/zoomLevels";
+import Cell from "./Cell";
 import CellPrecision from "./CellPrecision";
 
 const MAX_NUMBER_OF_LINES = 10000;
@@ -76,24 +77,98 @@ const lngLatBoundsToUnlCoreBounds = (
   };
 };
 
+export const getCell = (
+  coordinates: LngLat,
+  cellPrecision: CellPrecision
+): Cell => {
+  return {
+    locationId: UnlCore.encode(coordinates.lat, coordinates.lng, cellPrecision),
+    size: getFormattedCellDimensions(cellPrecision),
+  };
+};
+
+export const getFormattedCellDimensions = (cellPrecision: CellPrecision) => {
+  switch (+cellPrecision) {
+    case CellPrecision.GEOHASH_LENGTH_1:
+      return "5,009.4km x 4,992.6km";
+    case CellPrecision.GEOHASH_LENGTH_2:
+      return "1,252.3km x 624.1km";
+    case CellPrecision.GEOHASH_LENGTH_3:
+      return "156.5km x 156km";
+    case CellPrecision.GEOHASH_LENGTH_4:
+      return "39.1km x 19.5km";
+    case CellPrecision.GEOHASH_LENGTH_5:
+      return "4.9km x 4.9km";
+    case CellPrecision.GEOHASH_LENGTH_6:
+      return "1.2km x 609.4m";
+    case CellPrecision.GEOHASH_LENGTH_7:
+      return "152.9m x 152.4m";
+    case CellPrecision.GEOHASH_LENGTH_8:
+      return "38.2m x 19m";
+    case CellPrecision.GEOHASH_LENGTH_9:
+      return "4.8m x 4.8m";
+    case CellPrecision.GEOHASH_LENGTH_10:
+      return "1.2m x 59.5cm";
+    default:
+      return "4.8m x 4.8m";
+  }
+};
+
+export const polygonFeature = (
+  coordinates: GeoJSON.Position[][]
+): GeoJSON.Feature => {
+  return {
+    type: "Feature",
+    properties: {},
+    geometry: {
+      type: "Polygon",
+      coordinates: coordinates,
+    },
+  };
+};
+
+export const lineFeature = (
+  coordinates: GeoJSON.Position[]
+): GeoJSON.Feature => {
+  return {
+    type: "Feature",
+    properties: {},
+    geometry: {
+      type: "LineString",
+      coordinates: coordinates,
+    },
+  };
+};
+
 export const lineFeatureCollection = (
   coordinates: GeoJSON.Position[][]
 ): GeoJSON.FeatureCollection => {
   return {
     type: "FeatureCollection",
-    features: coordinates.map((coords: GeoJSON.Position[]) => ({
-      type: "Feature",
-      properties: {},
-      geometry: {
-        type: "LineString",
-        coordinates: coords,
-      },
-    })),
+    features: coordinates.map((coords: GeoJSON.Position[]) =>
+      lineFeature(coords)
+    ),
   };
 };
 
+export const locationIdToBoundsCoordinates = (
+  geohash: string
+): GeoJSON.Position[][] => {
+  const unlCoreBounds: UnlCore.Bounds = UnlCore.bounds(geohash);
+  const coordinates = [];
+
+  coordinates.push([unlCoreBounds.w, unlCoreBounds.n]);
+  coordinates.push([unlCoreBounds.w, unlCoreBounds.s]);
+  coordinates.push([unlCoreBounds.e, unlCoreBounds.s]);
+  coordinates.push([unlCoreBounds.e, unlCoreBounds.n]);
+  coordinates.push([unlCoreBounds.w, unlCoreBounds.n]);
+
+  return [coordinates];
+};
+
 export const getMinGridZoom = (cellPrecision: CellPrecision) => {
-  switch (cellPrecision) {
+  debugger;
+  switch (+cellPrecision) {
     case CellPrecision.GEOHASH_LENGTH_10:
       return ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_10;
     case CellPrecision.GEOHASH_LENGTH_9:
@@ -115,6 +190,13 @@ export const getMinGridZoom = (cellPrecision: CellPrecision) => {
     case CellPrecision.GEOHASH_LENGTH_1:
       return ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_1;
     default:
+      console.log("return default");
       return ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_9;
   }
+};
+
+export const locationIdToLngLat = (locationId: string): LngLat => {
+  const decodedGeohash = UnlCore.decode(locationId);
+
+  return new LngLat(decodedGeohash.lon, decodedGeohash.lat);
 };
