@@ -6,7 +6,7 @@ import {
   Map,
   RequestTransformFunction,
 } from "maplibre-gl";
-import { GridControl } from "../controls";
+import { GridControl, IndoorControl } from "../controls";
 import { getStyle } from "./styles/here";
 import ZoomLevel from "./zoomLevels";
 
@@ -15,6 +15,7 @@ const DEFAULT_GRID_CONTROL_POSITION = "top-right";
 export type UnlMapOptions = {
   apiKey: string;
   vpmId: string;
+  indoorMaps?: boolean;
   gridControl?: boolean;
   gridControlPosition?: ControlPosition;
   hash?: boolean | string;
@@ -61,15 +62,25 @@ export type UnlMapOptions = {
 };
 
 class UnlMap extends Map {
+  apiKey: string;
+  vpmId: string;
+
   constructor(options: UnlMapOptions) {
     super({
       ...options,
-      style: getStyle(options.apiKey),
+      style: getStyle("pFlhWNivCejOEWnTKIQf6ZKRWP5avfiANvleJKR0XAY"),
       minZoom: options.minZoom ?? ZoomLevel.MIN_ZOOM,
       maxZoom: options.maxZoom ?? ZoomLevel.MAX_ZOOM,
       maplibreLogo: false,
       logoPosition: undefined,
     });
+
+    this.apiKey = options.apiKey;
+    this.vpmId = options.vpmId;
+
+    if (options.indoorMaps) {
+      this.addControl(new IndoorControl());
+    }
 
     if (options.gridControl) {
       this.addControl(
@@ -78,6 +89,14 @@ class UnlMap extends Map {
       );
     }
   }
+
+  getApiKey = () => {
+    return this.apiKey;
+  };
+
+  getVpmId = () => {
+    return this.vpmId;
+  };
 }
 
 export default UnlMap;

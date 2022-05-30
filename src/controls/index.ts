@@ -6,6 +6,6 @@ export {
 export {
   default as IndoorControl,
   default as IndoorControlOptions,
-} from "./GridControl/GridControl";
+} from "./IndoorControl/IndoorControl";
 
 export { default as CellPrecision } from "./GridControl/CellPrecision";
