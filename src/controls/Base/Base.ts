@@ -25,6 +25,10 @@ class Base {
     buttons.forEach((button) => this.node.appendChild(button.node));
   };
 
+  removeButton = (...buttons: ControlButton[]) => {
+    buttons.forEach((button) => this.node.removeChild(button.node));
+  };
+
   addClassName = (className: string) => {
     this.node.classList.add(className);
   };

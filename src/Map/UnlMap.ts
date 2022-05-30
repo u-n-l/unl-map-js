@@ -79,7 +79,7 @@ class UnlMap extends Map {
     this.vpmId = options.vpmId;
 
     if (options.indoorMaps) {
-      this.addControl(new IndoorControl());
+      this.addControl(new IndoorControl(), "bottom-right");
     }
 
     if (options.gridControl) {

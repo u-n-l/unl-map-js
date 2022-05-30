@@ -39,6 +39,7 @@ import {
   VENUE_UNIT_MARKERS_SOURCE,
 } from "./sources";
 import { Record } from "../../api/records/models/Record";
+import ControlButton from "../GridControl/components/ControlButton";
 
 const DISPLAYED_FEATURE_TYPES = [
   ImdfFeatureType.LEVEL,
@@ -54,13 +55,54 @@ export default class IndoorControl extends Base {
   imdfVenueData: {
     [level: number]: ImdfVenueData | undefined;
   };
+  levelButtons: ControlButton[];
 
   constructor() {
     super();
 
     this.selectedLevel = 0;
     this.imdfVenueData = {};
+    this.levelButtons = [];
   }
+
+  handleLevelSelection = (level: number) => {
+    const selectedVenueId =
+      this.imdfVenueData[this.selectedLevel]?.venue?.features[0].properties
+        ?.venueId;
+
+    this.selectedLevel = level;
+
+    if (this.imdfVenueData[this.selectedLevel]) {
+      this.updateImdfDataSources();
+    } else {
+      this.fetchImdfVenueData(selectedVenueId);
+    }
+  };
+
+  updateLevelSelector = () => {
+    if (
+      !this.imdfVenueData[this.selectedLevel] ||
+      !this.imdfVenueData[this.selectedLevel]?.level
+    ) {
+      return;
+    }
+
+    this.levelButtons.forEach((button) => {
+      this.removeButton(button);
+    });
+
+    this.levelButtons = this.imdfVenueData[
+      this.selectedLevel
+    ]!.level!.features.reverse().map((level) =>
+      new ControlButton().setText(level.properties?.ordinal).onClick(() => {
+        this.handleLevelSelection(level?.properties?.ordinal);
+      })
+    );
+
+    this.levelButtons.forEach((button) => {
+      this.addButton(button);
+    });
+  };
 
   handleVenueClick = (e: MapMouseEvent) => {
     const existingVenueId =
@@ -80,7 +122,12 @@ export default class IndoorControl extends Base {
   fetchImdfVenueData = (venueId: string) => {
     const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
     unlApi.venuesApi
-      .getImdfFeatures(this.map.getVpmId(), venueId, 0, DISPLAYED_FEATURE_TYPES)
+      .getImdfFeatures(
+        this.map.getVpmId(),
+        venueId,
+        this.selectedLevel,
+        DISPLAYED_FEATURE_TYPES
+      )
       .then((imdfData: ImdfFeature[]) => {
         const levels: GeoJSON.Feature[] = [];
         const unit: GeoJSON.Feature[] = [];
@@ -133,6 +180,10 @@ export default class IndoorControl extends Base {
         };
 
         this.updateImdfDataSources();
+
+        if (Object.keys(this.imdfVenueData).length === 1) {
+          this.updateLevelSelector();
+        }
       });
   };
 
