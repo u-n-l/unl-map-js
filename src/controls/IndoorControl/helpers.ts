@@ -1,6 +1,11 @@
 import { Record } from "../../api/records/models/Record";
 import { polygonFeature } from "../GridControl/helpers";
 
+export const getRecordName = (record: Record) => {
+  const nameObject = record.geojson.properties.name;
+  return nameObject.en ?? nameObject[Object.keys(nameObject)[0]];
+};
+
 export const pointFeature = (
   coordinates: GeoJSON.Position,
   properties: GeoJSON.GeoJsonProperties
@@ -24,7 +29,7 @@ export const featureCollection = (
   };
 };
 
-export const venuesToFeatureCollection = (
+export const venuesRecordsToFeatureCollection = (
   isPoint: boolean,
   records: Record[]
 ): GeoJSON.FeatureCollection => {
@@ -34,6 +39,7 @@ export const venuesToFeatureCollection = (
       isPoint
         ? pointFeature([record.longitude, record.latitude], {
             id: record.venueId,
+            name: getRecordName(record),
           })
         : polygonFeature(record.geojson.geometry.coordinates, {
             id: record.venueId,

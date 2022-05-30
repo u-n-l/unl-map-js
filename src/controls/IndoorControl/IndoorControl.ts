@@ -13,23 +13,32 @@ import {
   venueUnitsFillLayer,
   venueUnitsLineLayer,
   VENUE_FOOTPRINT_FILL_LAYER,
-  VENUE_FOOTPRINT_SOURCE,
   VENUE_LEVEL_FILL_LAYER,
   VENUE_LEVEL_LINE_LAYER,
-  VENUE_LEVEL_SOURCE,
-  VENUE_MARKERS_SOURCE,
   VENUE_MARKERS_SYMBOL_LAYER,
   VENUE_OPENINGS_LINE_LAYER,
-  VENUE_OPENINGS_SOURCE,
   VENUE_UNITS_FILL_LAYER,
   VENUE_UNITS_LINE_LAYER,
-  VENUE_UNITS_SOURCE,
-  VENUE_UNIT_MARKERS_SOURCE,
   VENUE_UNIT_MARKERS_SYMBOL_LAYER,
 } from "./layers";
-import { featureCollection, venuesToFeatureCollection } from "./helpers";
+import { featureCollection, venuesRecordsToFeatureCollection } from "./helpers";
 import { ImdfFeatureType } from "../../api/venues/models/ImdfFeatureType";
 import ImdfFeature from "../../api/venues/models/ImdfFeature";
+import {
+  venueFootprintSource,
+  venueLevelSource,
+  venueMarkersSource,
+  venueOpeningsSource,
+  venueUnitMarkersSource,
+  venueUnitsSource,
+  VENUE_FOOTPRINT_SOURCE,
+  VENUE_LEVEL_SOURCE,
+  VENUE_MARKERS_SOURCE,
+  VENUE_OPENINGS_SOURCE,
+  VENUE_UNITS_SOURCE,
+  VENUE_UNIT_MARKERS_SOURCE,
+} from "./sources";
+import { Record } from "../../api/records/models/Record";
 
 const DISPLAYED_FEATURE_TYPES = [
   ImdfFeatureType.LEVEL,
@@ -41,41 +50,34 @@ const DISPLAYED_FEATURE_TYPES = [
 export interface IndoorControlOptions {}
 
 export default class IndoorControl extends Base {
-  imdfVenueData?: {
+  selectedLevel: number;
+  imdfVenueData: {
     [level: number]: ImdfVenueData | undefined;
   };
 
   constructor() {
     super();
+
+    this.selectedLevel = 0;
+    this.imdfVenueData = {};
   }
 
-  updateVenueMapLayers = () => {
-    const venueLevelSource: maplibregl.GeoJSONSource = this.map.getSource(
-      VENUE_LEVEL_SOURCE
-    ) as maplibregl.GeoJSONSource;
-
-    // const venueUnitsSource: maplibregl.GeoJSONSource = this.map.getSource(
-    //   VENUE_UNITS
-    // )
-
-    // if (venueLevelSource) {
-    //   venueLevelSource.setData(this.imdfVenueData?[0].level);
-    // }
-
-    // if (venueFootprintSource) {
-    //   const featureColl = venuesToFeatureCollection(false, records.items);
-    //   venueFootprintSource.setData(featureColl);
-    // }
-  };
-
   handleVenueClick = (e: MapMouseEvent) => {
+    const existingVenueId =
+      this.imdfVenueData[this.selectedLevel]?.venue?.features[0].properties
+        ?.venueId;
+
     //@ts-ignore
     const venueId = e.features[0].properties.id;
 
-    if (!venueId) {
-      return;
+    if (venueId && existingVenueId !== venueId) {
+      this.imdfVenueData = {};
+      this.selectedLevel = 0;
+      this.fetchImdfVenueData(venueId);
     }
+  };
 
+  fetchImdfVenueData = (venueId: string) => {
     const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
     unlApi.venuesApi
       .getImdfFeatures(this.map.getVpmId(), venueId, 0, DISPLAYED_FEATURE_TYPES)
@@ -120,7 +122,8 @@ export default class IndoorControl extends Base {
         });
 
         this.imdfVenueData = {
-          0: {
+          ...this.imdfVenueData,
+          [this.selectedLevel]: {
             level: levels.length > 0 ? featureCollection(levels) : undefined,
             opening:
               opening.length > 0 ? featureCollection(opening) : undefined,
@@ -129,97 +132,133 @@ export default class IndoorControl extends Base {
           },
         };
 
-        this.updateVenueMapLayers();
+        this.updateImdfDataSources();
       });
+  };
+
+  updateImdfDataSources = () => {
+    if (!this.imdfVenueData || !this.imdfVenueData[this.selectedLevel]) {
+      return;
+    }
+
+    const venueLevelSource: maplibregl.GeoJSONSource = this.map.getSource(
+      VENUE_LEVEL_SOURCE
+    ) as maplibregl.GeoJSONSource;
+
+    const venueUnitsSource: maplibregl.GeoJSONSource = this.map.getSource(
+      VENUE_UNITS_SOURCE
+    ) as maplibregl.GeoJSONSource;
+
+    const venueOpeningsSource: maplibregl.GeoJSONSource = this.map.getSource(
+      VENUE_OPENINGS_SOURCE
+    ) as maplibregl.GeoJSONSource;
+
+    const venueUnitMarkersSource: maplibregl.GeoJSONSource = this.map.getSource(
+      VENUE_UNIT_MARKERS_SOURCE
+    ) as maplibregl.GeoJSONSource;
+
+    if (venueLevelSource) {
+      venueLevelSource.setData(
+        this.imdfVenueData[this.selectedLevel]!.level ?? featureCollection([])
+      );
+    }
+
+    if (venueUnitsSource) {
+      venueUnitsSource.setData(
+        this.imdfVenueData[this.selectedLevel]!.unit ?? featureCollection([])
+      );
+    }
+
+    if (venueOpeningsSource) {
+      venueOpeningsSource.setData(
+        this.imdfVenueData[this.selectedLevel]!.opening ?? featureCollection([])
+      );
+    }
+
+    if (venueUnitMarkersSource) {
+      venueUnitMarkersSource.setData(
+        this.imdfVenueData[this.selectedLevel]!.unit ?? featureCollection([])
+      );
+    }
+  };
+
+  updateVenueMarkerAndFootprintSources = (records: Record[]) => {
+    const venueMarkersSource: maplibregl.GeoJSONSource = this.map.getSource(
+      VENUE_MARKERS_SOURCE
+    ) as maplibregl.GeoJSONSource;
+    const venueFootprintSource: maplibregl.GeoJSONSource = this.map.getSource(
+      VENUE_FOOTPRINT_SOURCE
+    ) as maplibregl.GeoJSONSource;
+
+    if (venueMarkersSource) {
+      venueMarkersSource.setData(
+        venuesRecordsToFeatureCollection(true, records)
+      );
+    }
+
+    if (venueFootprintSource) {
+      const featureColl = venuesRecordsToFeatureCollection(false, records);
+      venueFootprintSource.setData(featureColl);
+    }
   };
 
   fetchVenueRecords = () => {
     const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
+
     unlApi.recordsApi.getAll(this.map.getVpmId(), "venue").then((records) => {
-      const venueMarkersSource: maplibregl.GeoJSONSource = this.map.getSource(
-        VENUE_MARKERS_SOURCE
-      ) as maplibregl.GeoJSONSource;
-      const venueFootprintSource: maplibregl.GeoJSONSource = this.map.getSource(
-        VENUE_FOOTPRINT_SOURCE
-      ) as maplibregl.GeoJSONSource;
-
-      if (venueMarkersSource) {
-        venueMarkersSource.setData(
-          venuesToFeatureCollection(true, records.items)
-        );
-      }
-
-      if (venueFootprintSource) {
-        const featureColl = venuesToFeatureCollection(false, records.items);
-        venueFootprintSource.setData(featureColl);
+      if (records && records.items) {
+        this.updateVenueMarkerAndFootprintSources(records.items);
       }
     });
   };
 
-  insertSourcesAndLayers = () => {
+  loadMapIcons = () => {
     // this.map.loadImage(
     //   VenueMarkerIcon,
     //   (error?: Error | null, image?: HTMLImageElement | ImageBitmap | null) => {
     //     if (error || !image) {
     //       return;
     //     }
-
     //     this.map.addImage("venue-marker-icon", image);
     //   }
     // );
+  };
 
-    this.map.addSource(VENUE_MARKERS_SOURCE, {
-      type: "geojson",
-      data: venuesToFeatureCollection(true, []),
-    });
-    this.map.addSource(VENUE_FOOTPRINT_SOURCE, {
-      type: "geojson",
-      data: venuesToFeatureCollection(false, []),
-    });
-    this.map.addSource(VENUE_LEVEL_SOURCE, {
-      type: "geojson",
-      data: featureCollection([]),
-    });
-    this.map.addSource(VENUE_UNITS_SOURCE, {
-      type: "geojson",
-      data: featureCollection([]),
-    });
-    this.map.addSource(VENUE_OPENINGS_SOURCE, {
-      type: "geojson",
-      data: featureCollection([]),
-    });
-    this.map.addSource(VENUE_UNIT_MARKERS_SOURCE, {
-      type: "geojson",
-      data: featureCollection([]),
-    });
+  initSourcesAndLayers = () => {
+    this.map.addSource(VENUE_FOOTPRINT_SOURCE, venueFootprintSource);
+    this.map.addSource(VENUE_LEVEL_SOURCE, venueLevelSource);
+    this.map.addSource(VENUE_UNITS_SOURCE, venueUnitsSource);
+    this.map.addSource(VENUE_OPENINGS_SOURCE, venueOpeningsSource);
+    this.map.addSource(VENUE_UNIT_MARKERS_SOURCE, venueUnitMarkersSource);
+    this.map.addSource(VENUE_MARKERS_SOURCE, venueMarkersSource);
 
-    this.map.on("click", VENUE_MARKERS_SYMBOL_LAYER, this.handleVenueClick);
-    this.map.on("click", VENUE_FOOTPRINT_FILL_LAYER, this.handleVenueClick);
-
-    this.map.addLayer(venueMarkersSymbolLayer);
     this.map.addLayer(venueFootprintFillLayer);
-
     this.map.addLayer(venueLevelFillLayer);
     this.map.addLayer(venueLevelLineLayer);
     this.map.addLayer(venueUnitsFillLayer);
     this.map.addLayer(venueUnitsLineLayer);
     this.map.addLayer(venueOpeningLineLayer);
     this.map.addLayer(venueUnitMarkersSymbolLayer);
+    this.map.addLayer(venueMarkersSymbolLayer);
+
+    this.map.on("click", VENUE_MARKERS_SYMBOL_LAYER, this.handleVenueClick);
+    this.map.on("click", VENUE_FOOTPRINT_FILL_LAYER, this.handleVenueClick);
+  };
+
+  handleMapLoad = () => {
+    this.loadMapIcons();
+    this.initSourcesAndLayers();
+    this.fetchVenueRecords();
   };
 
   onAddControl = () => {
-    this.map.on("load", () => {
-      this.insertSourcesAndLayers();
-      this.fetchVenueRecords();
-    });
+    this.map.on("load", this.handleMapLoad);
   };
 
   onRemoveControl = () => {
     this.map.off("click", VENUE_MARKERS_SOURCE, this.handleVenueClick);
     this.map.off("click", VENUE_FOOTPRINT_SOURCE, this.handleVenueClick);
-
-    this.map.removeLayer(VENUE_MARKERS_SYMBOL_LAYER);
-    this.map.removeSource(VENUE_MARKERS_SOURCE);
+    this.map.off("load", this.handleMapLoad);
 
     this.map.removeLayer(VENUE_FOOTPRINT_FILL_LAYER);
     this.map.removeSource(VENUE_FOOTPRINT_SOURCE);
@@ -235,5 +274,8 @@ export default class IndoorControl extends Base {
     this.map.removeSource(VENUE_UNITS_SOURCE);
     this.map.removeSource(VENUE_OPENINGS_SOURCE);
     this.map.removeSource(VENUE_UNIT_MARKERS_SOURCE);
+
+    this.map.removeLayer(VENUE_MARKERS_SYMBOL_LAYER);
+    this.map.removeSource(VENUE_MARKERS_SOURCE);
   };
 }

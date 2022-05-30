@@ -1,14 +1,13 @@
 import { LayerSpecification } from "maplibre-gl";
 import ZoomLevel from "../../map/zoomLevels";
-
-export const VENUE_MARKERS_SOURCE = "controls-indoor-venue-marker-source";
-export const VENUE_FOOTPRINT_SOURCE = "controls-indoor-venue-footprint-source";
-
-export const VENUE_UNIT_MARKERS_SOURCE =
-  "controls-indoor-venue-unit-markers-source";
-export const VENUE_LEVEL_SOURCE = "controls-indoor-venue-level-source";
-export const VENUE_UNITS_SOURCE = "controls-indoor-venue-units-source";
-export const VENUE_OPENINGS_SOURCE = "controls-indoor-venue-openings-source";
+import {
+  VENUE_FOOTPRINT_SOURCE,
+  VENUE_LEVEL_SOURCE,
+  VENUE_MARKERS_SOURCE,
+  VENUE_OPENINGS_SOURCE,
+  VENUE_UNITS_SOURCE,
+  VENUE_UNIT_MARKERS_SOURCE,
+} from "./sources";
 
 export const VENUE_MARKERS_SYMBOL_LAYER =
   "controls-indoor-venue-marker-symbol-layer";
@@ -35,16 +34,16 @@ export const venueMarkersSymbolLayer: LayerSpecification = {
     "text-opacity": ["step", ["zoom"], 1, 15, 1, 17, 0.5],
   },
   layout: {
-    // "icon-image": "venue-marker-icon",
-    // "icon-offset": [
-    //   "interpolate",
-    //   ["linear"],
-    //   ["zoom"],
-    //   ZoomLevel.MIN_ZOOM,
-    //   ["literal", [0, -40]],
-    //   ZoomLevel.MAX_ZOOM,
-    //   ["literal", [0, -35]],
-    // ],
+    "icon-image": "venue-marker-icon",
+    "icon-offset": [
+      "interpolate",
+      ["linear"],
+      ["zoom"],
+      ZoomLevel.MIN_ZOOM,
+      ["literal", [0, -40]],
+      ZoomLevel.MAX_ZOOM,
+      ["literal", [0, -35]],
+    ],
     "text-optional": true,
     "text-field": ["get", "name"],
     "text-font": ["Fira GO Regular"],
@@ -85,69 +84,16 @@ export const venueFootprintFillLayer: LayerSpecification = {
       17,
       "hsl(0, 0%, 2%)",
     ],
-    // "fill-color": [
-    //   "step",
-    //   ["zoom"],
-    //   "hsla(29, 0%, 100%, 0)",
-    //   12,
-    //   "hsla(47, 85%, 92%, 0.6)",
-    //   17,
-    //   "hsla(48, 94%, 93%, 0.9)",
-    // ],
-    "fill-color": "#ff0000",
-    // "fill-opacity": ["step", ["zoom"], 0, 14, 1],
-  },
-};
-
-export const venueUnitsFillLayer: LayerSpecification = {
-  id: VENUE_UNITS_FILL_LAYER,
-  type: "fill",
-  source: VENUE_UNITS_SOURCE,
-  filter: [
-    "all",
-    ["==", ["get", "level_id"], 0],
-    ["!=", ["get", "category"], "walkway"],
-  ],
-  paint: {
     "fill-color": [
-      "case",
-      ["match", ["get", "category"], ["walkway", "restroom.male"], true, false],
-      "#FFFFFF",
-      [
-        "match",
-        ["get", "category"],
-        ["stairs", "elevator", "escalator"],
-        true,
-        false,
-      ],
-      "#769adb",
-      ["match", ["get", "category"], ["stairs"], true, false],
-      "#769adb",
-      ["match", ["get", "category"], ["restroom.female"], true, false],
-      "#f5bcbc",
-      ["match", ["get", "category"], ["restroom.male"], true, false],
-      "#f5bcbc",
-      ["match", ["get", "category"], ["nonpublic"], true, false],
-      "hsla(21, 0%, 88%, 0.4)",
-      "hsl(239, 37%, 93%)",
+      "step",
+      ["zoom"],
+      "hsla(29, 0%, 100%, 0)",
+      12,
+      "hsla(47, 85%, 92%, 0.6)",
+      17,
+      "hsla(48, 94%, 93%, 0.9)",
     ],
-    "fill-outline-color": "hsl(32, 0%, 35%)",
-    "fill-opacity": ["step", ["zoom"], 0, 16, 1, 17, 1],
-  },
-};
-
-export const venueUnitsLineLayer: LayerSpecification = {
-  id: VENUE_UNITS_LINE_LAYER,
-  type: "line",
-  source: VENUE_UNITS_SOURCE,
-  filter: [
-    "all",
-    ["==", ["get", "level_id"], 0],
-    ["!=", ["get", "category"], "walkway"],
-  ],
-  paint: {
-    "line-color": "hsl(28, 0%, 58%)",
-    "line-opacity": ["step", ["zoom"], 0, 17, 1],
+    "fill-opacity": ["step", ["zoom"], 0, 16, 1],
   },
 };
 
@@ -188,11 +134,54 @@ export const venueLevelLineLayer: LayerSpecification = {
   },
 };
 
+export const venueUnitsFillLayer: LayerSpecification = {
+  id: VENUE_UNITS_FILL_LAYER,
+  type: "fill",
+  source: VENUE_UNITS_SOURCE,
+  filter: ["all", ["!=", ["get", "category"], "walkway"]],
+  paint: {
+    "fill-color": [
+      "case",
+      ["match", ["get", "category"], ["walkway", "restroom.male"], true, false],
+      "#FFFFFF",
+      [
+        "match",
+        ["get", "category"],
+        ["stairs", "elevator", "escalator"],
+        true,
+        false,
+      ],
+      "#769adb",
+      ["match", ["get", "category"], ["stairs"], true, false],
+      "#769adb",
+      ["match", ["get", "category"], ["restroom.female"], true, false],
+      "#f5bcbc",
+      ["match", ["get", "category"], ["restroom.male"], true, false],
+      "#f5bcbc",
+      ["match", ["get", "category"], ["nonpublic"], true, false],
+      "hsla(21, 0%, 88%, 0.4)",
+      "hsl(239, 37%, 93%)",
+    ],
+    "fill-outline-color": "hsl(32, 0%, 35%)",
+    "fill-opacity": ["step", ["zoom"], 0, 16, 1, 17, 1],
+  },
+};
+
+export const venueUnitsLineLayer: LayerSpecification = {
+  id: VENUE_UNITS_LINE_LAYER,
+  type: "line",
+  source: VENUE_UNITS_SOURCE,
+  filter: ["all", ["!=", ["get", "category"], "walkway"]],
+  paint: {
+    "line-color": "hsl(28, 0%, 58%)",
+    "line-opacity": ["step", ["zoom"], 0, 17, 1],
+  },
+};
+
 export const venueOpeningLineLayer: LayerSpecification = {
   id: VENUE_OPENINGS_LINE_LAYER,
   type: "line",
   source: VENUE_OPENINGS_SOURCE,
-  filter: ["all", ["==", ["get", "level_id"], 0]],
   layout: { "line-join": "bevel", "line-cap": "round" },
   paint: {
     "line-color": "#769adb",
@@ -205,11 +194,7 @@ export const venueUnitMarkersSymbolLayer: LayerSpecification = {
   id: VENUE_UNIT_MARKERS_SYMBOL_LAYER,
   type: "symbol",
   source: VENUE_UNIT_MARKERS_SOURCE,
-  filter: [
-    "all",
-    ["==", ["get", "level_id"], 0],
-    ["!=", ["get", "category"], "walkway"],
-  ],
+  filter: ["all", ["!=", ["get", "category"], "walkway"]],
   paint: {
     "text-color": [
       "interpolate",
