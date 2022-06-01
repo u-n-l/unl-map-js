@@ -6,8 +6,8 @@ import {
   Map,
   RequestTransformFunction,
 } from "maplibre-gl";
-import { GridControl, IndoorControl } from "../controls";
-import { getStyle } from "./styles/here";
+import { GridControl, IndoorControl, MapTilesControl } from "../controls";
+import { getStyles } from "./styles/here";
 import ZoomLevel from "./zoomLevels";
 
 const DEFAULT_GRID_CONTROL_POSITION = "top-right";
@@ -17,6 +17,7 @@ export type UnlMapOptions = {
   vpmId: string;
   indoorMaps?: boolean;
   gridControl?: boolean;
+  mapTilesControl?: boolean;
   gridControlPosition?: ControlPosition;
   hash?: boolean | string;
   interactive?: boolean;
@@ -68,7 +69,7 @@ class UnlMap extends Map {
   constructor(options: UnlMapOptions) {
     super({
       ...options,
-      style: getStyle("pFlhWNivCejOEWnTKIQf6ZKRWP5avfiANvleJKR0XAY"),
+      style: getStyles("pFlhWNivCejOEWnTKIQf6ZKRWP5avfiANvleJKR0XAY")[0],
       minZoom: options.minZoom ?? ZoomLevel.MIN_ZOOM,
       maxZoom: options.maxZoom ?? ZoomLevel.MAX_ZOOM,
       maplibreLogo: false,
@@ -87,6 +88,10 @@ class UnlMap extends Map {
         new GridControl(),
         options.gridControlPosition ?? DEFAULT_GRID_CONTROL_POSITION
       );
+    }
+
+    if (options.mapTilesControl) {
+      this.addControl(new MapTilesControl(), "top-left");
     }
   }
 
