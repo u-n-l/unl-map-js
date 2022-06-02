@@ -10,7 +10,7 @@ export const getStyle = (apiKey: string) => {
         type: "vector",
         maxzoom: 17,
         tiles: [
-          `https://vector.hereapi.com/v2/vectortiles/base/mc/{z}/{x}/{y}/omv?apikey=${apiKey}`,
+          `https://vector.hereapi.com/v2/vectortiles/base/mc/{z}/{x}/{y}/omv?apikey=mDI8QJCMDYlXmWmcU25JAXwb6haFx5ZMYOf21DVXlxk`,
         ],
         layers: [
           "boundaries",
