@@ -8,4 +8,6 @@ export {
   default as IndoorControlOptions,
 } from "./IndoorControl/IndoorControl";
 
+export { default as MapTilesControl } from "./MapTilesControl/MapTilesControl";
+
 export { default as CellPrecision } from "./GridControl/CellPrecision";

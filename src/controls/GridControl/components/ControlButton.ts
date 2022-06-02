@@ -36,6 +36,20 @@ class ControlButton {
     return this;
   };
 
+  setActive(isActive: boolean) {
+    if (isActive) {
+      this.addClassName("-active");
+    } else {
+      this.removeClassName("-active");
+    }
+
+    return this;
+  }
+
+  isActive() {
+    return this.node.classList.contains("-active");
+  }
+
   onClick = (callback: (event: MouseEvent) => void) => {
     this.node.addEventListener("click", callback);
 
