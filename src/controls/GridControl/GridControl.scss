@@ -39,6 +39,7 @@
     width: 46%;
     max-width: 680px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 16px;
   }
   &-header {
     display: flex;
@@ -47,6 +48,7 @@
     padding: 6px 30px;
     background-color: #fff;
     color: #000;
+    border-radius: 16px;
   }
   &-body {
     display: flex;
@@ -58,6 +60,14 @@
     border-width: 0px 0px thin;
     border-style: solid;
     border-color: rgba(0, 0, 0, 0.12);
+  }
+  &-header-title {
+    color: #444444;
+    font-size: 28px;
+    font-weight: 500;
+    margin-right: 78px;
+    margin-bottom: 36px;
+    margin-bottom: 16px;
   }
   &-title {
     color: #000000;
@@ -77,4 +87,40 @@
     justify-content: space-between;
     padding: 30px 30px;
   }
+  &-select{
+    padding:8px;
+    padding-right: 16px;
+  }
+  &-close-button{
+    background: transparent;
+    border: transparent;
+    padding-top: 8px;
+  }
+  &-select-button{
+    border-radius: 32px;
+    padding:16px;
+    padding-left: 48px;
+    padding-right: 48px;
+    background-color: white;
+    background-color:#B6A4FF;
+    border-color: #B6A4FF;;
+    color: white;
+    font-size: 16px;
+    border-style: double;
+  }
+  &-cancel-button{
+    border-radius: 32px;
+    padding:16px;
+    padding-left: 48px;
+    padding-right: 48px;
+    background-color: white;
+    color:#B6A4FF;
+    border-color: #B6A4FF;
+    font-size: 16px;
+    border-style: double;
+  }
+}
+
+.mapbox-cancel-button {
+  background-color: red;
 }
