@@ -1,0 +1,13 @@
+import { LngLat, LngLatBounds } from "maplibre-gl";
+import ZoomLevel from "../../map/zoomLevels";
+import Cell from "./Cell";
+import CellPrecision from "./CellPrecision";
+export declare const convertBoundsToGridLines: (bounds: LngLatBounds, gridType: CellPrecision) => [[number, number], [number, number]][];
+export declare const getCell: (coordinates: LngLat, cellPrecision: CellPrecision) => Cell;
+export declare const getFormattedCellDimensions: (cellPrecision: CellPrecision) => "5,009.4km x 4,992.6km" | "1,252.3km x 624.1km" | "156.5km x 156km" | "39.1km x 19.5km" | "4.9km x 4.9km" | "1.2km x 609.4m" | "152.9m x 152.4m" | "38.2m x 19m" | "4.8m x 4.8m" | "1.2m x 59.5cm";
+export declare const polygonFeature: (coordinates: GeoJSON.Position[][]) => GeoJSON.Feature;
+export declare const lineFeature: (coordinates: GeoJSON.Position[]) => GeoJSON.Feature;
+export declare const lineFeatureCollection: (coordinates: GeoJSON.Position[][]) => GeoJSON.FeatureCollection;
+export declare const locationIdToBoundsCoordinates: (geohash: string) => GeoJSON.Position[][];
+export declare const getMinGridZoom: (cellPrecision: CellPrecision) => ZoomLevel;
+export declare const locationIdToLngLat: (locationId: string) => LngLat;
