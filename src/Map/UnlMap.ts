@@ -11,14 +11,18 @@ import { getStyles } from "./styles/here";
 import ZoomLevel from "./zoomLevels";
 
 const DEFAULT_GRID_CONTROL_POSITION = "top-right";
+const DEFAULT_INDOOR_MAPS_CONTROL_POSITION = "bottom-right";
+const DEFAULT_TILES_SELECTOR_CONTROL_POSITION = "bottom-left";
 
 export type UnlMapOptions = {
   apiKey: string;
   vpmId: string;
-  indoorMaps?: boolean;
   gridControl?: boolean;
-  mapTilesControl?: boolean;
   gridControlPosition?: ControlPosition;
+  indoorMapsControl?: boolean;
+  indoorMapsControlPosition: ControlPosition;
+  mapTilesControl?: boolean;
+  mapTilesControlPosition?: ControlPosition;
   hash?: boolean | string;
   interactive?: boolean;
   container: HTMLElement | string;
@@ -78,20 +82,26 @@ class UnlMap extends Map {
 
     this.apiKey = options.apiKey;
     this.vpmId = options.vpmId;
-
-    if (options.indoorMaps) {
-      this.addControl(new IndoorControl(), "bottom-right");
-    }
-
     if (options.gridControl) {
       this.addControl(
         new GridControl(),
         options.gridControlPosition ?? DEFAULT_GRID_CONTROL_POSITION
       );
     }
+    if (options.indoorMapsControl) {
+      this.addControl(
+        new IndoorControl(),
+        options.indoorMapsControlPosition ??
+          DEFAULT_INDOOR_MAPS_CONTROL_POSITION
+      );
+    }
 
     if (options.mapTilesControl) {
-      this.addControl(new MapTilesControl(), "top-left");
+      this.addControl(
+        new MapTilesControl(),
+        options.mapTilesControlPosition ??
+          DEFAULT_TILES_SELECTOR_CONTROL_POSITION
+      );
     }
   }
 
