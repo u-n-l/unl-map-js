@@ -263,17 +263,17 @@ export default class IndoorControl extends Base {
     });
   };
 
-  loadMapIcons = () => {
-    // this.map.loadImage(
-    //   VenueMarkerIcon,
-    //   (error?: Error | null, image?: HTMLImageElement | ImageBitmap | null) => {
-    //     if (error || !image) {
-    //       return;
-    //     }
-    //     this.map.addImage("venue-marker-icon", image);
-    //   }
-    // );
-  };
+  // loadMapIcons = () => {
+  //   this.map.loadImage(
+  //     VenueMarkerIcon,
+  //     (error?: Error | null, image?: HTMLImageElement | ImageBitmap | null) => {
+  //       if (error || !image) {
+  //         return;
+  //       }
+  //       this.map.addImage("venue-marker-icon", image);
+  //     }
+  //   );
+  // };
 
   initSourcesAndLayers = () => {
     this.map.addSource(VENUE_FOOTPRINT_SOURCE, venueFootprintSource);
@@ -297,7 +297,7 @@ export default class IndoorControl extends Base {
   };
 
   handleMapLoad = () => {
-    this.loadMapIcons();
+    // this.loadMapIcons();
     this.initSourcesAndLayers();
     this.fetchVenueRecords();
   };
