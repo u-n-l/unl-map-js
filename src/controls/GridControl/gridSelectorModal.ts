@@ -17,6 +17,7 @@ const gridSelectorModal = (
   header.classList.add("mapbox-control-grid-selector-modal-header");
 
   const closeButton = document.createElement("button");
+  closeButton.classList.add("mapbox-control-grid-selector-modal-close-button");
   closeButton.onclick = () => {
     root.style.display = "none";
   };
@@ -27,6 +28,7 @@ const gridSelectorModal = (
 
   const headerText = document.createElement("h2");
   headerText.innerHTML = "Choose Grid Size";
+  headerText.classList.add("mapbox-control-grid-selector-modal-header-title");
 
   const modalBody = document.createElement("div");
   modalBody.classList.add("mapbox-control-grid-selector-modal-body");
@@ -55,6 +57,7 @@ const gridSelectorModal = (
   const valuesColumn = document.createElement("div");
 
   const geohashSelector = document.createElement("select");
+  geohashSelector.classList.add("mapbox-control-grid-selector-modal-select");
   Object.keys(CellPrecision).forEach((key) => {
     const value = CellPrecision[<any>key];
 
@@ -105,6 +108,9 @@ const gridSelectorModal = (
   );
 
   const cancelButton = document.createElement("button");
+  cancelButton.classList.add(
+    "mapbox-control-grid-selector-modal-cancel-button"
+  );
   cancelButton.onclick = () => {
     root.style.display = "none";
     geohashSelector.value = <any>currentPrecision;
@@ -112,6 +118,9 @@ const gridSelectorModal = (
   cancelButton.appendChild(document.createTextNode("Cancel"));
 
   const selectButton = document.createElement("button");
+  selectButton.classList.add(
+    "mapbox-control-grid-selector-modal-select-button"
+  );
   selectButton.onclick = () => {
     onPrecisionChange(<any>geohashSelector.value);
   };
