@@ -40,18 +40,35 @@ export default class MapTilesControl extends Base {
   }
 
   insert() {
-    this.button.onClick(this.showMapTiles);
+    this.button.onClick(this.toggleMapTiles);
     this.addButton(this.button);
 
     this.map.getContainer().appendChild(this.tooltip);
+
+    const tooltip = document.getElementById("map-tiles-tooltip");
+    const mapTilesButton = this.button;
+    document.addEventListener("click", function (event) {
+      //@ts-ignore
+      var isClickInsideTooltip = tooltip.contains(event.target);
+      //@ts-ignore
+      var isClickOnMapTilesButton = mapTilesButton.node.contains(event.target);
+      if (!isClickOnMapTilesButton && !isClickInsideTooltip) {
+        //@ts-ignore
+        tooltip?.style.display = "none";
+      }
+    });
   }
 
   get defaultOptions(): any[] {
     return getStyles("pFlhWNivCejOEWnTKIQf6ZKRWP5avfiANvleJKR0XAY");
   }
 
-  showMapTiles = () => {
-    this.tooltip.style.display = "block";
+  toggleMapTiles = () => {
+    if (this.tooltip.style.display === "block") {
+      this.tooltip.style.display = "none";
+    } else {
+      this.tooltip.style.display = "block";
+    }
   };
 
   onAddControl = () => {

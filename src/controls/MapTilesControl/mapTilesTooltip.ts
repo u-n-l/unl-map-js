@@ -74,22 +74,6 @@ const mapTilesTooltip = (
     tooltipContent.appendChild(buttonContainer);
   });
 
-  document.onclick = function (e) {
-    //@ts-ignore
-    if (e && e.target!.id === "map-tiles-tooltip") {
-      root.style.display = "none";
-    }
-  };
-
-  //   document.addEventListener("click", function (event) {
-  //     // const el = document.getElementById("map-tiles-tooltip");
-  //     //@ts-ignore
-  //     var isClickInsideElement = root?.contains(event.target);
-  //     if (!isClickInsideElement) {
-  //       root.style.display = "none";
-  //     }
-  //   });
-
   root.appendChild(tooltipContent);
 
   return root;
