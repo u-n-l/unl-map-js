@@ -2,7 +2,7 @@ import Base from "../Base/Base";
 import ControlButton from "../GridControl/components/ControlButton";
 import { getStyles } from "../../map/styles/here";
 import { StyleSpecification } from "maplibre-gl";
-import mapTilesTooltip, { getButtonIcon } from "./mapTilesTooltip";
+import { getButtonIcon, mapTilesTooltip } from "./mapTilesTooltip";
 
 export interface MapTilesControlOptions {
   styles?: StyleSpecification[];

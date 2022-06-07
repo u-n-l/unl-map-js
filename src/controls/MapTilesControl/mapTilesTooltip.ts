@@ -1,9 +1,15 @@
 import { StyleSpecification } from "maplibre-gl";
-import defaultIcon from "../../icons/ts/DefaultTiles";
-import vectorialTiles from "../../icons/ts/VectorialTiles";
-import satelliteTiles from "../../icons/ts/SatelliteTiles";
-import terrainTiles from "../../icons/ts/TerrainTiles";
-import trafficTiles from "../../icons/ts/TrafficTiles";
+import baseTiles from "../../icons/ts/BaseTilesIcon";
+import vectorialTiles from "../../icons/ts/VectorialTilesIcon";
+import satelliteTiles from "../../icons/ts/SatelliteTilesIcon";
+import terrainTiles from "../../icons/ts/TerrainTilesIcon";
+import trafficTiles from "../../icons/ts/TrafficTilesIcon";
+
+const VECTORIAL_LABEL = "HERE Berlin";
+const SATELLITE_LABEL = "satellite";
+const TRAFFIC_LABEL = "traffic";
+const TERRAIN_LABEL = "terrain";
+const BASE_LABEL = "Base map";
 
 const getStyleIcon = (index: number) => {
   switch (index) {
@@ -16,7 +22,7 @@ const getStyleIcon = (index: number) => {
     case 3:
       return trafficTiles();
     case 4:
-      return defaultIcon();
+      return baseTiles();
     default:
       vectorialTiles();
   }
@@ -24,22 +30,22 @@ const getStyleIcon = (index: number) => {
 
 export const getButtonIcon = (styleName: string) => {
   switch (styleName) {
-    case "HERE Berlin":
+    case VECTORIAL_LABEL:
       return vectorialTiles();
-    case "satellite":
+    case SATELLITE_LABEL:
       return satelliteTiles();
-    case "terrain":
+    case TERRAIN_LABEL:
       return terrainTiles();
-    case "traffic":
+    case TRAFFIC_LABEL:
       return trafficTiles();
-    case "Base map":
-      return defaultIcon();
+    case BASE_LABEL:
+      return baseTiles();
     default:
       vectorialTiles();
   }
 };
 
-const mapTilesTooltip = (
+export const mapTilesTooltip = (
   styles: StyleSpecification[],
   onChange: (style: StyleSpecification) => void,
   buttons: HTMLButtonElement[]
@@ -68,8 +74,15 @@ const mapTilesTooltip = (
     buttons.push(button);
 
     buttonContainer.appendChild(button);
+
+    const buttonDescription = document.createElement("p");
+    buttonDescription.classList.add(
+      "mapbox-control-map-tiles-tooltip-button-description"
+    );
     //@ts-ignore
-    buttonContainer.appendChild(document.createTextNode(style.label));
+    buttonDescription.innerHTML = style.label;
+
+    buttonContainer.appendChild(buttonDescription);
 
     tooltipContent.appendChild(buttonContainer);
   });
@@ -78,5 +91,3 @@ const mapTilesTooltip = (
 
   return root;
 };
-
-export default mapTilesTooltip;
