@@ -21,7 +21,11 @@ import {
   VENUE_UNITS_LINE_LAYER,
   VENUE_UNIT_MARKERS_SYMBOL_LAYER,
 } from "./layers";
-import { featureCollection, venuesRecordsToFeatureCollection } from "./helpers";
+import {
+  featureCollection,
+  venuesRecordsToFeatureCollection,
+  venueUnitMarkersToFeatureCollection,
+} from "./helpers";
 import { ImdfFeatureType } from "../../api/venues/models/ImdfFeatureType";
 import ImdfFeature from "../../api/venues/models/ImdfFeature";
 import {
@@ -228,7 +232,9 @@ export default class IndoorControl extends Base {
 
     if (venueUnitMarkersSource) {
       venueUnitMarkersSource.setData(
-        this.imdfVenueData[this.selectedLevel]!.unit ?? featureCollection([])
+        venueUnitMarkersToFeatureCollection(
+          this.imdfVenueData[this.selectedLevel]!.unit!
+        ) ?? featureCollection([])
       );
     }
   };

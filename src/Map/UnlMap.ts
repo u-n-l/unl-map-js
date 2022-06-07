@@ -6,13 +6,19 @@ import {
   Map,
   RequestTransformFunction,
 } from "maplibre-gl";
-import { GridControl, IndoorControl, MapTilesControl } from "../controls";
+import {
+  DraftShapesControl,
+  GridControl,
+  IndoorControl,
+  MapTilesControl,
+} from "../controls";
 import { getStyles } from "./styles/here";
 import ZoomLevel from "./zoomLevels";
 
 const DEFAULT_GRID_CONTROL_POSITION = "top-right";
-const DEFAULT_INDOOR_MAPS_CONTROL_POSITION = "bottom-right";
-const DEFAULT_TILES_SELECTOR_CONTROL_POSITION = "bottom-left";
+const DEFAULT_INDOOR_MAPS_CONTROL_POSITION = "top-right";
+const DEFAULT_TILES_SELECTOR_CONTROL_POSITION = "top-left";
+const DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON = "top-left";
 
 export type UnlMapOptions = {
   apiKey: string;
@@ -23,6 +29,8 @@ export type UnlMapOptions = {
   indoorMapsControlPosition: ControlPosition;
   mapTilesControl?: boolean;
   mapTilesControlPosition?: ControlPosition;
+  draftShapesControl?: boolean;
+  draftShapesControlPosition?: ControlPosition;
   hash?: boolean | string;
   interactive?: boolean;
   container: HTMLElement | string;
@@ -82,6 +90,7 @@ class UnlMap extends Map {
 
     this.apiKey = options.apiKey;
     this.vpmId = options.vpmId;
+
     if (options.gridControl) {
       this.addControl(
         new GridControl(),
@@ -103,6 +112,13 @@ class UnlMap extends Map {
       this.addControl(
         new MapTilesControl({ position: mapTilesPosition }),
         mapTilesPosition
+      );
+    }
+    if (options.draftShapesControl) {
+      this.addControl(
+        new DraftShapesControl(),
+        options.draftShapesControlPosition ??
+          DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON
       );
     }
   }
