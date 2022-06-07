@@ -97,10 +97,12 @@ class UnlMap extends Map {
     }
 
     if (options.mapTilesControl) {
-      this.addControl(
-        new MapTilesControl(),
+      const mapTilesPosition =
         options.mapTilesControlPosition ??
-          DEFAULT_TILES_SELECTOR_CONTROL_POSITION
+        DEFAULT_TILES_SELECTOR_CONTROL_POSITION;
+      this.addControl(
+        new MapTilesControl({ position: mapTilesPosition }),
+        mapTilesPosition
       );
     }
   }
