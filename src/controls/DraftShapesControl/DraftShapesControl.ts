@@ -1,4 +1,5 @@
-import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import { MapMouseEvent } from "maplibre-gl";
+import MapboxDraw, { DrawCreateEvent } from "@mapbox/mapbox-gl-draw";
 import ControlButton from "../GridControl/components/ControlButton";
 import Base from "../Base/Base";
 import { DragCircleMode } from "mapbox-gl-draw-circle";
@@ -16,6 +17,8 @@ import {
 import UnlApi from "../../api/UnlApi";
 import { Record } from "../../api/records/models/Record";
 import { featureCollection, polygonFeature } from "../Base/helpers";
+import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
+import { appendDraftShapeFeatureProperties } from "./helpers";
 
 export interface DraftShapesControlOptions {}
 
@@ -23,8 +26,6 @@ export default class DraftShapesControl extends Base {
   polygonButton: ControlButton;
   circleButton: ControlButton;
   rectangleButton: ControlButton;
-  lineButton: ControlButton;
-  pointButton: ControlButton;
   draw: MapboxDraw;
 
   constructor(options?: DraftShapesControlOptions) {
@@ -56,12 +57,6 @@ export default class DraftShapesControl extends Base {
         //@ts-ignore
         this.draw.changeMode("draw_rectangle");
       });
-    this.lineButton = new ControlButton().setText("L").onClick(() => {
-      this.draw.changeMode("draw_line_string");
-    });
-    this.pointButton = new ControlButton().setText("P").onClick(() => {
-      this.draw.changeMode("draw_point");
-    });
   }
 
   initSourcesAndLayers = () => {
@@ -91,7 +86,7 @@ export default class DraftShapesControl extends Base {
     const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
 
     unlApi.recordsApi
-      .getAll(this.map.getVpmId(), "DraftShape")
+      .getAll(this.map.getVpmId(), RecordFeatureType.DRAFT_SHAPE)
       .then((records) => {
         if (records && records.items) {
           this.updateDraftShapeSource(records.items);
@@ -99,21 +94,45 @@ export default class DraftShapesControl extends Base {
       });
   };
 
+  handleDrawCreate = (event: DrawCreateEvent) => {
+    const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
+
+    const createdDraftShape = appendDraftShapeFeatureProperties(
+      event.features[0]
+    );
+
+    unlApi.recordsApi.create(this.map.getVpmId(), createdDraftShape);
+    this.draw.set(featureCollection([]));
+    this.fetchDraftShapes();
+  };
+
+  handleDraftShapeClick = (e: MapMouseEvent) => {
+    //@ts-ignore
+    this.draw.set(featureCollection([e.features[0]]));
+    this.draw.changeMode("simple_select");
+  };
+
+  initDrawControl = () => {
+    //@ts-ignore
+    this.map.addControl(this.draw, "top-right");
+
+    this.map.on("draw.create", this.handleDrawCreate);
+
+    this.map.on("click", DRAFT_SHAPES_FILL_LAYER, this.handleDraftShapeClick);
+    this.map.on("click", DRAFT_SHAPES_LINE_LAYER, this.handleDraftShapeClick);
+  };
+
   handleMapLoad = () => {
-    // this.loadMapIcons();
     this.initSourcesAndLayers();
     this.fetchDraftShapes();
+    this.initDrawControl();
   };
 
   onAddControl = () => {
     this.addButton(this.polygonButton);
     this.addButton(this.circleButton);
     this.addButton(this.rectangleButton);
-    this.addButton(this.lineButton);
-    this.addButton(this.pointButton);
 
-    //@ts-ignore
-    this.map.addControl(this.draw, "top-right");
     this.map.on("load", this.handleMapLoad);
   };
 
@@ -121,6 +140,8 @@ export default class DraftShapesControl extends Base {
     //@ts-ignore
     this.map.removeControl(this.draw);
 
+    this.map.off("click", DRAFT_SHAPES_FILL_LAYER, this.handleDraftShapeClick);
+    this.map.off("click", DRAFT_SHAPES_LINE_LAYER, this.handleDraftShapeClick);
     this.map.off("load", this.handleMapLoad);
 
     this.map.removeLayer(DRAFT_SHAPES_FILL_LAYER);

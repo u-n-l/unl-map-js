@@ -44,6 +44,7 @@ import {
 import { Record } from "../../api/records/models/Record";
 import ControlButton from "../GridControl/components/ControlButton";
 import { featureCollection } from "../Base/helpers";
+import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
 
 const DISPLAYED_FEATURE_TYPES = [
   ImdfFeatureType.LEVEL,
@@ -262,11 +263,13 @@ export default class IndoorControl extends Base {
   fetchVenueRecords = () => {
     const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
 
-    unlApi.recordsApi.getAll(this.map.getVpmId(), "venue").then((records) => {
-      if (records && records.items) {
-        this.updateVenueMarkerAndFootprintSources(records.items);
-      }
-    });
+    unlApi.recordsApi
+      .getAll(this.map.getVpmId(), RecordFeatureType.VENUE)
+      .then((records) => {
+        if (records && records.items) {
+          this.updateVenueMarkerAndFootprintSources(records.items);
+        }
+      });
   };
 
   // loadMapIcons = () => {

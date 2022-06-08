@@ -9,6 +9,20 @@ export default class RecordsApi extends BaseAPI {
     super(configuration);
   }
 
+  public create(projectId: string, feature: GeoJSON.Feature): Promise<Record> {
+    const pathParamMap = {
+      project_id: projectId,
+    };
+
+    return this.restClient.post<Record>(
+      "projects/{project_id}/records",
+      pathParamMap,
+      {
+        geojson: feature,
+      }
+    );
+  }
+
   public getAll(
     projectId: string,
     filterBy: string,
