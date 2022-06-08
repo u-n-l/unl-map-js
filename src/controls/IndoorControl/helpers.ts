@@ -1,5 +1,5 @@
 import { Record } from "../../api/records/models/Record";
-import { polygonFeature } from "../GridControl/helpers";
+import { polygonFeature } from "../Base/helpers";
 import { FacilityCategory } from "./FacilityCategory";
 
 export const getIsFacility = (feature: GeoJSON.Feature) => {
@@ -83,15 +83,6 @@ export const venueUnitMarkersToFeatureCollection = (
         },
       };
     }),
-  };
-};
-
-export const featureCollection = (
-  features: GeoJSON.Feature[]
-): GeoJSON.FeatureCollection => {
-  return {
-    type: "FeatureCollection",
-    features,
   };
 };
 

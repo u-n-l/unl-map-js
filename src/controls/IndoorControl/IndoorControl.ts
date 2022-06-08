@@ -22,7 +22,6 @@ import {
   VENUE_UNIT_MARKERS_SYMBOL_LAYER,
 } from "./layers";
 import {
-  featureCollection,
   venuesRecordsToFeatureCollection,
   venueUnitMarkersToFeatureCollection,
 } from "./helpers";
@@ -44,6 +43,7 @@ import {
 } from "./sources";
 import { Record } from "../../api/records/models/Record";
 import ControlButton from "../GridControl/components/ControlButton";
+import { featureCollection } from "../Base/helpers";
 
 const DISPLAYED_FEATURE_TYPES = [
   ImdfFeatureType.LEVEL,

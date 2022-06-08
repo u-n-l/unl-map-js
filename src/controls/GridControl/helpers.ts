@@ -114,20 +114,6 @@ export const getFormattedCellDimensions = (cellPrecision: CellPrecision) => {
   }
 };
 
-export const polygonFeature = (
-  coordinates: GeoJSON.Position[][],
-  properties?: GeoJSON.GeoJsonProperties
-): GeoJSON.Feature => {
-  return {
-    type: "Feature",
-    properties: properties ?? {},
-    geometry: {
-      type: "Polygon",
-      coordinates: coordinates,
-    },
-  };
-};
-
 export const lineFeature = (
   coordinates: GeoJSON.Position[]
 ): GeoJSON.Feature => {

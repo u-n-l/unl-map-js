@@ -10,12 +10,12 @@ import {
   lineFeatureCollection,
   locationIdToBoundsCoordinates,
   locationIdToLngLat,
-  polygonFeature,
 } from "./helpers";
 import CellPrecision from "./CellPrecision";
 import Cell from "./Cell";
 import cellInfoPopupTemplate from "./cellPopup";
 import gridSelectorModal from "./gridSelectorModal";
+import { polygonFeature } from "../Base/helpers";
 
 const GRID_LINES_SOURCE = "controls-grid-lines-source";
 const CELL_SOURCE = "controls-cell-source";

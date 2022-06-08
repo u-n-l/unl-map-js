@@ -1,5 +1,6 @@
 import { SourceSpecification } from "maplibre-gl";
-import { featureCollection, venuesRecordsToFeatureCollection } from "./helpers";
+import { featureCollection } from "../Base/helpers";
+import { venuesRecordsToFeatureCollection } from "./helpers";
 
 export const VENUE_MARKERS_SOURCE = "controls-indoor-venue-marker-source";
 export const VENUE_FOOTPRINT_SOURCE = "controls-indoor-venue-footprint-source";
