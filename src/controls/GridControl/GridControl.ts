@@ -89,9 +89,8 @@ export default class GridControl extends Base {
     this.gridButton.onClick(this.showGridSelector);
     this.addButton(this.gridButton);
     this.map.getContainer().appendChild(this.gridSelector);
-    this.map.on("load", () => {
-      this.showGrid();
-    });
+    this.map.on("styledata", this.addLayersAndSources);
+    this.showGrid();
   };
 
   updateCellPopupPosition = () => {
@@ -180,53 +179,60 @@ export default class GridControl extends Base {
     }
   };
 
+  addLayersAndSources = () => {
+    this.map.getSource(GRID_LINES_SOURCE) === undefined &&
+      this.map.addSource(GRID_LINES_SOURCE, {
+        type: "geojson",
+        data: lineFeatureCollection([]),
+      });
+
+    this.map.getSource(CELL_SOURCE) === undefined &&
+      this.map.addSource(CELL_SOURCE, {
+        type: "geojson",
+        data: polygonFeature([]),
+      });
+
+    this.map.getLayer(GRID_LINES_LAYER) === undefined &&
+      this.map.addLayer({
+        id: GRID_LINES_LAYER,
+        type: "line",
+        source: GRID_LINES_SOURCE,
+        layout: {
+          "line-join": "round",
+          "line-cap": "round",
+        },
+        paint: {
+          "line-color": this.lineColor,
+          "line-width": this.lineWidth,
+        },
+        minzoom: getMinGridZoom(this.currentPrecision),
+      });
+
+    this.map.getLayer(CELL_FILL_LAYER) === undefined &&
+      this.map.addLayer({
+        id: CELL_FILL_LAYER,
+        type: "fill",
+        source: CELL_SOURCE,
+        paint: {
+          "fill-color": this.cellFillColor,
+        },
+        minzoom: getMinGridZoom(this.currentPrecision),
+      });
+
+    this.map.getLayer(CELL_BORDER_LAYER) === undefined &&
+      this.map.addLayer({
+        id: CELL_BORDER_LAYER,
+        type: "line",
+        source: CELL_SOURCE,
+        paint: {
+          "line-color": this.lineColor,
+          "line-width": 1,
+        },
+        minzoom: getMinGridZoom(this.currentPrecision),
+      });
+  };
+
   showGrid = () => {
-    this.map.addSource(GRID_LINES_SOURCE, {
-      type: "geojson",
-      data: lineFeatureCollection([]),
-    });
-
-    this.map.addSource(CELL_SOURCE, {
-      type: "geojson",
-      data: polygonFeature([]),
-    });
-
-    this.map.addLayer({
-      id: GRID_LINES_LAYER,
-      type: "line",
-      source: GRID_LINES_SOURCE,
-      layout: {
-        "line-join": "round",
-        "line-cap": "round",
-      },
-      paint: {
-        "line-color": this.lineColor,
-        "line-width": this.lineWidth,
-      },
-      minzoom: getMinGridZoom(this.currentPrecision),
-    });
-
-    this.map.addLayer({
-      id: CELL_FILL_LAYER,
-      type: "fill",
-      source: CELL_SOURCE,
-      paint: {
-        "fill-color": this.cellFillColor,
-      },
-      minzoom: getMinGridZoom(this.currentPrecision),
-    });
-
-    this.map.addLayer({
-      id: CELL_BORDER_LAYER,
-      type: "line",
-      source: CELL_SOURCE,
-      paint: {
-        "line-color": this.lineColor,
-        "line-width": 1,
-      },
-      minzoom: getMinGridZoom(this.currentPrecision),
-    });
-
     this.gridButton.setIcon(selectedGridIcon());
     this.updateGridLines();
     this.map.on("click", this.handleMapClick);
