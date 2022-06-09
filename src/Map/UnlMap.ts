@@ -91,12 +91,6 @@ class UnlMap extends Map {
     this.apiKey = options.apiKey;
     this.vpmId = options.vpmId;
 
-    if (options.gridControl) {
-      this.addControl(
-        new GridControl(),
-        options.gridControlPosition ?? DEFAULT_GRID_CONTROL_POSITION
-      );
-    }
     if (options.indoorMapsControl) {
       this.addControl(
         new IndoorControl(),
@@ -104,7 +98,6 @@ class UnlMap extends Map {
           DEFAULT_INDOOR_MAPS_CONTROL_POSITION
       );
     }
-
     if (options.mapTilesControl) {
       const mapTilesPosition =
         options.mapTilesControlPosition ??
@@ -119,6 +112,12 @@ class UnlMap extends Map {
         new DraftShapesControl(),
         options.draftShapesControlPosition ??
           DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON
+      );
+    }
+    if (options.gridControl) {
+      this.addControl(
+        new GridControl(),
+        options.gridControlPosition ?? DEFAULT_GRID_CONTROL_POSITION
       );
     }
   }

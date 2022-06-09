@@ -282,40 +282,54 @@ export default class IndoorControl extends Base {
   // };
 
   initSourcesAndLayers = () => {
-    this.map.addSource(VENUE_FOOTPRINT_SOURCE, venueFootprintSource);
-    this.map.addSource(VENUE_LEVEL_SOURCE, venueLevelSource);
-    this.map.addSource(VENUE_UNITS_SOURCE, venueUnitsSource);
-    this.map.addSource(VENUE_OPENINGS_SOURCE, venueOpeningsSource);
-    this.map.addSource(VENUE_UNIT_MARKERS_SOURCE, venueUnitMarkersSource);
-    this.map.addSource(VENUE_MARKERS_SOURCE, venueMarkersSource);
+    this.map.getSource(VENUE_FOOTPRINT_SOURCE) === undefined &&
+      this.map.addSource(VENUE_FOOTPRINT_SOURCE, venueFootprintSource);
+    this.map.getSource(VENUE_LEVEL_SOURCE) === undefined &&
+      this.map.addSource(VENUE_LEVEL_SOURCE, venueLevelSource);
+    this.map.getSource(VENUE_UNITS_SOURCE) === undefined &&
+      this.map.addSource(VENUE_UNITS_SOURCE, venueUnitsSource);
+    this.map.getSource(VENUE_OPENINGS_SOURCE) === undefined &&
+      this.map.addSource(VENUE_OPENINGS_SOURCE, venueOpeningsSource);
+    this.map.getSource(VENUE_UNIT_MARKERS_SOURCE) === undefined &&
+      this.map.addSource(VENUE_UNIT_MARKERS_SOURCE, venueUnitMarkersSource);
+    this.map.getSource(VENUE_MARKERS_SOURCE) === undefined &&
+      this.map.addSource(VENUE_MARKERS_SOURCE, venueMarkersSource);
 
-    this.map.addLayer(venueFootprintFillLayer);
-    this.map.addLayer(venueLevelFillLayer);
-    this.map.addLayer(venueLevelLineLayer);
-    this.map.addLayer(venueUnitsFillLayer);
-    this.map.addLayer(venueUnitsLineLayer);
-    this.map.addLayer(venueOpeningLineLayer);
-    this.map.addLayer(venueUnitMarkersSymbolLayer);
-    this.map.addLayer(venueMarkersSymbolLayer);
-
-    this.map.on("click", VENUE_MARKERS_SYMBOL_LAYER, this.handleVenueClick);
-    this.map.on("click", VENUE_FOOTPRINT_FILL_LAYER, this.handleVenueClick);
+    this.map.getLayer(VENUE_FOOTPRINT_FILL_LAYER) === undefined &&
+      this.map.addLayer(venueFootprintFillLayer);
+    this.map.getLayer(VENUE_LEVEL_FILL_LAYER) === undefined &&
+      this.map.addLayer(venueLevelFillLayer);
+    this.map.getLayer(VENUE_LEVEL_LINE_LAYER) === undefined &&
+      this.map.addLayer(venueLevelLineLayer);
+    this.map.getLayer(VENUE_UNITS_FILL_LAYER) === undefined &&
+      this.map.addLayer(venueUnitsFillLayer);
+    this.map.getLayer(VENUE_UNITS_LINE_LAYER) === undefined &&
+      this.map.addLayer(venueUnitsLineLayer);
+    this.map.getLayer(VENUE_OPENINGS_LINE_LAYER) === undefined &&
+      this.map.addLayer(venueOpeningLineLayer);
+    this.map.getLayer(VENUE_UNIT_MARKERS_SYMBOL_LAYER) === undefined &&
+      this.map.addLayer(venueUnitMarkersSymbolLayer);
+    this.map.getLayer(VENUE_MARKERS_SYMBOL_LAYER) === undefined &&
+      this.map.addLayer(venueMarkersSymbolLayer);
   };
 
   handleMapLoad = () => {
     // this.loadMapIcons();
     this.initSourcesAndLayers();
     this.fetchVenueRecords();
+    this.updateImdfDataSources();
   };
 
   onAddControl = () => {
-    this.map.on("load", this.handleMapLoad);
+    this.map.on("styledata", this.handleMapLoad);
+    this.map.on("click", VENUE_MARKERS_SYMBOL_LAYER, this.handleVenueClick);
+    this.map.on("click", VENUE_FOOTPRINT_FILL_LAYER, this.handleVenueClick);
   };
 
   onRemoveControl = () => {
     this.map.off("click", VENUE_MARKERS_SOURCE, this.handleVenueClick);
     this.map.off("click", VENUE_FOOTPRINT_SOURCE, this.handleVenueClick);
-    this.map.off("load", this.handleMapLoad);
+    this.map.off("styledata", this.handleMapLoad);
 
     this.map.removeLayer(VENUE_FOOTPRINT_FILL_LAYER);
     this.map.removeSource(VENUE_FOOTPRINT_SOURCE);
