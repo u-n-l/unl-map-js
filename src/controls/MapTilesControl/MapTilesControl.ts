@@ -1,5 +1,5 @@
 import Base from "../Base/Base";
-import ControlButton from "../GridControl/components/ControlButton";
+import ControlButton from "../components/ControlButton";
 import { getStyles } from "../../map/styles/here";
 import { ControlPosition, StyleSpecification } from "maplibre-gl";
 import { getButtonIcon, mapTilesTooltip } from "./mapTilesTooltip";

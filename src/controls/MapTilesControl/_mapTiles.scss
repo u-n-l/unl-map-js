@@ -1,11 +1,7 @@
 .mapbox-control-map-tiles-tooltip {
   &-root {
-    width: fit-content;
-    height: fit-content;
-    padding-top: 8px;
-    padding-bottom: 4px;
-    padding-left: 8px;
-    padding-right: 8px;
+    @include size(fit-content, fit-content);
+    @include padding(8px, 4px, 8px, 8px);
     display: none;
     position: absolute;
     z-index: 1;
@@ -15,20 +11,14 @@
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
   &-content {
-    position: relative;
-    margin: auto;
-    padding: 0;
     display: flex;
   }
   &-button-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    @include flexContainer(column, center);
   }
   &-button {
-    height: 29px;
-    width: 29px;
-    padding: 0px;
+    @include size(29px, 29px);
+    padding: 0;
     border: none;
     border-radius: 15px;
     cursor: pointer;

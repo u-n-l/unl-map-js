@@ -1,5 +1,5 @@
 import { LngLat, MapMouseEvent } from "maplibre-gl";
-import ControlButton from "./components/ControlButton";
+import ControlButton from "../components/ControlButton";
 import gridIcon from "../../icons/ts/GridIcon";
 import selectedGridIcon from "../../icons/ts/SelectedGridIcon";
 import Base from "../Base/Base";

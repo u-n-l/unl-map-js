@@ -1,6 +1,6 @@
 import { MapMouseEvent } from "maplibre-gl";
 import MapboxDraw, { DrawCreateEvent } from "@mapbox/mapbox-gl-draw";
-import ControlButton from "../GridControl/components/ControlButton";
+import ControlButton from "../components/ControlButton";
 import Base from "../Base/Base";
 import { DragCircleMode } from "mapbox-gl-draw-circle";
 import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
