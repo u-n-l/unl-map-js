@@ -77,6 +77,7 @@ export type UnlMapOptions = {
 class UnlMap extends Map {
   apiKey: string;
   vpmId: string;
+  mapTilesControlPosition: ControlPosition;
 
   constructor(options: UnlMapOptions) {
     super({
@@ -90,6 +91,9 @@ class UnlMap extends Map {
 
     this.apiKey = options.apiKey;
     this.vpmId = options.vpmId;
+    this.mapTilesControlPosition =
+      options.mapTilesControlPosition ??
+      DEFAULT_TILES_SELECTOR_CONTROL_POSITION;
 
     if (options.indoorMapsControl) {
       this.addControl(
@@ -99,13 +103,7 @@ class UnlMap extends Map {
       );
     }
     if (options.mapTilesControl) {
-      const mapTilesPosition =
-        options.mapTilesControlPosition ??
-        DEFAULT_TILES_SELECTOR_CONTROL_POSITION;
-      this.addControl(
-        new MapTilesControl({ position: mapTilesPosition }),
-        mapTilesPosition
-      );
+      this.addControl(new MapTilesControl(), this.mapTilesControlPosition);
     }
     if (options.draftShapesControl) {
       this.addControl(
@@ -128,6 +126,10 @@ class UnlMap extends Map {
 
   getVpmId = () => {
     return this.vpmId;
+  };
+
+  getMapTilesControlPosition = () => {
+    return this.mapTilesControlPosition;
   };
 }
 
