@@ -61,6 +61,7 @@ export default class IndoorControl extends Base {
     [level: number]: ImdfVenueData | undefined;
   };
   levelButtons: ControlButton[];
+  unlApi: UnlApi | undefined;
 
   constructor() {
     super();
@@ -68,6 +69,7 @@ export default class IndoorControl extends Base {
     this.selectedLevel = 0;
     this.imdfVenueData = {};
     this.levelButtons = [];
+    this.unlApi = undefined;
   }
 
   handleLevelSelection = (level: number) => {
@@ -125,71 +127,71 @@ export default class IndoorControl extends Base {
   };
 
   fetchImdfVenueData = (venueId: string) => {
-    const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
-    unlApi.venuesApi
-      .getImdfFeatures(
-        this.map.getVpmId(),
-        venueId,
-        this.selectedLevel,
-        DISPLAYED_FEATURE_TYPES
-      )
-      .then((imdfData: ImdfFeature[]) => {
-        const levels: GeoJSON.Feature[] = [];
-        const unit: GeoJSON.Feature[] = [];
-        const opening: GeoJSON.Feature[] = [];
-        const venue: GeoJSON.Feature[] = [];
+    this.unlApi &&
+      this.unlApi.venuesApi
+        .getImdfFeatures(
+          this.map.getVpmId(),
+          venueId,
+          this.selectedLevel,
+          DISPLAYED_FEATURE_TYPES
+        )
+        .then((imdfData: ImdfFeature[]) => {
+          const levels: GeoJSON.Feature[] = [];
+          const unit: GeoJSON.Feature[] = [];
+          const opening: GeoJSON.Feature[] = [];
+          const venue: GeoJSON.Feature[] = [];
 
-        imdfData.forEach((feature: ImdfFeature) => {
-          const featureParsed = {
-            feature_type: feature.featureType,
-            geometry: feature.geometry,
-            id: feature.id,
-            properties: feature.properties,
-            type: feature.type,
-            unlFeatureId: feature.unlId,
+          imdfData.forEach((feature: ImdfFeature) => {
+            const featureParsed = {
+              feature_type: feature.featureType,
+              geometry: feature.geometry,
+              id: feature.id,
+              properties: feature.properties,
+              type: feature.type,
+              unlFeatureId: feature.unlId,
+            };
+
+            switch (feature.featureType) {
+              case ImdfFeatureType.LEVEL:
+                levels.push(featureParsed);
+                break;
+              case ImdfFeatureType.OPENING:
+                opening.push(featureParsed);
+                break;
+              case ImdfFeatureType.UNIT:
+                unit.push(featureParsed);
+                break;
+              case ImdfFeatureType.VENUE:
+                venue.push({
+                  ...featureParsed,
+                  properties: {
+                    ...feature.properties,
+                    venueId: feature.venueId,
+                  },
+                });
+                break;
+              default:
+                break;
+            }
+          });
+
+          this.imdfVenueData = {
+            ...this.imdfVenueData,
+            [this.selectedLevel]: {
+              level: levels.length > 0 ? featureCollection(levels) : undefined,
+              opening:
+                opening.length > 0 ? featureCollection(opening) : undefined,
+              venue: venue.length > 0 ? featureCollection(venue) : undefined,
+              unit: unit.length > 0 ? featureCollection(unit) : undefined,
+            },
           };
 
-          switch (feature.featureType) {
-            case ImdfFeatureType.LEVEL:
-              levels.push(featureParsed);
-              break;
-            case ImdfFeatureType.OPENING:
-              opening.push(featureParsed);
-              break;
-            case ImdfFeatureType.UNIT:
-              unit.push(featureParsed);
-              break;
-            case ImdfFeatureType.VENUE:
-              venue.push({
-                ...featureParsed,
-                properties: {
-                  ...feature.properties,
-                  venueId: feature.venueId,
-                },
-              });
-              break;
-            default:
-              break;
+          this.updateImdfDataSources();
+
+          if (Object.keys(this.imdfVenueData).length === 1) {
+            this.updateLevelSelector();
           }
         });
-
-        this.imdfVenueData = {
-          ...this.imdfVenueData,
-          [this.selectedLevel]: {
-            level: levels.length > 0 ? featureCollection(levels) : undefined,
-            opening:
-              opening.length > 0 ? featureCollection(opening) : undefined,
-            venue: venue.length > 0 ? featureCollection(venue) : undefined,
-            unit: unit.length > 0 ? featureCollection(unit) : undefined,
-          },
-        };
-
-        this.updateImdfDataSources();
-
-        if (Object.keys(this.imdfVenueData).length === 1) {
-          this.updateLevelSelector();
-        }
-      });
   };
 
   updateImdfDataSources = () => {
@@ -261,15 +263,14 @@ export default class IndoorControl extends Base {
   };
 
   fetchVenueRecords = () => {
-    const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
-
-    unlApi.recordsApi
-      .getAll(this.map.getVpmId(), RecordFeatureType.VENUE)
-      .then((records) => {
-        if (records && records.items) {
-          this.updateVenueMarkerAndFootprintSources(records.items);
-        }
-      });
+    this.unlApi &&
+      this.unlApi.recordsApi
+        .getAll(this.map.getVpmId(), RecordFeatureType.VENUE)
+        .then((records) => {
+          if (records && records.items) {
+            this.updateVenueMarkerAndFootprintSources(records.items);
+          }
+        });
   };
 
   // loadMapIcons = () => {
@@ -324,6 +325,7 @@ export default class IndoorControl extends Base {
   };
 
   onAddControl = () => {
+    this.unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
     this.map.on("styledata", this.handleMapLoad);
     this.map.on("click", VENUE_MARKERS_SYMBOL_LAYER, this.handleVenueClick);
     this.map.on("click", VENUE_FOOTPRINT_FILL_LAYER, this.handleVenueClick);
