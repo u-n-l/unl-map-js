@@ -79,7 +79,7 @@ export default class GridControl extends Base {
 
     this.updateGridLines();
     const newMinGridZoom = getMinGridZoom(this.currentPrecision);
-    console.log("newMinGridZoom", newMinGridZoom);
+
     this.map.setLayerZoomRange(GRID_LINES_LAYER, newMinGridZoom, 24);
     this.map.setLayerZoomRange(CELL_BORDER_LAYER, newMinGridZoom, 24);
     this.map.setLayerZoomRange(CELL_FILL_LAYER, newMinGridZoom, 24);
