@@ -3,13 +3,6 @@
   height: $height;
 }
 
-@mixin padding($top, $bottom, $left, $right) {
-  padding-top: $top;
-  padding-bottom: $bottom;
-  padding-left: $left;
-  padding-right: $right;
-}
-
 @mixin flexContainer(
   $direction,
   $alignment: null,
