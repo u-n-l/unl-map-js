@@ -10,6 +10,7 @@ import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
 import polygonDraw from "../../icons/ts/PolygonDraw";
 import cricleDraw from "../../icons/ts/CricleDraw";
 import rectangleDraw from "../../icons/ts/RectangleDraw";
+import deleteIcon from "../../icons/ts/DeleteIcon";
 import { draftShapesSource, DRAFT_SHAPES_SOURCE } from "./sources";
 import {
   draftShapesFillLayer,
@@ -29,6 +30,7 @@ export default class DraftShapesControl extends Base {
   polygonButton: ControlButton;
   circleButton: ControlButton;
   rectangleButton: ControlButton;
+  deleteButton: ControlButton;
   draw: MapboxDraw;
   selectedDraftShapeId?: string;
   draftShapes: Record[];
@@ -61,6 +63,12 @@ export default class DraftShapesControl extends Base {
       .onClick(() => {
         //@ts-ignore
         this.draw.changeMode("draw_rectangle");
+      });
+    this.deleteButton = new ControlButton()
+      .setIcon(deleteIcon())
+      .onClick(() => {
+        // this.draw.changeMode("draw_rectangle");
+        this.handleShapeDelete();
       });
 
     this.selectedDraftShapeId = undefined;
@@ -152,6 +160,28 @@ export default class DraftShapesControl extends Base {
       });
   };
 
+  handleShapeDelete = () => {
+    const selectedDraftShapeId = this.selectedDraftShapeId;
+    const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
+
+    unlApi.recordsApi
+      .delete(this.map.getVpmId(), selectedDraftShapeId!)
+      .then((value) => {
+        this.map.setFilter(DRAFT_SHAPES_FILL_LAYER, null);
+        this.map.setFilter(DRAFT_SHAPES_LINE_LAYER, null);
+
+        const deletedDraftShapeIndex = this.draftShapes.findIndex(
+          (draftShape) => draftShape.recordId === value.recordId
+        );
+
+        this.draftShapes.splice(deletedDraftShapeIndex, 1);
+
+        this.updateDraftShapeSource(this.draftShapes);
+        this.draw.set(featureCollection([]));
+        this.selectedDraftShapeId = undefined;
+      });
+  };
+
   handleDraftShapeClick = (e: MapMouseEvent) => {
     //@ts-ignore
     this.selectedDraftShapeId = e.features[0].properties.id;
@@ -205,6 +235,7 @@ export default class DraftShapesControl extends Base {
     this.addButton(this.polygonButton);
     this.addButton(this.circleButton);
     this.addButton(this.rectangleButton);
+    this.addButton(this.deleteButton);
 
     this.map.on("load", this.handleMapLoad);
   };
