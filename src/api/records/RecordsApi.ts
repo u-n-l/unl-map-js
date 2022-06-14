@@ -43,4 +43,23 @@ export default class RecordsApi extends BaseAPI {
       queryStringParameters
     );
   }
+
+  public update(
+    projectId: string,
+    recordId: string,
+    feature: GeoJSON.Feature
+  ): Promise<Record> {
+    const pathParamMap = {
+      project_id: projectId,
+      record_id: recordId,
+    };
+
+    return this.restClient.put<Record>(
+      "projects/{project_id}/records/{record_id}",
+      pathParamMap,
+      {
+        geojson: feature,
+      }
+    );
+  }
 }

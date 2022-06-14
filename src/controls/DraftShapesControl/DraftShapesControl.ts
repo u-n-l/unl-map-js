@@ -1,5 +1,8 @@
-import { MapMouseEvent } from "maplibre-gl";
-import MapboxDraw, { DrawCreateEvent } from "@mapbox/mapbox-gl-draw";
+import { FilterSpecification, MapMouseEvent } from "maplibre-gl";
+import MapboxDraw, {
+  DrawCreateEvent,
+  DrawUpdateEvent,
+} from "@mapbox/mapbox-gl-draw";
 import ControlButton from "../GridControl/components/ControlButton";
 import Base from "../Base/Base";
 import { DragCircleMode } from "mapbox-gl-draw-circle";
@@ -27,6 +30,8 @@ export default class DraftShapesControl extends Base {
   circleButton: ControlButton;
   rectangleButton: ControlButton;
   draw: MapboxDraw;
+  selectedDraftShapeId?: string;
+  draftShapes: Record[];
 
   constructor(options?: DraftShapesControlOptions) {
     super();
@@ -57,6 +62,9 @@ export default class DraftShapesControl extends Base {
         //@ts-ignore
         this.draw.changeMode("draw_rectangle");
       });
+
+    this.selectedDraftShapeId = undefined;
+    this.draftShapes = [];
   }
 
   initSourcesAndLayers = () => {
@@ -75,7 +83,10 @@ export default class DraftShapesControl extends Base {
       draftShapesSource.setData(
         featureCollection(
           records.map((record) =>
-            polygonFeature(record.geojson.geometry.coordinates)
+            polygonFeature(record.geojson.geometry.coordinates, {
+              ...record.geojson.properties,
+              id: record.geojson.id,
+            })
           )
         )
       );
@@ -89,7 +100,8 @@ export default class DraftShapesControl extends Base {
       .getAll(this.map.getVpmId(), RecordFeatureType.DRAFT_SHAPE)
       .then((records) => {
         if (records && records.items) {
-          this.updateDraftShapeSource(records.items);
+          this.draftShapes = records.items;
+          this.updateDraftShapeSource(this.draftShapes);
         }
       });
   };
@@ -101,14 +113,71 @@ export default class DraftShapesControl extends Base {
       event.features[0]
     );
 
-    unlApi.recordsApi.create(this.map.getVpmId(), createdDraftShape);
-    this.draw.set(featureCollection([]));
-    this.fetchDraftShapes();
+    unlApi.recordsApi
+      .create(this.map.getVpmId(), createdDraftShape)
+      .then((value) => {
+        if (value) {
+          this.draftShapes.push(value);
+          this.updateDraftShapeSource(this.draftShapes);
+          this.draw.set(featureCollection([]));
+        }
+      });
+  };
+
+  handleDrawUpdate = (event: DrawUpdateEvent) => {
+    const updatedDraftShapeId = event.features[0].properties?.id;
+    const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
+
+    unlApi.recordsApi
+      .update(
+        this.map.getVpmId(),
+        updatedDraftShapeId,
+        appendDraftShapeFeatureProperties({
+          geometry: event.features[0].geometry,
+          properties: event.features[0].properties,
+          type: event.features[0].type,
+        })
+        //  appendDraftShapeFeatureProperties(event.features[0])
+      )
+      .then((value) => {
+        this.draftShapes = this.draftShapes.map((draftShape) =>
+          draftShape.geojson.id === value.geojson.id ? value : draftShape
+        );
+
+        this.updateDraftShapeSource(this.draftShapes);
+        this.draw.set(featureCollection([]));
+      });
   };
 
   handleDraftShapeClick = (e: MapMouseEvent) => {
     //@ts-ignore
-    this.draw.set(featureCollection([e.features[0]]));
+    this.selectedDraftShapeId = e.features[0].properties.id;
+    const filteredId = this.selectedDraftShapeId ?? 0;
+
+    const filterExpression = [
+      "!=",
+      ["get", "id"],
+      filteredId,
+    ] as FilterSpecification;
+
+    console.log("map", this.map);
+    this.map.setFilter(DRAFT_SHAPES_FILL_LAYER, filterExpression);
+    this.map.setFilter(DRAFT_SHAPES_LINE_LAYER, filterExpression);
+
+    const selectedDraftShape = this.draftShapes.find(
+      (shape) => shape.geojson.id === filteredId
+    );
+
+    console.log("selectedDraftShape", selectedDraftShape);
+    //@ts-ignore
+    this.draw.set(
+      featureCollection([
+        polygonFeature(selectedDraftShape?.geojson.geometry.coordinates, {
+          ...selectedDraftShape?.geojson.properties,
+          id: selectedDraftShape?.geojson.id,
+        }),
+      ])
+    );
     this.draw.changeMode("simple_select");
   };
 
@@ -117,6 +186,7 @@ export default class DraftShapesControl extends Base {
     this.map.addControl(this.draw, "top-right");
 
     this.map.on("draw.create", this.handleDrawCreate);
+    this.map.on("draw.update", this.handleDrawUpdate);
 
     this.map.on("click", DRAFT_SHAPES_FILL_LAYER, this.handleDraftShapeClick);
     this.map.on("click", DRAFT_SHAPES_LINE_LAYER, this.handleDraftShapeClick);
