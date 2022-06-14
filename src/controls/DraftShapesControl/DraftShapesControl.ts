@@ -85,7 +85,7 @@ export default class DraftShapesControl extends Base {
           records.map((record) =>
             polygonFeature(record.geojson.geometry.coordinates, {
               ...record.geojson.properties,
-              id: record.geojson.id,
+              id: record.recordId,
             })
           )
         )
@@ -137,15 +137,18 @@ export default class DraftShapesControl extends Base {
           properties: event.features[0].properties,
           type: event.features[0].type,
         })
-        //  appendDraftShapeFeatureProperties(event.features[0])
       )
       .then((value) => {
+        this.map.setFilter(DRAFT_SHAPES_FILL_LAYER, null);
+        this.map.setFilter(DRAFT_SHAPES_LINE_LAYER, null);
+
         this.draftShapes = this.draftShapes.map((draftShape) =>
-          draftShape.geojson.id === value.geojson.id ? value : draftShape
+          draftShape.recordId === value.recordId ? value : draftShape
         );
 
         this.updateDraftShapeSource(this.draftShapes);
         this.draw.set(featureCollection([]));
+        this.selectedDraftShapeId = undefined;
       });
   };
 
@@ -165,7 +168,7 @@ export default class DraftShapesControl extends Base {
     this.map.setFilter(DRAFT_SHAPES_LINE_LAYER, filterExpression);
 
     const selectedDraftShape = this.draftShapes.find(
-      (shape) => shape.geojson.id === filteredId
+      (shape) => shape.recordId === filteredId
     );
 
     console.log("selectedDraftShape", selectedDraftShape);
@@ -174,7 +177,7 @@ export default class DraftShapesControl extends Base {
       featureCollection([
         polygonFeature(selectedDraftShape?.geojson.geometry.coordinates, {
           ...selectedDraftShape?.geojson.properties,
-          id: selectedDraftShape?.geojson.id,
+          id: selectedDraftShape?.recordId,
         }),
       ])
     );

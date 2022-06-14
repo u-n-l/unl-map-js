@@ -62,4 +62,16 @@ export default class RecordsApi extends BaseAPI {
       }
     );
   }
+
+  public delete(projectId: string, recordId: string): Promise<Record> {
+    const pathParamMap = {
+      project_id: projectId,
+      record_id: recordId,
+    };
+
+    return this.restClient.delete<Record>(
+      "projects/{project_id}/records/{record_id}",
+      pathParamMap
+    );
+  }
 }
