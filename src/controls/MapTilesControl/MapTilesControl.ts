@@ -1,11 +1,10 @@
 import Base from "../Base/Base";
-import ControlButton from "../GridControl/components/ControlButton";
+import ControlButton from "../components/ControlButton";
 import { getStyles } from "../../map/styles/here";
-import { ControlPosition, StyleSpecification } from "maplibre-gl";
+import { StyleSpecification } from "maplibre-gl";
 import { getButtonIcon, mapTilesTooltip } from "./mapTilesTooltip";
 
 export interface MapTilesControlOptions {
-  position: ControlPosition;
   styles?: StyleSpecification[];
   onChange?: (style: StyleSpecification) => void;
 }
@@ -15,10 +14,9 @@ export default class MapTilesControl extends Base {
   onChange?: (style: StyleSpecification) => void;
   button: ControlButton;
   tooltip: HTMLDivElement;
-  position: ControlPosition;
   mapTilesButtons: HTMLButtonElement[];
 
-  constructor(options: MapTilesControlOptions) {
+  constructor(options?: MapTilesControlOptions) {
     super();
 
     this.styles = options?.styles ?? this.defaultOptions;
@@ -29,7 +27,6 @@ export default class MapTilesControl extends Base {
       //@ts-ignore
       getButtonIcon(this.defaultOptions[0].name)
     );
-    this.position = options.position;
 
     this.tooltip = mapTilesTooltip(
       this.styles,
@@ -78,7 +75,7 @@ export default class MapTilesControl extends Base {
   };
 
   setTooltipPosition = () => {
-    switch (this.position) {
+    switch (this.map.getMapTilesControlPosition()) {
       case "bottom-left":
         this.tooltip.style.marginLeft = "40px";
         this.tooltip.style.bottom = "0px";

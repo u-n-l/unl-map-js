@@ -1,0 +1,16 @@
+@import "base/variables";
+@import "base/mixins";
+
+@import "controls/components/controlButton";
+@import "controls/GridControl/grid";
+@import "controls/MapTilesControl/mapTiles";
+
+body {
+  font-family: $font-type;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 400;
+}

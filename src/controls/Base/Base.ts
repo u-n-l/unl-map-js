@@ -1,5 +1,5 @@
 import UnlMap from "../../map/UnlMap";
-import ControlButton from "../GridControl/components/ControlButton";
+import ControlButton from "../components/ControlButton";
 
 class Base {
   node: HTMLDivElement;

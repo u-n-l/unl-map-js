@@ -6,7 +6,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "prepublish": "npm run build",
-    "build": "tsc && sass src/index.scss:lib/unl-map-js.css",
+    "build": "tsc && sass src/global.scss:lib/unl-map-js.css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
