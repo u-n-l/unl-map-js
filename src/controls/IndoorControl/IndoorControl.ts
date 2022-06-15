@@ -42,7 +42,7 @@ import {
   VENUE_UNIT_MARKERS_SOURCE,
 } from "./sources";
 import { Record } from "../../api/records/models/Record";
-import ControlButton from "../GridControl/components/ControlButton";
+import ControlButton from "../components/ControlButton";
 import { featureCollection } from "../Base/helpers";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
 
@@ -61,6 +61,7 @@ export default class IndoorControl extends Base {
     [level: number]: ImdfVenueData | undefined;
   };
   levelButtons: ControlButton[];
+  unlApi?: UnlApi;
 
   constructor() {
     super();
@@ -125,8 +126,7 @@ export default class IndoorControl extends Base {
   };
 
   fetchImdfVenueData = (venueId: string) => {
-    const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
-    unlApi.venuesApi
+    this.unlApi?.venuesApi
       .getImdfFeatures(
         this.map.getVpmId(),
         venueId,
@@ -261,9 +261,7 @@ export default class IndoorControl extends Base {
   };
 
   fetchVenueRecords = () => {
-    const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
-
-    unlApi.recordsApi
+    this.unlApi?.recordsApi
       .getAll(this.map.getVpmId(), RecordFeatureType.VENUE)
       .then((records) => {
         if (records && records.items) {
@@ -324,6 +322,7 @@ export default class IndoorControl extends Base {
   };
 
   onAddControl = () => {
+    this.unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
     this.map.on("styledata", this.handleMapLoad);
     this.map.on("click", VENUE_MARKERS_SYMBOL_LAYER, this.handleVenueClick);
     this.map.on("click", VENUE_FOOTPRINT_FILL_LAYER, this.handleVenueClick);

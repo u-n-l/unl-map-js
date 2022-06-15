@@ -1,15 +1,17 @@
 import { FilterSpecification, MapMouseEvent } from "maplibre-gl";
 import MapboxDraw, {
   DrawCreateEvent,
+  DrawSelectionChangeEvent,
   DrawUpdateEvent,
 } from "@mapbox/mapbox-gl-draw";
-import ControlButton from "../GridControl/components/ControlButton";
+import ControlButton from "../components/ControlButton";
 import Base from "../Base/Base";
 import { DragCircleMode } from "mapbox-gl-draw-circle";
 import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
 import polygonDraw from "../../icons/ts/PolygonDraw";
 import cricleDraw from "../../icons/ts/CricleDraw";
 import rectangleDraw from "../../icons/ts/RectangleDraw";
+import deleteIcon from "../../icons/ts/DeleteIcon";
 import { draftShapesSource, DRAFT_SHAPES_SOURCE } from "./sources";
 import {
   draftShapesFillLayer,
@@ -29,9 +31,11 @@ export default class DraftShapesControl extends Base {
   polygonButton: ControlButton;
   circleButton: ControlButton;
   rectangleButton: ControlButton;
+  deleteButton: ControlButton;
   draw: MapboxDraw;
   selectedDraftShapeId?: string;
   draftShapes: Record[];
+  unlApi?: UnlApi;
 
   constructor(options?: DraftShapesControlOptions) {
     super();
@@ -61,6 +65,11 @@ export default class DraftShapesControl extends Base {
       .onClick(() => {
         //@ts-ignore
         this.draw.changeMode("draw_rectangle");
+      });
+    this.deleteButton = new ControlButton()
+      .setIcon(deleteIcon())
+      .onClick(() => {
+        this.handleDraftShapeDelete();
       });
 
     this.selectedDraftShapeId = undefined;
@@ -94,9 +103,7 @@ export default class DraftShapesControl extends Base {
   };
 
   fetchDraftShapes = () => {
-    const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
-
-    unlApi.recordsApi
+    this.unlApi?.recordsApi
       .getAll(this.map.getVpmId(), RecordFeatureType.DRAFT_SHAPE)
       .then((records) => {
         if (records && records.items) {
@@ -107,13 +114,11 @@ export default class DraftShapesControl extends Base {
   };
 
   handleDrawCreate = (event: DrawCreateEvent) => {
-    const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
-
     const createdDraftShape = appendDraftShapeFeatureProperties(
       event.features[0]
     );
 
-    unlApi.recordsApi
+    this.unlApi?.recordsApi
       .create(this.map.getVpmId(), createdDraftShape)
       .then((value) => {
         if (value) {
@@ -126,9 +131,8 @@ export default class DraftShapesControl extends Base {
 
   handleDrawUpdate = (event: DrawUpdateEvent) => {
     const updatedDraftShapeId = event.features[0].properties?.id;
-    const unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
 
-    unlApi.recordsApi
+    this.unlApi?.recordsApi
       .update(
         this.map.getVpmId(),
         updatedDraftShapeId,
@@ -152,6 +156,28 @@ export default class DraftShapesControl extends Base {
       });
   };
 
+  handleDraftShapeDelete = () => {
+    const selectedDraftShapeId = this.selectedDraftShapeId;
+
+    this.unlApi?.recordsApi
+      .delete(this.map.getVpmId(), selectedDraftShapeId!)
+      .then((value) => {
+        this.map.setFilter(DRAFT_SHAPES_FILL_LAYER, null);
+        this.map.setFilter(DRAFT_SHAPES_LINE_LAYER, null);
+
+        const deletedDraftShapeIndex = this.draftShapes.findIndex(
+          (draftShape) => draftShape.recordId === value.recordId
+        );
+
+        this.draftShapes.splice(deletedDraftShapeIndex, 1);
+
+        this.updateDraftShapeSource(this.draftShapes);
+        this.draw.set(featureCollection([]));
+        this.selectedDraftShapeId = undefined;
+        this.deleteButton.node.style.display = "none";
+      });
+  };
+
   handleDraftShapeClick = (e: MapMouseEvent) => {
     //@ts-ignore
     this.selectedDraftShapeId = e.features[0].properties.id;
@@ -163,7 +189,6 @@ export default class DraftShapesControl extends Base {
       filteredId,
     ] as FilterSpecification;
 
-    console.log("map", this.map);
     this.map.setFilter(DRAFT_SHAPES_FILL_LAYER, filterExpression);
     this.map.setFilter(DRAFT_SHAPES_LINE_LAYER, filterExpression);
 
@@ -171,7 +196,6 @@ export default class DraftShapesControl extends Base {
       (shape) => shape.recordId === filteredId
     );
 
-    console.log("selectedDraftShape", selectedDraftShape);
     //@ts-ignore
     this.draw.set(
       featureCollection([
@@ -184,12 +208,21 @@ export default class DraftShapesControl extends Base {
     this.draw.changeMode("simple_select");
   };
 
+  toggleDeleteButton = (event: DrawSelectionChangeEvent) => {
+    if (event.features.length === 0) {
+      this.deleteButton.node.style.display = "none";
+    } else if (event.features.length > 0) {
+      this.deleteButton.node.style.display = "flex";
+    }
+  };
+
   initDrawControl = () => {
     //@ts-ignore
     this.map.addControl(this.draw, "top-right");
 
     this.map.on("draw.create", this.handleDrawCreate);
     this.map.on("draw.update", this.handleDrawUpdate);
+    this.map.on("draw.selectionchange", this.toggleDeleteButton);
 
     this.map.on("click", DRAFT_SHAPES_FILL_LAYER, this.handleDraftShapeClick);
     this.map.on("click", DRAFT_SHAPES_LINE_LAYER, this.handleDraftShapeClick);
@@ -202,9 +235,13 @@ export default class DraftShapesControl extends Base {
   };
 
   onAddControl = () => {
+    this.unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
+
     this.addButton(this.polygonButton);
     this.addButton(this.circleButton);
     this.addButton(this.rectangleButton);
+    this.addButton(this.deleteButton);
+    this.deleteButton.node.style.display = "none";
 
     this.map.on("load", this.handleMapLoad);
   };

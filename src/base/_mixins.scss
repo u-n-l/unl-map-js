@@ -1,0 +1,29 @@
+@mixin size($width, $height) {
+  width: $width;
+  height: $height;
+}
+
+@mixin flexContainer(
+  $direction,
+  $alignment: null,
+  $justify: null,
+  $wrap: null
+) {
+  display: flex;
+
+  @if $direction != null {
+    flex-direction: $direction;
+  }
+
+  @if $alignment != null {
+    align-items: $alignment;
+  }
+
+  @if $justify != null {
+    justify-content: $justify;
+  }
+
+  @if $wrap != null {
+    flex-wrap: $wrap;
+  }
+}
