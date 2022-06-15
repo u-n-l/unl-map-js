@@ -1,6 +1,7 @@
 import { FilterSpecification, MapMouseEvent } from "maplibre-gl";
 import MapboxDraw, {
   DrawCreateEvent,
+  DrawSelectionChangeEvent,
   DrawUpdateEvent,
 } from "@mapbox/mapbox-gl-draw";
 import ControlButton from "../components/ControlButton";
@@ -205,7 +206,14 @@ export default class DraftShapesControl extends Base {
       ])
     );
     this.draw.changeMode("simple_select");
-    this.deleteButton.node.style.display = "flex";
+  };
+
+  toggleDeleteButton = (event: DrawSelectionChangeEvent) => {
+    if (event.features.length === 0) {
+      this.deleteButton.node.style.display = "none";
+    } else if (event.features.length > 0) {
+      this.deleteButton.node.style.display = "flex";
+    }
   };
 
   initDrawControl = () => {
@@ -214,6 +222,7 @@ export default class DraftShapesControl extends Base {
 
     this.map.on("draw.create", this.handleDrawCreate);
     this.map.on("draw.update", this.handleDrawUpdate);
+    this.map.on("draw.selectionchange", this.toggleDeleteButton);
 
     this.map.on("click", DRAFT_SHAPES_FILL_LAYER, this.handleDraftShapeClick);
     this.map.on("click", DRAFT_SHAPES_LINE_LAYER, this.handleDraftShapeClick);

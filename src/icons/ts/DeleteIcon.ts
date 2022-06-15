@@ -1,5 +1,5 @@
-const svg = `<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20"
-height="20" x="0px" y="0px"
+const svg = `<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="19"
+height="18" x="0px" y="0px"
 	 viewBox="0 0 307.252 307.252" style="enable-background:new 0 0 307.252 307.252;" xml:space="preserve">
 <path id="XMLID_564_" d="M184.581,230.833l9.521-100.238c0.575-6.048,5.931-10.48,11.991-9.911
 	c6.048,0.575,10.485,5.943,9.911,11.991l-9.521,100.238c-0.541,5.694-5.332,9.961-10.938,9.961c-0.348,0-0.699-0.017-1.053-0.05
