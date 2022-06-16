@@ -321,7 +321,6 @@ export default class IndoorControl extends Base {
   };
 
   handleMapLoad = () => {
-    this.loadMapIcons();
     this.initSourcesAndLayers();
     this.fetchVenueRecords();
     this.updateImdfDataSources();
@@ -329,6 +328,7 @@ export default class IndoorControl extends Base {
 
   onAddControl = () => {
     this.unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
+    this.map.on("load", this.loadMapIcons);
     this.map.on("styledata", this.handleMapLoad);
     this.map.on("click", VENUE_MARKERS_SYMBOL_LAYER, this.handleVenueClick);
     this.map.on("click", VENUE_FOOTPRINT_FILL_LAYER, this.handleVenueClick);
