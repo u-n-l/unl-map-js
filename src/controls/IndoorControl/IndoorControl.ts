@@ -46,11 +46,11 @@ import ControlButton from "../components/ControlButton";
 import { featureCollection } from "../Base/helpers";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
 
-const DISPLAYED_FEATURE_TYPES = [
-  ImdfFeatureType.LEVEL,
-  ImdfFeatureType.UNIT,
-  ImdfFeatureType.OPENING,
-  ImdfFeatureType.VENUE,
+const DISPLAYED_FEATURE_TYPES: ImdfFeatureType[] = [
+  "level",
+  "unit",
+  "opening",
+  "venue",
 ];
 
 export interface IndoorControlOptions {}
@@ -150,16 +150,16 @@ export default class IndoorControl extends Base {
           };
 
           switch (feature.featureType) {
-            case ImdfFeatureType.LEVEL:
+            case "level":
               levels.push(featureParsed);
               break;
-            case ImdfFeatureType.OPENING:
+            case "opening":
               opening.push(featureParsed);
               break;
-            case ImdfFeatureType.UNIT:
+            case "unit":
               unit.push(featureParsed);
               break;
-            case ImdfFeatureType.VENUE:
+            case "venue":
               venue.push({
                 ...featureParsed,
                 properties: {

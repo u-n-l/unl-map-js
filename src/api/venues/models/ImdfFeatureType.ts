@@ -1,18 +1,17 @@
-export enum ImdfFeatureType {
-  VENUE = "venue",
-  BUILDING = "building",
-  FOOTPRINT = "footprint",
-  LEVEL = "level",
-  UNIT = "unit",
-  FIXTURE = "fixture",
-  SECTION = "section",
-  GEOFENCE = "geofence",
-  KIOSK = "kiosk",
-  DETAIL = "detail",
-  OPENING = "opening",
-  AMENITY = "amenity",
-  ANCHOR = "anchor",
-  OCCUPANT = "occupant",
-  ADDRESS = "address",
-  RELATIONSHIP = "relationship",
-}
+export type ImdfFeatureType =
+  | "venue"
+  | "building"
+  | "footprint"
+  | "level"
+  | "unit"
+  | "fixture"
+  | "section"
+  | "geofence"
+  | "kiosk"
+  | "detail"
+  | "opening"
+  | "amenity"
+  | "anchor"
+  | "occupant"
+  | "address"
+  | "relationship";
