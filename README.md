@@ -1,8 +1,8 @@
 ## Introduction
 
-unl-map-js is a mapping library for developers of web applications, extending and enhacning functionalities of [maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js). Apart from the capabilities of maplibre, the package exposes the following controls:
+unl-map-js is a mapping library for developers of web applications, extending and enhancing functionalities of [maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js). Apart from the capabilities of maplibre, the package exposes the following controls:
 
-- Grid lines and cells visualisation with a customisable precision;
+- UNL grid lines and cells visualisation with a customisable precision;
 - Tile selector, including vectorial, traffic, terrain, satellite and base options;
 - Indoor maps overlay in the [IMDF](https://register.apple.com/resources/imdf/) format;
 - Drawing tools for creating, updating and deleting draft shapes;
@@ -89,3 +89,132 @@ const map = new UnlSdk.Map({
   zoom: 1,
 });
 ```
+
+## Initializing the map
+
+## Custom controls
+
+On top of the maplibre-gl-js, this package exposes the following custom controls that can be initialised during the map instantiation or added later using the addControl. All of them allow to specify the position of the control on the map: top-right, bottom-right, bottom-left, top-left.
+
+### UNL grid and cells
+
+Grid and cells control can be enabled during the map initialization by passing the `gridControl` `true`. The `gridControlPosition` parameter will dictate the position of the control button. If no position is specified, the control defaults to 'top-right'. This first approach will load the grid control with the default options.
+
+```js
+const map = new UnlSdk.Map({
+  ...
+  gridControl: true,
+  gridControlPosition: "bottom-right",
+  ...
+});
+```
+
+It can also be added later by calling the `addControl` function on the map reference:
+
+```js
+import UnlSdk from "unl_map_sdk";
+
+const map = new UnlSdk.Map({
+    ...
+});
+
+map.addControl(new UnlSdk.GridControl(), "bottom-right");
+```
+
+If the second approach is chosen, the following options can be specified during the `GridControl` initialisation:
+
+| Option           | Type            | Default   | Description                                                                      |
+| ---------------- | --------------- | --------- | -------------------------------------------------------------------------------- |
+| defaultPrecision | `CellPrecision` | 9         | Default precision of the cells. It can be changed manually via the grid selector |
+| lineColor        | `string`        | "#C0C0C0" | Grid line's colour                                                               |
+| lineWidth        | `number`        | 0.5       | Grid line's width                                                                |
+| cellFillColor    | `string`        | "#FFB100" | Cell's colour                                                                    |
+| cellBorderColor  | `string`        | "#FFB100" | Cell's border colour                                                             |
+
+If GridControl is enabled, the cell will get highlighted by clicking on the map. It will render a popup displaying the geohash of the correspoding selected cell. For performance reasons, the grid lines will be generated at different zoom levels, dependant on the selected precision, according to the following table:
+
+| Precision | Zoom level |
+| --------- | ---------- |
+| 10        | 20         |
+| 9         | 18         |
+| 8         | 16         |
+| 7         | 14         |
+| 6         | 12         |
+| 5         | 10         |
+| 4         | 8          |
+| 3         | 4          |
+| 2         | 3          |
+| 1         | 2          |
+
+#### Interaction example
+
+### Tiles selector
+
+Tile selector control can be enabled during the map initialization by passing the `mapTilesControl` `true`. The `mapTilesControlPosition` parameter will dictate the position of the tile selector. If no position is specified, the control defaults to 'top-left'.
+
+```js
+const map = new UnlSdk.Map({
+  ...
+  mapTilesControl: true,
+  mapTilesControlPosition: "bottom-right",
+  ...
+});
+```
+
+It can also be added later by calling the `addControl` function on the map reference:
+
+```js
+import UnlSdk from "unl_map_sdk";
+
+const map = new UnlSdk.Map({
+    ...
+});
+
+map.addControl(new UnlSdk.MapTilesControl(), "bottom-right");
+```
+
+If the second approach is chosen, the following options can be specified during the `MapTilesControl` initialisation:
+
+| Option | Type     | Default                                                  | Description                                             |
+| ------ | -------- | -------------------------------------------------------- | ------------------------------------------------------- |
+| styles | UnlTiles | ["vectorial", "traffic", "terrain", "satellite", "base"] | The options that will be included in the tiles selector |
+
+#### Interactive example
+
+### Indoor maps overlay
+
+Indoor maps overlay control can be enabled during the map initialization by passing the `indoorMapsControl` `true`. The `indoorMapsControlPosition` parameter will dictate the position of the venue level selector buttons. If no position is specified, the control defaults to 'top-right'.
+
+It can also be added later by calling the `addControl` function on the map reference:
+
+```js
+import UnlSdk from "unl_map_sdk";
+
+const map = new UnlSdk.Map({
+    ...
+});
+
+map.addControl(new UnlSdk.IndoorControl(), "bottom-right");
+```
+
+Enabling the indoor maps overlay, will fetch the venue maps and render the marker and outer area of the venues that were uploaded in the vpm whose id is passed as part of the map initialization. By clicking on a venue, the full venue data will be downloaded, rendering the venue units and facilities, along with the level selector buttons.
+
+#### Interactive example
+
+### Draft shapes
+
+Draft shapes control can be enabled during the map initialization by passing the `draftShapesControl` `true`. The `draftShapesControlPosition` parameter will dictate the position of the venue level selector buttons. If no position is specified, the control defaults to 'top-left'.
+
+It can also be added later by calling the `addControl` function on the map reference:
+
+```js
+import UnlSdk from "unl_map_sdk";
+
+const map = new UnlSdk.Map({
+    ...
+});
+
+map.addControl(new UnlSdk.DraftShapesControl(), "bottom-right");
+```
+
+Enabling the draft shapes control, will fetch and render all the shapes added in the vpm whose id is passed during the map initialization. Additionaly, by clicking on a shape, it can be moved or edited. New shapes can be created: polygon, circle or rectangles, via the three corresponding control buttons.
