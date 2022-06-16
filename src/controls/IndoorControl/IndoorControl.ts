@@ -46,6 +46,7 @@ import { featureCollection } from "../Base/helpers";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
 import mapIcons from "./mapIcons";
 import { MapIcon } from "../models/MapIcon";
+import { venueRecordsList } from "./venueRecordsList";
 
 const DISPLAYED_FEATURE_TYPES = [
   ImdfFeatureType.LEVEL,
@@ -62,7 +63,9 @@ export default class IndoorControl extends Base {
     [level: number]: ImdfVenueData | undefined;
   };
   levelButtons: ControlButton[];
+  venueRecords: Record[];
   unlApi?: UnlApi;
+  venueRecordsList?: HTMLDivElement;
 
   constructor() {
     super();
@@ -70,6 +73,8 @@ export default class IndoorControl extends Base {
     this.selectedLevel = 0;
     this.imdfVenueData = {};
     this.levelButtons = [];
+    this.venueRecords = [];
+    this.venueRecordsList = undefined;
   }
 
   handleLevelSelection = (level: number) => {
@@ -266,6 +271,10 @@ export default class IndoorControl extends Base {
       .getAll(this.map.getVpmId(), RecordFeatureType.VENUE)
       .then((records) => {
         if (records && records.items) {
+          this.venueRecords = records.items;
+          this.venueRecordsList = venueRecordsList(records.items);
+          this.map.getContainer().appendChild(this.venueRecordsList);
+
           this.updateVenueMarkerAndFootprintSources(records.items);
         }
       });

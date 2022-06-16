@@ -26,7 +26,7 @@ export type UnlMapOptions = {
   gridControl?: boolean;
   gridControlPosition?: ControlPosition;
   indoorMapsControl?: boolean;
-  indoorMapsControlPosition: ControlPosition;
+  indoorMapsControlPosition?: ControlPosition;
   mapTilesControl?: boolean;
   mapTilesControlPosition?: ControlPosition;
   draftShapesControl?: boolean;
