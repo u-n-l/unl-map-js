@@ -1,39 +1,38 @@
 import Base from "../Base/Base";
 import ControlButton from "../components/ControlButton";
-import { getStyles } from "../../map/styles/here";
-import { StyleSpecification } from "maplibre-gl";
 import { getButtonIcon, mapTilesTooltip } from "./mapTilesTooltip";
+import { getStyle, MapTilesStyle } from "../../Map/styles/MapTilesStyle";
 
 export interface MapTilesControlOptions {
-  styles?: StyleSpecification[];
-  onChange?: (style: StyleSpecification) => void;
+  displayControlsDefault: boolean;
+  styles?: MapTilesStyle[];
 }
 
 export default class MapTilesControl extends Base {
-  styles: StyleSpecification[];
-  onChange?: (style: StyleSpecification) => void;
+  displayControlsDefault: boolean;
+  styles: MapTilesStyle[];
   button: ControlButton;
   tooltip: HTMLDivElement;
   mapTilesButtons: HTMLButtonElement[];
 
-  constructor(options?: MapTilesControlOptions) {
+  constructor(options: MapTilesControlOptions) {
     super();
 
+    this.displayControlsDefault = options.displayControlsDefault;
     this.styles = options?.styles ?? this.defaultOptions;
-    this.onChange = options?.onChange;
     this.mapTilesButtons = [];
 
     this.button = new ControlButton().setIcon(
       //@ts-ignore
-      getButtonIcon(this.defaultOptions[0].name)
+      getButtonIcon(this.defaultOptions[0])
     );
 
     this.tooltip = mapTilesTooltip(
       this.styles,
       (style) => {
-        this.map.setStyle(style);
+        this.setStyle(style);
         //@ts-ignore
-        this.button.setIcon(getButtonIcon(style.name));
+        this.button.setIcon(getButtonIcon(style));
       },
       this.mapTilesButtons
     );
@@ -62,8 +61,8 @@ export default class MapTilesControl extends Base {
     });
   }
 
-  get defaultOptions(): any[] {
-    return getStyles("pFlhWNivCejOEWnTKIQf6ZKRWP5avfiANvleJKR0XAY");
+  get defaultOptions(): MapTilesStyle[] {
+    return ["vectorial", "satellite", "terrain", "traffic", "base"];
   }
 
   toggleMapTiles = () => {
@@ -99,8 +98,16 @@ export default class MapTilesControl extends Base {
     }
   };
 
+  setStyle = (style: MapTilesStyle) => {
+    const styleFile = getStyle(style);
+    //@ts-ignore
+    this.map.setStyle(styleFile);
+  };
+
   onAddControl = () => {
-    this.insert();
+    if (this.displayControlsDefault) {
+      this.insert();
+    }
   };
 
   onRemoveControl = () => {};
