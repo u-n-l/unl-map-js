@@ -3,7 +3,7 @@
 unl-map-js is a mapping library for developers of web applications, extending and enhancing functionalities of [maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js). Apart from the capabilities of maplibre, the package exposes the following controls:
 
 - UNL grid lines and cells visualisation with a customisable precision;
-- Tile selector, including vectorial, traffic, terrain, satellite and base options;
+- Tile selector, including 'vectorial', 'traffic', 'terrain', 'satellite' and 'base' options;
 - Indoor maps overlay in the [IMDF](https://register.apple.com/resources/imdf/) format;
 - Drawing tools for creating, updating and deleting draft shapes;
 
@@ -49,6 +49,10 @@ import 'unl-map-js/lib/unl-map-js.css'
 
 Typescript definition files are included as part of the same package.
 
+## Initializing the map
+
+In order to initialise
+
 #### Example usage
 
 ##### index.html
@@ -90,11 +94,9 @@ const map = new UnlSdk.Map({
 });
 ```
 
-## Initializing the map
-
 ## Custom controls
 
-On top of the maplibre-gl-js, this package exposes the following custom controls that can be initialised during the map instantiation or added later using the addControl. All of them allow to specify the position of the control on the map: top-right, bottom-right, bottom-left, top-left.
+On top of the maplibre-gl-js, this package exposes the following custom controls that can be initialised during the map instantiation with the default options or added later using the `addControl` function on the map reference. All of them allow to specify the position of the control on the map: 'top-right', 'bottom-right', 'bottom-left', 'top-left'.
 
 ### UNL grid and cells
 
@@ -121,7 +123,7 @@ const map = new UnlSdk.Map({
 map.addControl(new UnlSdk.GridControl(), "bottom-right");
 ```
 
-If the second approach is chosen, the following options can be specified during the `GridControl` initialisation:
+If the second approach is chosen, the following options can be specified during the `GridControl` initialization:
 
 | Option           | Type            | Default   | Description                                                                      |
 | ---------------- | --------------- | --------- | -------------------------------------------------------------------------------- |
@@ -146,7 +148,8 @@ If GridControl is enabled, the cell will get highlighted by clicking on the map.
 | 2         | 3          |
 | 1         | 2          |
 
-#### Interaction example
+![Grid lines and cell](https://github.com/u-n-l/unl-map-js/blob/main/docs/gifs/grid_lines.gif?raw=true)
+![Grid precision selection](https://github.com/u-n-l/unl-map-js/blob/main/docs/gifs/grid_selector.gif?raw=true)
 
 ### Tiles selector
 
@@ -173,13 +176,36 @@ const map = new UnlSdk.Map({
 map.addControl(new UnlSdk.MapTilesControl(), "bottom-right");
 ```
 
-If the second approach is chosen, the following options can be specified during the `MapTilesControl` initialisation:
+If the second approach is chosen, the following options can be specified during the `MapTilesControl` initialization:
 
-| Option | Type     | Default                                                  | Description                                             |
-| ------ | -------- | -------------------------------------------------------- | ------------------------------------------------------- |
-| styles | UnlTiles | ["vectorial", "traffic", "terrain", "satellite", "base"] | The options that will be included in the tiles selector |
+| Option                 | Type          | Default                                                  | Description                                             |
+| ---------------------- | ------------- | -------------------------------------------------------- | ------------------------------------------------------- |
+| styles                 | MapTilesStyle | ["vectorial", "traffic", "terrain", "satellite", "base"] | The options that will be included in the tiles selector |
+| displayControlsDefault | boolean       | true                                                     | Display the default tile selector UI                    |
 
-#### Interactive example
+![Tile selector](https://github.com/u-n-l/unl-map-js/blob/main/docs/gifs/tile_selector.gif?raw=true)
+
+#### API Methods
+
+`new MapTilesControl()` returns an instance of MapTilesControl with the following API:
+
+### `set(style: MapTilesStyle) => void`
+
+This method takes a `MapTilesStyle` parameter and updates the selected tile from the map.
+The supported MapTilesStyle properties are: `vector`, `traffic`, `terrain`, `satellite`, `base`.
+
+Example
+
+```js
+const mapTilesControl = new UnlSdk.MapTilesControl(
+  { displayControlsDefault: false },
+  "top-left"
+);
+
+map.addControl(mapTilesControl);
+
+mapTilesControl.setStyle("terrain");
+```
 
 ### Indoor maps overlay
 
@@ -199,7 +225,7 @@ map.addControl(new UnlSdk.IndoorControl(), "bottom-right");
 
 Enabling the indoor maps overlay, will fetch the venue maps and render the marker and outer area of the venues that were uploaded in the vpm whose id is passed as part of the map initialization. By clicking on a venue, the full venue data will be downloaded, rendering the venue units and facilities, along with the level selector buttons.
 
-#### Interactive example
+![Indoor maps overlay](https://github.com/u-n-l/unl-map-js/blob/main/docs/gifs/indoor_overlays.gif?raw=true)
 
 ### Draft shapes
 
@@ -218,3 +244,4 @@ map.addControl(new UnlSdk.DraftShapesControl(), "bottom-right");
 ```
 
 Enabling the draft shapes control, will fetch and render all the shapes added in the vpm whose id is passed during the map initialization. Additionaly, by clicking on a shape, it can be moved or edited. New shapes can be created: polygon, circle or rectangles, via the three corresponding control buttons.
+![Draft shapes creation & editing and delete](https://github.com/u-n-l/unl-map-js/blob/main/docs/gifs/draft_shapes.gif?raw=true)
