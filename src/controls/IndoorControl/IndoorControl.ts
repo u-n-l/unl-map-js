@@ -1,4 +1,3 @@
-// import VenueMarkerIcon from "../../icons/png/venue-marker-icon.png";
 import { MapMouseEvent } from "maplibre-gl";
 import UnlApi from "../../api/UnlApi";
 import ImdfVenueData from "../../api/venues/models/ImdfVenueData";
@@ -45,6 +44,8 @@ import { Record } from "../../api/records/models/Record";
 import ControlButton from "../components/ControlButton";
 import { featureCollection } from "../Base/helpers";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
+import mapIcons from "./mapIcons";
+import { MapIcon } from "../models/MapIcon";
 
 const DISPLAYED_FEATURE_TYPES = [
   ImdfFeatureType.LEVEL,
@@ -270,17 +271,22 @@ export default class IndoorControl extends Base {
       });
   };
 
-  // loadMapIcons = () => {
-  //   this.map.loadImage(
-  //     VenueMarkerIcon,
-  //     (error?: Error | null, image?: HTMLImageElement | ImageBitmap | null) => {
-  //       if (error || !image) {
-  //         return;
-  //       }
-  //       this.map.addImage("venue-marker-icon", image);
-  //     }
-  //   );
-  // };
+  loadMapIcons = () => {
+    mapIcons.forEach((icon: MapIcon) => {
+      this.map.loadImage(
+        icon.image,
+        (
+          error?: Error | null,
+          image?: HTMLImageElement | ImageBitmap | null
+        ) => {
+          if (error || !image) {
+            return;
+          }
+          this.map.addImage(icon.name, image);
+        }
+      );
+    });
+  };
 
   initSourcesAndLayers = () => {
     this.map.getSource(VENUE_FOOTPRINT_SOURCE) === undefined &&
@@ -315,7 +321,7 @@ export default class IndoorControl extends Base {
   };
 
   handleMapLoad = () => {
-    // this.loadMapIcons();
+    this.loadMapIcons();
     this.initSourcesAndLayers();
     this.fetchVenueRecords();
     this.updateImdfDataSources();
