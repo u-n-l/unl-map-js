@@ -1,4 +1,4 @@
-## Introduction
+# Introduction
 
 unl-map-js is a mapping library for developers of web applications, extending and enhancing functionalities of [maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js). Apart from the capabilities of maplibre, the package exposes the following controls:
 
@@ -7,55 +7,53 @@ unl-map-js is a mapping library for developers of web applications, extending an
 - Indoor maps overlay in the [IMDF](https://register.apple.com/resources/imdf/) format;
 - Drawing tools for creating, updating and deleting draft shapes;
 
-## Getting started
+# Getting started
 
-### Installing
+## Installing
 
 ```
 npm install unl-map-js
 ```
 
-### Usage in your application
+## Usage in your application
 
-#### Javascript
+### Javascript
 
-##### When using modules
+#### When using modules
 
 ```
 import UnlSdk from "unl_map_sdk";
 ```
 
-##### When using CDN
+#### When using CDN
 
 ```
 <script src='../v1.0.0/unl-map-js.js'></script>
 ```
 
-#### CSS
+### CSS
 
-##### When using modules
+#### When using modules
 
 ```
 import 'unl-map-js/lib/unl-map-js.css'
 ```
 
-##### When using CDN
+#### When using CDN
 
 ```
 <link rel='stylesheet' href='../unl-map-js/v1.0.0/unl-map-js.css' type='text/css' />
 ```
 
-#### Typescript
+### Typescript
 
 Typescript definition files are included as part of the same package.
 
-## Initializing the map
-
-In order to initialise
+### Initializing the map
 
 #### Example usage
 
-##### index.html
+#### index.html
 
 ```html
 <!DOCTYPE html>
@@ -75,7 +73,7 @@ In order to initialise
 </html>
 ```
 
-##### index.js
+#### index.js
 
 ```js
 import UnlSdk from "unl_map_sdk";
@@ -94,11 +92,11 @@ const map = new UnlSdk.Map({
 });
 ```
 
-## Custom controls
+# Custom controls
 
 On top of the maplibre-gl-js, this package exposes the following custom controls that can be initialised during the map instantiation with the default options or added later using the `addControl` function on the map reference. All of them allow to specify the position of the control on the map: 'top-right', 'bottom-right', 'bottom-left', 'top-left'.
 
-### UNL grid and cells
+## UNL grid and cells
 
 Grid and cells control can be enabled during the map initialization by passing the `gridControl` `true`. The `gridControlPosition` parameter will dictate the position of the control button. If no position is specified, the control defaults to 'top-right'. This first approach will load the grid control with the default options.
 
@@ -151,7 +149,7 @@ If GridControl is enabled, the cell will get highlighted by clicking on the map.
 ![Grid lines and cell](https://github.com/u-n-l/unl-map-js/blob/main/docs/gifs/grid_lines.gif?raw=true)
 ![Grid precision selection](https://github.com/u-n-l/unl-map-js/blob/main/docs/gifs/grid_selector.gif?raw=true)
 
-### Tiles selector
+## Tiles selector
 
 Tile selector control can be enabled during the map initialization by passing the `mapTilesControl` `true`. The `mapTilesControlPosition` parameter will dictate the position of the tile selector. If no position is specified, the control defaults to 'top-left'.
 
@@ -185,7 +183,7 @@ If the second approach is chosen, the following options can be specified during 
 
 ![Tile selector](https://github.com/u-n-l/unl-map-js/blob/main/docs/gifs/tile_selector.gif?raw=true)
 
-#### API Methods
+### API Methods
 
 `new MapTilesControl()` returns an instance of MapTilesControl with the following API:
 
@@ -207,7 +205,7 @@ map.addControl(mapTilesControl);
 mapTilesControl.setStyle("terrain");
 ```
 
-### Indoor maps overlay
+## Indoor maps overlay
 
 Indoor maps overlay control can be enabled during the map initialization by passing the `indoorMapsControl` `true`. The `indoorMapsControlPosition` parameter will dictate the position of the venue level selector buttons. If no position is specified, the control defaults to 'top-right'.
 
@@ -227,7 +225,7 @@ Enabling the indoor maps overlay, will fetch the venue maps and render the marke
 
 ![Indoor maps overlay](https://github.com/u-n-l/unl-map-js/blob/main/docs/gifs/indoor_overlays.gif?raw=true)
 
-### Draft shapes
+## Draft shapes
 
 Draft shapes control can be enabled during the map initialization by passing the `draftShapesControl` `true`. The `draftShapesControlPosition` parameter will dictate the position of the venue level selector buttons. If no position is specified, the control defaults to 'top-left'.
 
