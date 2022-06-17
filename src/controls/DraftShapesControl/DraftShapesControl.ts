@@ -28,14 +28,14 @@ import { appendDraftShapeFeatureProperties } from "./helpers";
 export interface DraftShapesControlOptions {}
 
 export default class DraftShapesControl extends Base {
-  polygonButton: ControlButton;
-  circleButton: ControlButton;
-  rectangleButton: ControlButton;
-  deleteButton: ControlButton;
-  draw: MapboxDraw;
-  selectedDraftShapeId?: string;
-  draftShapes: Record[];
-  unlApi?: UnlApi;
+  private polygonButton: ControlButton;
+  private circleButton: ControlButton;
+  private rectangleButton: ControlButton;
+  private deleteButton: ControlButton;
+  private draw: MapboxDraw;
+  private selectedDraftShapeId?: string;
+  private draftShapes: Record[];
+  private unlApi?: UnlApi;
 
   constructor(options?: DraftShapesControlOptions) {
     super();
@@ -76,14 +76,14 @@ export default class DraftShapesControl extends Base {
     this.draftShapes = [];
   }
 
-  initSourcesAndLayers = () => {
+  private initSourcesAndLayers = () => {
     this.map.addSource(DRAFT_SHAPES_SOURCE, draftShapesSource);
 
     this.map.addLayer(draftShapesFillLayer);
     this.map.addLayer(draftShapesLineLayer);
   };
 
-  updateDraftShapeSource = (records: Record[]) => {
+  private updateDraftShapeSource = (records: Record[]) => {
     const draftShapesSource: maplibregl.GeoJSONSource = this.map.getSource(
       DRAFT_SHAPES_SOURCE
     ) as maplibregl.GeoJSONSource;
@@ -102,7 +102,7 @@ export default class DraftShapesControl extends Base {
     }
   };
 
-  fetchDraftShapes = () => {
+  private fetchDraftShapes = () => {
     this.unlApi?.recordsApi
       .getAll(this.map.getVpmId(), RecordFeatureType.DRAFT_SHAPE)
       .then((records) => {
@@ -113,7 +113,7 @@ export default class DraftShapesControl extends Base {
       });
   };
 
-  handleDrawCreate = (event: DrawCreateEvent) => {
+  private handleDrawCreate = (event: DrawCreateEvent) => {
     const createdDraftShape = appendDraftShapeFeatureProperties(
       event.features[0]
     );
@@ -129,7 +129,7 @@ export default class DraftShapesControl extends Base {
       });
   };
 
-  handleDrawUpdate = (event: DrawUpdateEvent) => {
+  private handleDrawUpdate = (event: DrawUpdateEvent) => {
     const updatedDraftShapeId = event.features[0].properties?.id;
 
     this.unlApi?.recordsApi
@@ -156,7 +156,7 @@ export default class DraftShapesControl extends Base {
       });
   };
 
-  handleDraftShapeDelete = () => {
+  private handleDraftShapeDelete = () => {
     const selectedDraftShapeId = this.selectedDraftShapeId;
 
     this.unlApi?.recordsApi
@@ -178,7 +178,7 @@ export default class DraftShapesControl extends Base {
       });
   };
 
-  handleDraftShapeClick = (e: MapMouseEvent) => {
+  private handleDraftShapeClick = (e: MapMouseEvent) => {
     //@ts-ignore
     this.selectedDraftShapeId = e.features[0].properties.id;
     const filteredId = this.selectedDraftShapeId ?? 0;
@@ -208,7 +208,7 @@ export default class DraftShapesControl extends Base {
     this.draw.changeMode("simple_select");
   };
 
-  toggleDeleteButton = (event: DrawSelectionChangeEvent) => {
+  private toggleDeleteButton = (event: DrawSelectionChangeEvent) => {
     if (event.features.length === 0) {
       this.deleteButton.node.style.display = "none";
     } else if (event.features.length > 0) {
@@ -216,7 +216,7 @@ export default class DraftShapesControl extends Base {
     }
   };
 
-  initDrawControl = () => {
+  private initDrawControl = () => {
     //@ts-ignore
     this.map.addControl(this.draw, "top-right");
 
@@ -228,7 +228,7 @@ export default class DraftShapesControl extends Base {
     this.map.on("click", DRAFT_SHAPES_LINE_LAYER, this.handleDraftShapeClick);
   };
 
-  handleMapLoad = () => {
+  private handleMapLoad = () => {
     this.initSourcesAndLayers();
     this.fetchDraftShapes();
     this.initDrawControl();
