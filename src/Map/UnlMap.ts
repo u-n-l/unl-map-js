@@ -11,6 +11,7 @@ import {
   GridControl,
   IndoorControl,
   MapTilesControl,
+  LibraryControl,
 } from "../controls";
 import { getStyle } from "./styles/MapTilesStyle";
 import ZoomLevel from "./zoomLevels";
@@ -24,6 +25,7 @@ export type UnlMapOptions = {
   apiKey: string;
   vpmId: string;
   gridControl?: boolean;
+  libraryControl?: boolean;
   gridControlPosition?: ControlPosition;
   indoorMapsControl?: boolean;
   indoorMapsControlPosition?: ControlPosition;
@@ -102,7 +104,7 @@ class UnlMap extends Map {
 
     if (options.indoorMapsControl) {
       this.addControl(
-        new IndoorControl(),
+        new IndoorControl({ showLibrary: options.libraryControl }),
         options.indoorMapsControlPosition ??
           DEFAULT_INDOOR_MAPS_CONTROL_POSITION
       );
