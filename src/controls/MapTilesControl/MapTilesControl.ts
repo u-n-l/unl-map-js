@@ -61,7 +61,7 @@ export default class MapTilesControl extends Base {
     });
   }
 
-  get defaultOptions(): MapTilesStyle[] {
+  private get defaultOptions(): MapTilesStyle[] {
     return ["vectorial", "satellite", "terrain", "traffic", "base"];
   }
 
@@ -104,11 +104,11 @@ export default class MapTilesControl extends Base {
     this.map.setStyle(styleFile);
   };
 
-  onAddControl = () => {
+  protected onAddControl = () => {
     if (this.displayControlsDefault) {
       this.insert();
     }
   };
 
-  onRemoveControl = () => {};
+  protected onRemoveControl = () => {};
 }
