@@ -1,26 +1,28 @@
 
 .mapbox-control-venues-list {
     &-root {
-      @include size(fit-content, fit-content);
-      padding: 40px 40px 40px;
+      list-style: none;
+      display: none;
+      bottom: 35px;
+      left:35px;
       position: absolute;
+      height: 300px;
+      overflow:scroll;
       z-index: 1;
       overflow: auto;
       background-color: white;
       border-radius: 10px;
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      box-shadow: 0 1px 2px 0 rgba(114, 114, 114, 0.869), 0 1px 2px 0 rgba(114, 114, 114, 0.869),
     }
 
     &-style{
-        list-style: none;
+      display: block;
+      list-style: none;
+      padding-left: 0
     }
     
     &-item {
-      font-size: 12px;
-    }
-
-    &-content {
-      display: flex;
+      padding: 8px;
     }
   }
   
