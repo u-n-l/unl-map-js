@@ -1,0 +1,26 @@
+{
+  "version": 8,
+  "sources": {
+    "raster-tiles": {
+      "type": "raster",
+      "maxzoom": 19,
+      "tiles": [
+        "https://1.aerial.maps.api.here.com/maptile/2.1/maptile/newest/hybrid.day/{z}/{x}/{y}/512/png8?app_id=FQqMksczscHZmnVXWiWv&app_code=-_G1lyWmaZlbolo409QBTg"
+      ],
+      "tileSize": 512
+    }
+  },
+  "glyphs": "https://assets.vector.hereapi.com/fonts/{fontstack}/{range}.pbf",
+  "layers": [
+    {
+      "id": "simple-tiles",
+      "type": "raster",
+      "source": "raster-tiles",
+      "minzoom": 0,
+      "maxzoom": 22,
+      "layout": {
+        "visibility": "visible"
+      }
+    }
+  ]
+}

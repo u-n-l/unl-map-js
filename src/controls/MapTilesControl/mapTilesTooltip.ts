@@ -1,44 +1,21 @@
-import { StyleSpecification } from "maplibre-gl";
 import baseTiles from "../../icons/ts/BaseTilesIcon";
 import vectorialTiles from "../../icons/ts/VectorialTilesIcon";
 import satelliteTiles from "../../icons/ts/SatelliteTilesIcon";
 import terrainTiles from "../../icons/ts/TerrainTilesIcon";
 import trafficTiles from "../../icons/ts/TrafficTilesIcon";
+import { MapTilesStyle } from "../../Map/styles/MapTilesStyle";
 
-const VECTORIAL_LABEL = "HERE Berlin";
-const SATELLITE_LABEL = "satellite";
-const TRAFFIC_LABEL = "traffic";
-const TERRAIN_LABEL = "terrain";
-const BASE_LABEL = "Base map";
-
-const getStyleIcon = (index: number) => {
-  switch (index) {
-    case 0:
+export const getButtonIcon = (style: MapTilesStyle) => {
+  switch (style) {
+    case "vectorial":
       return vectorialTiles();
-    case 1:
+    case "satellite":
       return satelliteTiles();
-    case 2:
+    case "terrain":
       return terrainTiles();
-    case 3:
+    case "traffic":
       return trafficTiles();
-    case 4:
-      return baseTiles();
-    default:
-      vectorialTiles();
-  }
-};
-
-export const getButtonIcon = (styleName: string) => {
-  switch (styleName) {
-    case VECTORIAL_LABEL:
-      return vectorialTiles();
-    case SATELLITE_LABEL:
-      return satelliteTiles();
-    case TERRAIN_LABEL:
-      return terrainTiles();
-    case TRAFFIC_LABEL:
-      return trafficTiles();
-    case BASE_LABEL:
+    case "base":
       return baseTiles();
     default:
       vectorialTiles();
@@ -46,8 +23,8 @@ export const getButtonIcon = (styleName: string) => {
 };
 
 export const mapTilesTooltip = (
-  styles: StyleSpecification[],
-  onChange: (style: StyleSpecification) => void,
+  styles: MapTilesStyle[],
+  onChange: (style: MapTilesStyle) => void,
   buttons: HTMLButtonElement[]
 ) => {
   const root = document.createElement("div");
@@ -66,7 +43,7 @@ export const mapTilesTooltip = (
     const button = document.createElement("button");
 
     //@ts-ignore
-    button.appendChild(getStyleIcon(styles.indexOf(style)));
+    button.appendChild(getButtonIcon(style));
     button.classList.add("mapbox-control-map-tiles-tooltip-button");
     button.onclick = () => {
       onChange(style);
@@ -79,8 +56,9 @@ export const mapTilesTooltip = (
     buttonDescription.classList.add(
       "mapbox-control-map-tiles-tooltip-button-description"
     );
-    //@ts-ignore
-    buttonDescription.innerHTML = style.label;
+
+    buttonDescription.innerHTML = style;
+    buttonDescription.style.textTransform = "capitalize";
 
     buttonContainer.appendChild(buttonDescription);
 

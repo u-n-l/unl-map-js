@@ -48,11 +48,11 @@ import mapIcons from "./mapIcons";
 import { MapIcon } from "../models/MapIcon";
 import { venueRecordsList } from "./venueRecordsList";
 
-const DISPLAYED_FEATURE_TYPES = [
-  ImdfFeatureType.LEVEL,
-  ImdfFeatureType.UNIT,
-  ImdfFeatureType.OPENING,
-  ImdfFeatureType.VENUE,
+const DISPLAYED_FEATURE_TYPES: ImdfFeatureType[] = [
+  "level",
+  "unit",
+  "opening",
+  "venue",
 ];
 
 export interface IndoorControlOptions {}
@@ -156,16 +156,16 @@ export default class IndoorControl extends Base {
           };
 
           switch (feature.featureType) {
-            case ImdfFeatureType.LEVEL:
+            case "level":
               levels.push(featureParsed);
               break;
-            case ImdfFeatureType.OPENING:
+            case "opening":
               opening.push(featureParsed);
               break;
-            case ImdfFeatureType.UNIT:
+            case "unit":
               unit.push(featureParsed);
               break;
-            case ImdfFeatureType.VENUE:
+            case "venue":
               venue.push({
                 ...featureParsed,
                 properties: {
@@ -330,7 +330,6 @@ export default class IndoorControl extends Base {
   };
 
   handleMapLoad = () => {
-    this.loadMapIcons();
     this.initSourcesAndLayers();
     this.fetchVenueRecords();
     this.updateImdfDataSources();
@@ -338,6 +337,7 @@ export default class IndoorControl extends Base {
 
   onAddControl = () => {
     this.unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
+    this.map.on("load", this.loadMapIcons);
     this.map.on("styledata", this.handleMapLoad);
     this.map.on("click", VENUE_MARKERS_SYMBOL_LAYER, this.handleVenueClick);
     this.map.on("click", VENUE_FOOTPRINT_FILL_LAYER, this.handleVenueClick);

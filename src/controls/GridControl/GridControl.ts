@@ -89,7 +89,7 @@ export default class GridControl extends Base {
     this.gridButton.onClick(this.showGridSelector);
     this.addButton(this.gridButton);
     this.map.getContainer().appendChild(this.gridSelector);
-    this.map.on("styledata", this.addLayersAndSources);
+    this.map.on("styledata", this.handleStyleChange);
     this.showGrid();
   };
 
@@ -255,6 +255,22 @@ export default class GridControl extends Base {
     this.map.removeSource(CELL_SOURCE);
 
     this.removeCellInfoPopup();
+  };
+
+  handleStyleChange = () => {
+    this.addLayersAndSources();
+    this.updateGridLines();
+
+    const cellSource: maplibregl.GeoJSONSource = this.map.getSource(
+      CELL_SOURCE
+    ) as maplibregl.GeoJSONSource;
+
+    if (cellSource && this.clickedLngLat) {
+      const geohash = getCell(this.clickedLngLat, this.currentPrecision);
+      const coordinates = locationIdToBoundsCoordinates(geohash.locationId);
+      const polygon = polygonFeature(coordinates);
+      cellSource.setData(polygon);
+    }
   };
 
   showGridSelector = () => {

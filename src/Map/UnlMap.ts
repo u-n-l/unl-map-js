@@ -12,7 +12,7 @@ import {
   IndoorControl,
   MapTilesControl,
 } from "../controls";
-import { getStyles } from "./styles/here";
+import { getStyle } from "./styles/MapTilesStyle";
 import ZoomLevel from "./zoomLevels";
 
 const DEFAULT_GRID_CONTROL_POSITION = "top-right";
@@ -29,6 +29,7 @@ export type UnlMapOptions = {
   indoorMapsControlPosition?: ControlPosition;
   mapTilesControl?: boolean;
   mapTilesControlPosition?: ControlPosition;
+  displayMapTilesControlDefault?: boolean;
   draftShapesControl?: boolean;
   draftShapesControlPosition?: ControlPosition;
   hash?: boolean | string;
@@ -78,11 +79,13 @@ class UnlMap extends Map {
   apiKey: string;
   vpmId: string;
   mapTilesControlPosition: ControlPosition;
+  displayMapTilesControlDefault: boolean;
 
   constructor(options: UnlMapOptions) {
     super({
       ...options,
-      style: getStyles("pFlhWNivCejOEWnTKIQf6ZKRWP5avfiANvleJKR0XAY")[0],
+      //@ts-ignore
+      style: getStyle(),
       minZoom: options.minZoom ?? ZoomLevel.MIN_ZOOM,
       maxZoom: options.maxZoom ?? ZoomLevel.MAX_ZOOM,
       maplibreLogo: false,
@@ -94,6 +97,8 @@ class UnlMap extends Map {
     this.mapTilesControlPosition =
       options.mapTilesControlPosition ??
       DEFAULT_TILES_SELECTOR_CONTROL_POSITION;
+    this.displayMapTilesControlDefault =
+      options.displayMapTilesControlDefault ?? true;
 
     if (options.indoorMapsControl) {
       this.addControl(
@@ -103,7 +108,12 @@ class UnlMap extends Map {
       );
     }
     if (options.mapTilesControl) {
-      this.addControl(new MapTilesControl(), this.mapTilesControlPosition);
+      this.addControl(
+        new MapTilesControl({
+          displayControlsDefault: this.displayMapTilesControlDefault,
+        }),
+        this.mapTilesControlPosition
+      );
     }
     if (options.draftShapesControl) {
       this.addControl(
@@ -130,6 +140,10 @@ class UnlMap extends Map {
 
   getMapTilesControlPosition = () => {
     return this.mapTilesControlPosition;
+  };
+
+  getDisplayMapTilesControlsDefault = () => {
+    return this.displayMapTilesControlDefault;
   };
 }
 
