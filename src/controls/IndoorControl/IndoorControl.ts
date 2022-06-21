@@ -57,12 +57,12 @@ const DISPLAYED_FEATURE_TYPES: ImdfFeatureType[] = [
 export interface IndoorControlOptions {}
 
 export default class IndoorControl extends Base {
-  selectedLevel: number;
-  imdfVenueData: {
+  private selectedLevel: number;
+  private imdfVenueData: {
     [level: number]: ImdfVenueData | undefined;
   };
-  levelButtons: ControlButton[];
-  unlApi?: UnlApi;
+  private levelButtons: ControlButton[];
+  private unlApi?: UnlApi;
 
   constructor() {
     super();
@@ -72,7 +72,7 @@ export default class IndoorControl extends Base {
     this.levelButtons = [];
   }
 
-  handleLevelSelection = (level: number) => {
+  private handleLevelSelection = (level: number) => {
     const selectedVenueId =
       this.imdfVenueData[this.selectedLevel]?.venue?.features[0].properties
         ?.venueId;
@@ -86,7 +86,7 @@ export default class IndoorControl extends Base {
     }
   };
 
-  updateLevelSelector = () => {
+  private updateLevelSelector = () => {
     if (
       !this.imdfVenueData[this.selectedLevel] ||
       !this.imdfVenueData[this.selectedLevel]?.level
@@ -111,7 +111,7 @@ export default class IndoorControl extends Base {
     });
   };
 
-  handleVenueClick = (e: MapMouseEvent) => {
+  private handleVenueClick = (e: MapMouseEvent) => {
     const existingVenueId =
       this.imdfVenueData[this.selectedLevel]?.venue?.features[0].properties
         ?.venueId;
@@ -126,7 +126,7 @@ export default class IndoorControl extends Base {
     }
   };
 
-  fetchImdfVenueData = (venueId: string) => {
+  private fetchImdfVenueData = (venueId: string) => {
     this.unlApi?.venuesApi
       .getImdfFeatures(
         this.map.getVpmId(),
@@ -193,7 +193,7 @@ export default class IndoorControl extends Base {
       });
   };
 
-  updateImdfDataSources = () => {
+  private updateImdfDataSources = () => {
     if (!this.imdfVenueData || !this.imdfVenueData[this.selectedLevel]) {
       return;
     }
@@ -241,7 +241,7 @@ export default class IndoorControl extends Base {
     }
   };
 
-  updateVenueMarkerAndFootprintSources = (records: Record[]) => {
+  private updateVenueMarkerAndFootprintSources = (records: Record[]) => {
     const venueMarkersSource: maplibregl.GeoJSONSource = this.map.getSource(
       VENUE_MARKERS_SOURCE
     ) as maplibregl.GeoJSONSource;
@@ -261,7 +261,7 @@ export default class IndoorControl extends Base {
     }
   };
 
-  fetchVenueRecords = () => {
+  private fetchVenueRecords = () => {
     this.unlApi?.recordsApi
       .getAll(this.map.getVpmId(), RecordFeatureType.VENUE)
       .then((records) => {
@@ -271,7 +271,7 @@ export default class IndoorControl extends Base {
       });
   };
 
-  loadMapIcons = () => {
+  private loadMapIcons = () => {
     mapIcons.forEach((icon: MapIcon) => {
       this.map.loadImage(
         icon.image,
@@ -288,7 +288,7 @@ export default class IndoorControl extends Base {
     });
   };
 
-  initSourcesAndLayers = () => {
+  private initSourcesAndLayers = () => {
     this.map.getSource(VENUE_FOOTPRINT_SOURCE) === undefined &&
       this.map.addSource(VENUE_FOOTPRINT_SOURCE, venueFootprintSource);
     this.map.getSource(VENUE_LEVEL_SOURCE) === undefined &&
@@ -320,7 +320,7 @@ export default class IndoorControl extends Base {
       this.map.addLayer(venueMarkersSymbolLayer);
   };
 
-  handleMapLoad = () => {
+  private handleMapLoad = () => {
     this.initSourcesAndLayers();
     this.fetchVenueRecords();
     this.updateImdfDataSources();

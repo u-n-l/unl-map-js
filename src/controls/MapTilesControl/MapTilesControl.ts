@@ -9,11 +9,11 @@ export interface MapTilesControlOptions {
 }
 
 export default class MapTilesControl extends Base {
-  displayControlsDefault: boolean;
-  styles: MapTilesStyle[];
-  button: ControlButton;
-  tooltip: HTMLDivElement;
-  mapTilesButtons: HTMLButtonElement[];
+  private displayControlsDefault: boolean;
+  private styles: MapTilesStyle[];
+  private button: ControlButton;
+  private tooltip: HTMLDivElement;
+  private mapTilesButtons: HTMLButtonElement[];
 
   constructor(options: MapTilesControlOptions) {
     super();
@@ -38,7 +38,7 @@ export default class MapTilesControl extends Base {
     );
   }
 
-  insert() {
+  private insert() {
     this.button.onClick(this.toggleMapTiles);
     this.button.node.style.position = "relative";
     this.button.node.appendChild(this.tooltip);
@@ -61,11 +61,11 @@ export default class MapTilesControl extends Base {
     });
   }
 
-  get defaultOptions(): MapTilesStyle[] {
+  private get defaultOptions(): MapTilesStyle[] {
     return ["vectorial", "satellite", "terrain", "traffic", "base"];
   }
 
-  toggleMapTiles = () => {
+  private toggleMapTiles = () => {
     if (this.tooltip.style.display === "block") {
       this.tooltip.style.display = "none";
     } else {
@@ -73,7 +73,7 @@ export default class MapTilesControl extends Base {
     }
   };
 
-  setTooltipPosition = () => {
+  private setTooltipPosition = () => {
     switch (this.map.getMapTilesControlPosition()) {
       case "bottom-left":
         this.tooltip.style.marginLeft = "40px";
@@ -104,11 +104,11 @@ export default class MapTilesControl extends Base {
     this.map.setStyle(styleFile);
   };
 
-  onAddControl = () => {
+  protected onAddControl = () => {
     if (this.displayControlsDefault) {
       this.insert();
     }
   };
 
-  onRemoveControl = () => {};
+  protected onRemoveControl = () => {};
 }

@@ -42,15 +42,15 @@ export interface GridControlOptions {
 }
 
 export default class GridControl extends Base {
-  gridButton: ControlButton;
-  currentPrecision: CellPrecision;
-  lineColor: string;
-  lineWidth: number;
-  cellFillColor: string;
-  cellBorderColor: string;
-  gridSelector: HTMLDivElement;
-  cellInfoPopupNode?: HTMLDivElement;
-  clickedLngLat?: LngLat;
+  private gridButton: ControlButton;
+  private currentPrecision: CellPrecision;
+  private lineColor: string;
+  private lineWidth: number;
+  private cellFillColor: string;
+  private cellBorderColor: string;
+  private gridSelector: HTMLDivElement;
+  private cellInfoPopupNode?: HTMLDivElement;
+  private clickedLngLat?: LngLat;
 
   constructor(options?: GridControlOptions) {
     super();
@@ -70,7 +70,7 @@ export default class GridControl extends Base {
     );
   }
 
-  handlePrecisionChange = (newPrecision: CellPrecision) => {
+  private handlePrecisionChange = (newPrecision: CellPrecision) => {
     this.currentPrecision = newPrecision;
 
     this.hideGridSelector();
@@ -85,7 +85,7 @@ export default class GridControl extends Base {
     this.map.setLayerZoomRange(CELL_FILL_LAYER, newMinGridZoom, 24);
   };
 
-  insert = () => {
+  private insert = () => {
     this.gridButton.onClick(this.showGridSelector);
     this.addButton(this.gridButton);
     this.map.getContainer().appendChild(this.gridSelector);
@@ -93,7 +93,7 @@ export default class GridControl extends Base {
     this.showGrid();
   };
 
-  updateCellPopupPosition = () => {
+  private updateCellPopupPosition = () => {
     if (!this.cellInfoPopupNode || !this.clickedLngLat) {
       return;
     }
@@ -115,13 +115,13 @@ export default class GridControl extends Base {
     }px`;
   };
 
-  addCellInfoPopup = (cell: Cell) => {
+  private addCellInfoPopup = (cell: Cell) => {
     this.cellInfoPopupNode = cellInfoPopupTemplate(cell.locationId);
 
     this.map.getContainer().appendChild(this.cellInfoPopupNode);
   };
 
-  removeCellInfoPopup = () => {
+  private removeCellInfoPopup = () => {
     if (!this.cellInfoPopupNode) {
       return;
     }
@@ -130,7 +130,7 @@ export default class GridControl extends Base {
     this.cellInfoPopupNode = undefined;
   };
 
-  resetCell = () => {
+  private resetCell = () => {
     const cellSource: maplibregl.GeoJSONSource = this.map.getSource(
       CELL_SOURCE
     ) as maplibregl.GeoJSONSource;
@@ -140,7 +140,7 @@ export default class GridControl extends Base {
     }
   };
 
-  handleMapClick = (e: MapMouseEvent) => {
+  private handleMapClick = (e: MapMouseEvent) => {
     const clickedCell = getCell(e.lngLat, this.currentPrecision);
     this.clickedLngLat = locationIdToLngLat(clickedCell.locationId);
 
@@ -160,7 +160,7 @@ export default class GridControl extends Base {
     this.updateCellPopupPosition();
   };
 
-  updateGridLines = () => {
+  private updateGridLines = () => {
     if (this.map.getZoom() < getMinGridZoom(this.currentPrecision)) {
       return;
     }
@@ -179,7 +179,7 @@ export default class GridControl extends Base {
     }
   };
 
-  addLayersAndSources = () => {
+  private addLayersAndSources = () => {
     this.map.getSource(GRID_LINES_SOURCE) === undefined &&
       this.map.addSource(GRID_LINES_SOURCE, {
         type: "geojson",
@@ -232,7 +232,7 @@ export default class GridControl extends Base {
       });
   };
 
-  showGrid = () => {
+  private showGrid = () => {
     this.gridButton.setIcon(selectedGridIcon());
     this.updateGridLines();
     this.map.on("click", this.handleMapClick);
@@ -240,7 +240,7 @@ export default class GridControl extends Base {
     this.map.on("moveend", this.updateGridLines);
   };
 
-  hideGrid = () => {
+  private hideGrid = () => {
     this.gridButton.setIcon(gridIcon());
 
     this.map.off("moveend", this.updateGridLines);
@@ -257,7 +257,7 @@ export default class GridControl extends Base {
     this.removeCellInfoPopup();
   };
 
-  handleStyleChange = () => {
+  private handleStyleChange = () => {
     this.addLayersAndSources();
     this.updateGridLines();
 
@@ -273,11 +273,11 @@ export default class GridControl extends Base {
     }
   };
 
-  showGridSelector = () => {
+  private showGridSelector = () => {
     this.gridSelector.style.display = "block";
   };
 
-  hideGridSelector = () => {
+  private hideGridSelector = () => {
     this.gridSelector.style.display = "none";
   };
 

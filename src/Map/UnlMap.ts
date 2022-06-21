@@ -24,14 +24,10 @@ export type UnlMapOptions = {
   apiKey: string;
   vpmId: string;
   gridControl?: boolean;
-  gridControlPosition?: ControlPosition;
   indoorMapsControl?: boolean;
-  indoorMapsControlPosition: ControlPosition;
   mapTilesControl?: boolean;
-  mapTilesControlPosition?: ControlPosition;
   displayMapTilesControlDefault?: boolean;
   draftShapesControl?: boolean;
-  draftShapesControlPosition?: ControlPosition;
   hash?: boolean | string;
   interactive?: boolean;
   container: HTMLElement | string;
@@ -94,17 +90,14 @@ class UnlMap extends Map {
 
     this.apiKey = options.apiKey;
     this.vpmId = options.vpmId;
-    this.mapTilesControlPosition =
-      options.mapTilesControlPosition ??
-      DEFAULT_TILES_SELECTOR_CONTROL_POSITION;
+    this.mapTilesControlPosition = DEFAULT_TILES_SELECTOR_CONTROL_POSITION;
     this.displayMapTilesControlDefault =
       options.displayMapTilesControlDefault ?? true;
 
     if (options.indoorMapsControl) {
       this.addControl(
         new IndoorControl(),
-        options.indoorMapsControlPosition ??
-          DEFAULT_INDOOR_MAPS_CONTROL_POSITION
+        DEFAULT_INDOOR_MAPS_CONTROL_POSITION
       );
     }
     if (options.mapTilesControl) {
@@ -118,15 +111,11 @@ class UnlMap extends Map {
     if (options.draftShapesControl) {
       this.addControl(
         new DraftShapesControl(),
-        options.draftShapesControlPosition ??
-          DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON
+        DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON
       );
     }
     if (options.gridControl) {
-      this.addControl(
-        new GridControl(),
-        options.gridControlPosition ?? DEFAULT_GRID_CONTROL_POSITION
-      );
+      this.addControl(new GridControl(), DEFAULT_GRID_CONTROL_POSITION);
     }
   }
 
