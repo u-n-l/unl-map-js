@@ -5,14 +5,16 @@ import {
   LngLatLike,
   Map,
   RequestTransformFunction,
+  StyleOptions,
+  StyleSpecification,
 } from "maplibre-gl";
 import {
   DraftShapesControl,
   GridControl,
   IndoorControl,
-  MapTilesControl,
+  TilesSelectorControl,
 } from "../controls";
-import { getStyle } from "./styles/MapTilesStyle";
+import { getStyle } from "./styles/MapTiles";
 import ZoomLevel from "./models/ZoomLevel";
 
 const DEFAULT_GRID_CONTROL_POSITION = "top-right";
@@ -21,13 +23,14 @@ const DEFAULT_TILES_SELECTOR_CONTROL_POSITION = "top-left";
 const DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON = "top-left";
 
 export type UnlMapOptions = {
+  //additional options
   apiKey: string;
   vpmId: string;
   gridControl?: boolean;
   indoorMapsControl?: boolean;
-  mapTilesControl?: boolean;
-  displayMapTilesControlDefault?: boolean;
+  tilesSelectorControl?: boolean;
   draftShapesControl?: boolean;
+  // maplibreLogo, logoPosition and style were removed from the original MapOptions
   hash?: boolean | string;
   interactive?: boolean;
   container: HTMLElement | string;
@@ -75,7 +78,6 @@ class UnlMap extends Map {
   apiKey: string;
   vpmId: string;
   mapTilesControlPosition: ControlPosition;
-  displayMapTilesControlDefault: boolean;
 
   constructor(options: UnlMapOptions) {
     super({
@@ -91,8 +93,6 @@ class UnlMap extends Map {
     this.apiKey = options.apiKey;
     this.vpmId = options.vpmId;
     this.mapTilesControlPosition = DEFAULT_TILES_SELECTOR_CONTROL_POSITION;
-    this.displayMapTilesControlDefault =
-      options.displayMapTilesControlDefault ?? true;
 
     if (options.indoorMapsControl) {
       this.addControl(
@@ -100,10 +100,10 @@ class UnlMap extends Map {
         DEFAULT_INDOOR_MAPS_CONTROL_POSITION
       );
     }
-    if (options.mapTilesControl) {
+    if (options.tilesSelectorControl) {
       this.addControl(
-        new MapTilesControl({
-          displayControlsDefault: this.displayMapTilesControlDefault,
+        new TilesSelectorControl({
+          displayControlsDefault: true,
         }),
         this.mapTilesControlPosition
       );
@@ -129,10 +129,6 @@ class UnlMap extends Map {
 
   getMapTilesControlPosition = () => {
     return this.mapTilesControlPosition;
-  };
-
-  getDisplayMapTilesControlsDefault = () => {
-    return this.displayMapTilesControlDefault;
   };
 }
 

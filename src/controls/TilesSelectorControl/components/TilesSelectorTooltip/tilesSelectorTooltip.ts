@@ -3,10 +3,10 @@ import vectorialTiles from "../../../../icons/ts/VectorialTilesIcon";
 import satelliteTiles from "../../../../icons/ts/SatelliteTilesIcon";
 import terrainTiles from "../../../../icons/ts/TerrainTilesIcon";
 import trafficTiles from "../../../../icons/ts/TrafficTilesIcon";
-import { MapTilesStyle } from "../../../../Map/styles/MapTilesStyle";
+import { MapTiles } from "../../../../Map/styles/MapTiles";
 
-export const getButtonIcon = (style: MapTilesStyle) => {
-  switch (style) {
+export const getButtonIcon = (tiles: MapTiles) => {
+  switch (tiles) {
     case "vectorial":
       return vectorialTiles();
     case "satellite":
@@ -23,30 +23,30 @@ export const getButtonIcon = (style: MapTilesStyle) => {
 };
 
 export const mapTilesTooltip = (
-  styles: MapTilesStyle[],
-  onChange: (style: MapTilesStyle) => void,
+  tiles: MapTiles[],
+  onChange: (tiles: MapTiles) => void,
   buttons: HTMLButtonElement[]
 ) => {
   const root = document.createElement("div");
-  root.classList.add("mapbox-control-map-tiles-tooltip-root");
-  root.setAttribute("id", "map-tiles-tooltip");
+  root.classList.add("mapbox-control-tiles-selector-tooltip-root");
+  root.setAttribute("id", "tiles-selector-tooltip");
 
   const tooltipContent = document.createElement("div");
-  tooltipContent.classList.add("mapbox-control-map-tiles-tooltip-content");
+  tooltipContent.classList.add("mapbox-control-tiles-selector-tooltip-content");
 
-  styles.forEach((style) => {
+  tiles.forEach((tiles) => {
     const buttonContainer = document.createElement("div");
     buttonContainer.classList.add(
-      "mapbox-control-map-tiles-tooltip-button-container"
+      "mapbox-control-tiles-selector-tooltip-button-container"
     );
 
     const button = document.createElement("button");
 
     //@ts-ignore
-    button.appendChild(getButtonIcon(style));
-    button.classList.add("mapbox-control-map-tiles-tooltip-button");
+    button.appendChild(getButtonIcon(tiles));
+    button.classList.add("mapbox-control-tiles-selector-tooltip-button");
     button.onclick = () => {
-      onChange(style);
+      onChange(tiles);
     };
     buttons.push(button);
 
@@ -54,10 +54,10 @@ export const mapTilesTooltip = (
 
     const buttonDescription = document.createElement("p");
     buttonDescription.classList.add(
-      "mapbox-control-map-tiles-tooltip-button-description"
+      "mapbox-control-tiles-selector-tooltip-button-description"
     );
 
-    buttonDescription.innerHTML = style;
+    buttonDescription.innerHTML = tiles;
     buttonDescription.style.textTransform = "capitalize";
 
     buttonContainer.appendChild(buttonDescription);
