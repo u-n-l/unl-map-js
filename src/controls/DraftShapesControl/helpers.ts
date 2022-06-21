@@ -5,38 +5,38 @@ import CellPrecision from "../GridControl/CellPrecision";
 import * as UnlCore from "unl-core";
 
 export const shapeCoordinatesToClusterId = (
-  coordinates: GeoJSON.Position[]
+  coordinates: GeoJSON.Position[],
+  clusterPrecision: CellPrecision
 ): string => {
-  let compressedCluster = "";
+  //@ts-ignore
+  const cluster = UnlCore.Polyhash.toCluster(coordinates[0], clusterPrecision);
 
   //@ts-ignore
-  const cluster = UnlCore.Polyhash.toCluster(
-    coordinates[0],
-    CellPrecision.GEOHASH_LENGTH_10
-  );
-  //@ts-ignore
-  compressedCluster = UnlCore.Polyhash.compress(cluster);
-
-  return compressedCluster;
+  return UnlCore.Polyhash.compress(cluster);
 };
 
 export const generateDraftShapeProperties = (
-  draftShape: GeoJSON.Feature
+  draftShape: GeoJSON.Feature,
+  clusterPrecision: CellPrecision
 ): GeoJSON.GeoJsonProperties => {
   return {
     feature_type: RecordFeatureType.DRAFT_SHAPE,
-    //@ts-ignore
-    clusterId: shapeCoordinatesToClusterId(draftShape.geometry.coordinates),
+    clusterId: shapeCoordinatesToClusterId(
+      //@ts-ignore
+      draftShape.geometry.coordinates,
+      clusterPrecision
+    ),
     area: turfArea(draftShape),
     shape: draftShape.properties?.shape ?? draftShape.geometry.type,
   };
 };
 
 export const appendDraftShapeFeatureProperties = (
-  draftShape: GeoJSON.Feature
+  draftShape: GeoJSON.Feature,
+  clusterPrecision: CellPrecision
 ): GeoJSON.Feature => {
   return {
     ...draftShape,
-    properties: generateDraftShapeProperties(draftShape),
+    properties: generateDraftShapeProperties(draftShape, clusterPrecision),
   };
 };
