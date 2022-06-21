@@ -1,10 +1,10 @@
-import { LayerSpecification } from "maplibre-gl";
+import { FillLayerSpecification, LineLayerSpecification } from "maplibre-gl";
 import { DRAFT_SHAPES_SOURCE } from "./sources";
 
 export const DRAFT_SHAPES_FILL_LAYER = "controls-draft-shapes-fill-layer";
 export const DRAFT_SHAPES_LINE_LAYER = "controls-draft-shapes-line-layer";
 
-export const draftShapesFillLayer: LayerSpecification = {
+export const draftShapesFillLayer: FillLayerSpecification = {
   id: DRAFT_SHAPES_FILL_LAYER,
   type: "fill",
   source: DRAFT_SHAPES_SOURCE,
@@ -14,7 +14,7 @@ export const draftShapesFillLayer: LayerSpecification = {
   },
 };
 
-export const draftShapesLineLayer: LayerSpecification = {
+export const draftShapesLineLayer: LineLayerSpecification = {
   id: DRAFT_SHAPES_LINE_LAYER,
   type: "line",
   source: DRAFT_SHAPES_SOURCE,

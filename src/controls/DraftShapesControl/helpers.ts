@@ -1,6 +1,6 @@
 import turfArea from "@turf/area";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
-import CellPrecision from "../GridControl/CellPrecision";
+import CellPrecision from "../GridControl/models/CellPrecision";
 //@ts-ignore
 import * as UnlCore from "unl-core";
 

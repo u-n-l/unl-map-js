@@ -14,7 +14,7 @@ import cricleDraw from "../../icons/ts/CricleDraw";
 import rectangleDraw from "../../icons/ts/RectangleDraw";
 import deleteIcon from "../../icons/ts/DeleteIcon";
 import ControlButton from "../components/ControlButton";
-import CellPrecision from "../GridControl/CellPrecision";
+import CellPrecision from "../GridControl/models/CellPrecision";
 import UnlApi from "../../api/UnlApi";
 import Base from "../Base/Base";
 import { featureCollection, polygonFeature } from "../Base/helpers";
@@ -48,7 +48,7 @@ export default class DraftShapesControl extends Base {
   private selectedDraftShapeId?: string;
   private clusterPrecision: CellPrecision;
 
-  constructor(options: DraftShapesControlOptions) {
+  constructor(options?: DraftShapesControlOptions) {
     super();
 
     this.draw = new MapboxDraw({
@@ -84,7 +84,7 @@ export default class DraftShapesControl extends Base {
       });
     this.draftShapes = [];
     this.clusterPrecision =
-      options.clusterPrecision ?? CellPrecision.GEOHASH_LENGTH_9;
+      options?.clusterPrecision ?? CellPrecision.GEOHASH_LENGTH_9;
   }
 
   private initSourcesAndLayers = () => {

@@ -11,14 +11,19 @@ import {
   locationIdToBoundsCoordinates,
   locationIdToLngLat,
 } from "./helpers";
-import CellPrecision from "./CellPrecision";
-import Cell from "./Cell";
-import cellInfoPopupTemplate from "./cellPopup";
-import gridSelectorModal from "./gridSelectorModal";
+import CellPrecision from "./models/CellPrecision";
+import Cell from "./models/Cell";
+import cellInfoPopupTemplate from "./components/CellPopup/cellPopup";
+import gridSelectorModal from "./components/GridSelectorModal/gridSelectorModal";
 import { polygonFeature } from "../Base/helpers";
+import {
+  gridCellSource,
+  gridLinesSource,
+  GRID_CELL_SOURCE,
+  GRID_LINES_SOURCE,
+} from "./sources";
+import { gridCellFillLayer, gridCellLineLayer, gridLinesLayer } from "./layers";
 
-const GRID_LINES_SOURCE = "controls-grid-lines-source";
-const CELL_SOURCE = "controls-cell-source";
 const GRID_LINES_LAYER = "controls-grid-lines-layer";
 const CELL_FILL_LAYER = "controls-cell-fill-layer";
 const CELL_BORDER_LAYER = "controls-cell-border-layer";
@@ -132,7 +137,7 @@ export default class GridControl extends Base {
 
   private resetCell = () => {
     const cellSource: maplibregl.GeoJSONSource = this.map.getSource(
-      CELL_SOURCE
+      GRID_CELL_SOURCE
     ) as maplibregl.GeoJSONSource;
 
     if (cellSource) {
@@ -145,7 +150,7 @@ export default class GridControl extends Base {
     this.clickedLngLat = locationIdToLngLat(clickedCell.locationId);
 
     const cellSource: maplibregl.GeoJSONSource = this.map.getSource(
-      CELL_SOURCE
+      GRID_CELL_SOURCE
     ) as maplibregl.GeoJSONSource;
 
     if (cellSource) {
@@ -181,55 +186,38 @@ export default class GridControl extends Base {
 
   private addLayersAndSources = () => {
     this.map.getSource(GRID_LINES_SOURCE) === undefined &&
-      this.map.addSource(GRID_LINES_SOURCE, {
-        type: "geojson",
-        data: lineFeatureCollection([]),
-      });
+      this.map.addSource(GRID_LINES_SOURCE, gridLinesSource);
 
-    this.map.getSource(CELL_SOURCE) === undefined &&
-      this.map.addSource(CELL_SOURCE, {
-        type: "geojson",
-        data: polygonFeature([]),
-      });
+    this.map.getSource(GRID_CELL_SOURCE) === undefined &&
+      this.map.addSource(GRID_CELL_SOURCE, gridCellSource);
+
+    const minGridZoom = getMinGridZoom(this.currentPrecision);
 
     this.map.getLayer(GRID_LINES_LAYER) === undefined &&
-      this.map.addLayer({
-        id: GRID_LINES_LAYER,
-        type: "line",
-        source: GRID_LINES_SOURCE,
-        layout: {
-          "line-join": "round",
-          "line-cap": "round",
-        },
-        paint: {
-          "line-color": this.lineColor,
-          "line-width": this.lineWidth,
-        },
-        minzoom: getMinGridZoom(this.currentPrecision),
-      });
+      this.map.addLayer(
+        gridLinesLayer(
+          {
+            "line-color": this.lineColor,
+            "line-width": this.lineWidth,
+          },
+          minGridZoom
+        )
+      );
 
     this.map.getLayer(CELL_FILL_LAYER) === undefined &&
-      this.map.addLayer({
-        id: CELL_FILL_LAYER,
-        type: "fill",
-        source: CELL_SOURCE,
-        paint: {
-          "fill-color": this.cellFillColor,
-        },
-        minzoom: getMinGridZoom(this.currentPrecision),
-      });
+      this.map.addLayer(
+        gridCellFillLayer(
+          {
+            "fill-color": this.cellFillColor,
+          },
+          minGridZoom
+        )
+      );
 
     this.map.getLayer(CELL_BORDER_LAYER) === undefined &&
-      this.map.addLayer({
-        id: CELL_BORDER_LAYER,
-        type: "line",
-        source: CELL_SOURCE,
-        paint: {
-          "line-color": this.cellBorderColor,
-          "line-width": 1,
-        },
-        minzoom: getMinGridZoom(this.currentPrecision),
-      });
+      this.map.addLayer(
+        gridCellLineLayer({ "line-color": this.cellBorderColor }, minGridZoom)
+      );
   };
 
   private showGrid = () => {
@@ -252,7 +240,7 @@ export default class GridControl extends Base {
 
     this.map.removeLayer(CELL_FILL_LAYER);
     this.map.removeLayer(CELL_BORDER_LAYER);
-    this.map.removeSource(CELL_SOURCE);
+    this.map.removeSource(GRID_CELL_SOURCE);
 
     this.removeCellInfoPopup();
   };
@@ -262,7 +250,7 @@ export default class GridControl extends Base {
     this.updateGridLines();
 
     const cellSource: maplibregl.GeoJSONSource = this.map.getSource(
-      CELL_SOURCE
+      GRID_CELL_SOURCE
     ) as maplibregl.GeoJSONSource;
 
     if (cellSource && this.clickedLngLat) {
