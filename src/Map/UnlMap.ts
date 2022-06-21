@@ -13,7 +13,7 @@ import {
   MapTilesControl,
 } from "../controls";
 import { getStyle } from "./styles/MapTilesStyle";
-import ZoomLevel from "./zoomLevels";
+import ZoomLevel from "./models/ZoomLevel";
 
 const DEFAULT_GRID_CONTROL_POSITION = "top-right";
 const DEFAULT_INDOOR_MAPS_CONTROL_POSITION = "top-right";

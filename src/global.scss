@@ -1,9 +1,10 @@
 @import "base/variables";
 @import "base/mixins";
 
-@import "controls/components/controlButton";
-@import "controls/GridControl/grid";
-@import "controls/MapTilesControl/mapTiles";
+@import "controls/components/ControlButton/controlButton";
+@import "controls/GridControl/components/CellPopup/cellPopup";
+@import "controls/GridControl/components/GridSelectorModal/gridSelectorModal";
+@import "controls/MapTilesControl/components/MapTilesTooltip/mapTilesTooltip";
 
 body {
   font-family: $font-type;

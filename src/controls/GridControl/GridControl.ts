@@ -1,5 +1,5 @@
 import { LngLat, MapMouseEvent } from "maplibre-gl";
-import ControlButton from "../components/ControlButton";
+import ControlButton from "../components/ControlButton/ControlButton";
 import gridIcon from "../../icons/ts/GridIcon";
 import selectedGridIcon from "../../icons/ts/SelectedGridIcon";
 import Base from "../Base/Base";
@@ -22,11 +22,14 @@ import {
   GRID_CELL_SOURCE,
   GRID_LINES_SOURCE,
 } from "./sources";
-import { gridCellFillLayer, gridCellLineLayer, gridLinesLayer } from "./layers";
-
-const GRID_LINES_LAYER = "controls-grid-lines-layer";
-const CELL_FILL_LAYER = "controls-cell-fill-layer";
-const CELL_BORDER_LAYER = "controls-cell-border-layer";
+import {
+  gridCellFillLayer,
+  gridCellLineLayer,
+  gridLinesLayer,
+  GRID_CELL_FILL_LAYER,
+  GRID_CELL_LINE_LAYER,
+  GRID_LINES_LAYER,
+} from "./layers";
 
 const DEFAULT_LINES_COLOR = "#C0C0C0";
 const DEFAULT_CELL_FILL_COLOR = "#FFB100";
@@ -86,8 +89,8 @@ export default class GridControl extends Base {
     const newMinGridZoom = getMinGridZoom(this.currentPrecision);
 
     this.map.setLayerZoomRange(GRID_LINES_LAYER, newMinGridZoom, 24);
-    this.map.setLayerZoomRange(CELL_BORDER_LAYER, newMinGridZoom, 24);
-    this.map.setLayerZoomRange(CELL_FILL_LAYER, newMinGridZoom, 24);
+    this.map.setLayerZoomRange(GRID_CELL_LINE_LAYER, newMinGridZoom, 24);
+    this.map.setLayerZoomRange(GRID_CELL_FILL_LAYER, newMinGridZoom, 24);
   };
 
   private insert = () => {
@@ -204,7 +207,7 @@ export default class GridControl extends Base {
         )
       );
 
-    this.map.getLayer(CELL_FILL_LAYER) === undefined &&
+    this.map.getLayer(GRID_CELL_FILL_LAYER) === undefined &&
       this.map.addLayer(
         gridCellFillLayer(
           {
@@ -214,7 +217,7 @@ export default class GridControl extends Base {
         )
       );
 
-    this.map.getLayer(CELL_BORDER_LAYER) === undefined &&
+    this.map.getLayer(GRID_CELL_LINE_LAYER) === undefined &&
       this.map.addLayer(
         gridCellLineLayer({ "line-color": this.cellBorderColor }, minGridZoom)
       );
@@ -238,8 +241,8 @@ export default class GridControl extends Base {
     this.map.removeLayer(GRID_LINES_LAYER);
     this.map.removeSource(GRID_LINES_SOURCE);
 
-    this.map.removeLayer(CELL_FILL_LAYER);
-    this.map.removeLayer(CELL_BORDER_LAYER);
+    this.map.removeLayer(GRID_CELL_FILL_LAYER);
+    this.map.removeLayer(GRID_CELL_LINE_LAYER);
     this.map.removeSource(GRID_CELL_SOURCE);
 
     this.removeCellInfoPopup();

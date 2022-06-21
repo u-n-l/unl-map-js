@@ -13,7 +13,7 @@ import polygonDraw from "../../icons/ts/PolygonDraw";
 import cricleDraw from "../../icons/ts/CricleDraw";
 import rectangleDraw from "../../icons/ts/RectangleDraw";
 import deleteIcon from "../../icons/ts/DeleteIcon";
-import ControlButton from "../components/ControlButton";
+import ControlButton from "../components/ControlButton/ControlButton";
 import CellPrecision from "../GridControl/models/CellPrecision";
 import UnlApi from "../../api/UnlApi";
 import Base from "../Base/Base";

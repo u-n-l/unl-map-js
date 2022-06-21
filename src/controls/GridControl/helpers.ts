@@ -1,6 +1,6 @@
 import { LngLat, LngLatBounds } from "maplibre-gl";
 import UnlCore from "unl-core";
-import ZoomLevel from "../../map/zoomLevels";
+import ZoomLevel from "../../Map/models/ZoomLevel";
 import Cell from "./models/Cell";
 import CellPrecision from "./models/CellPrecision";
 

@@ -1,5 +1,5 @@
 import Base from "../Base/Base";
-import ControlButton from "../components/ControlButton";
+import ControlButton from "../components/ControlButton/ControlButton";
 import {
   getButtonIcon,
   mapTilesTooltip,

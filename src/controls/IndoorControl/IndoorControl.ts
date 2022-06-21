@@ -41,7 +41,7 @@ import {
   VENUE_UNIT_MARKERS_SOURCE,
 } from "./sources";
 import { Record } from "../../api/records/models/Record";
-import ControlButton from "../components/ControlButton";
+import ControlButton from "../components/ControlButton/ControlButton";
 import { featureCollection } from "../Base/helpers";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
 import mapIcons from "./indoorMapIcons";
