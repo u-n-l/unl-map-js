@@ -225,7 +225,7 @@ export default class GridControl extends Base {
         type: "line",
         source: CELL_SOURCE,
         paint: {
-          "line-color": this.lineColor,
+          "line-color": this.cellBorderColor,
           "line-width": 1,
         },
         minzoom: getMinGridZoom(this.currentPrecision),
