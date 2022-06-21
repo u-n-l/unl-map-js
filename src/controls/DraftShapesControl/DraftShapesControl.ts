@@ -1,7 +1,7 @@
 import { FilterSpecification, MapMouseEvent } from "maplibre-gl";
 import MapboxDraw, {
   DrawCreateEvent,
-  DrawSelectionChangeEvent,
+  DrawModeChageEvent,
   DrawUpdateEvent,
 } from "@mapbox/mapbox-gl-draw";
 import ControlButton from "../components/ControlButton";
@@ -24,6 +24,7 @@ import { Record } from "../../api/records/models/Record";
 import { featureCollection, polygonFeature } from "../Base/helpers";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
 import { appendDraftShapeFeatureProperties } from "./helpers";
+import { Feature, GeoJsonProperties, Geometry } from "geojson";
 
 export interface DraftShapesControlOptions {}
 
@@ -36,6 +37,10 @@ export default class DraftShapesControl extends Base {
   private selectedDraftShapeId?: string;
   private draftShapes: Record[];
   private unlApi?: UnlApi;
+  private updatedDraftShape?: {
+    id: string;
+    feature: Feature<Geometry, GeoJsonProperties>;
+  };
 
   constructor(options?: DraftShapesControlOptions) {
     super();
@@ -130,30 +135,45 @@ export default class DraftShapesControl extends Base {
   };
 
   private handleDrawUpdate = (event: DrawUpdateEvent) => {
-    const updatedDraftShapeId = event.features[0].properties?.id;
+    this.updatedDraftShape = {
+      id: event.features[0].properties?.id,
+      feature: appendDraftShapeFeatureProperties({
+        geometry: event.features[0].geometry,
+        properties: event.features[0].properties,
+        type: event.features[0].type,
+      }),
+    };
+  };
 
-    this.unlApi?.recordsApi
-      .update(
-        this.map.getVpmId(),
-        updatedDraftShapeId,
-        appendDraftShapeFeatureProperties({
-          geometry: event.features[0].geometry,
-          properties: event.features[0].properties,
-          type: event.features[0].type,
-        })
-      )
-      .then((value) => {
-        this.map.setFilter(DRAFT_SHAPES_FILL_LAYER, null);
-        this.map.setFilter(DRAFT_SHAPES_LINE_LAYER, null);
+  private handleModeChange = (event: DrawModeChageEvent) => {
+    if (event.mode === "simple_select" && this.updatedDraftShape) {
+      this.unlApi?.recordsApi
+        .update(
+          this.map.getVpmId(),
+          this.updatedDraftShape.id,
+          this.updatedDraftShape.feature
+        )
+        .then((value) => {
+          this.map.setFilter(DRAFT_SHAPES_FILL_LAYER, null);
+          this.map.setFilter(DRAFT_SHAPES_LINE_LAYER, null);
 
-        this.draftShapes = this.draftShapes.map((draftShape) =>
-          draftShape.recordId === value.recordId ? value : draftShape
-        );
+          this.draftShapes = this.draftShapes.map((draftShape) =>
+            draftShape.recordId === value.recordId ? value : draftShape
+          );
 
-        this.updateDraftShapeSource(this.draftShapes);
-        this.draw.set(featureCollection([]));
-        this.selectedDraftShapeId = undefined;
-      });
+          this.updateDraftShapeSource(this.draftShapes);
+          this.draw.set(featureCollection([]));
+          this.selectedDraftShapeId = undefined;
+          this.updatedDraftShape = undefined;
+        });
+      this.updatedDraftShape = undefined;
+    }
+
+    if (event.mode === "direct_select") {
+      this.deleteButton.node.style.display = "flex";
+    } else {
+      this.deleteButton.node.style.display = "none";
+    }
   };
 
   private handleDraftShapeDelete = () => {
@@ -174,6 +194,7 @@ export default class DraftShapesControl extends Base {
         this.updateDraftShapeSource(this.draftShapes);
         this.draw.set(featureCollection([]));
         this.selectedDraftShapeId = undefined;
+        this.updatedDraftShape = undefined;
         this.deleteButton.node.style.display = "none";
       });
   };
@@ -208,21 +229,13 @@ export default class DraftShapesControl extends Base {
     this.draw.changeMode("simple_select");
   };
 
-  private toggleDeleteButton = (event: DrawSelectionChangeEvent) => {
-    if (event.features.length === 0) {
-      this.deleteButton.node.style.display = "none";
-    } else if (event.features.length > 0) {
-      this.deleteButton.node.style.display = "flex";
-    }
-  };
-
   private initDrawControl = () => {
     //@ts-ignore
     this.map.addControl(this.draw, "top-right");
 
     this.map.on("draw.create", this.handleDrawCreate);
     this.map.on("draw.update", this.handleDrawUpdate);
-    this.map.on("draw.selectionchange", this.toggleDeleteButton);
+    this.map.on("draw.modechange", this.handleModeChange);
 
     this.map.on("click", DRAFT_SHAPES_FILL_LAYER, this.handleDraftShapeClick);
     this.map.on("click", DRAFT_SHAPES_LINE_LAYER, this.handleDraftShapeClick);
