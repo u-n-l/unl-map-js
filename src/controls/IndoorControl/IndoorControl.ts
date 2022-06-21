@@ -44,8 +44,8 @@ import { Record } from "../../api/records/models/Record";
 import ControlButton from "../components/ControlButton";
 import { featureCollection } from "../Base/helpers";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
-import mapIcons from "./mapIcons";
-import { MapIcon } from "../models/MapIcon";
+import mapIcons from "./indoorMapIcons";
+import { MapIcon } from "../../Map/models/MapIcon";
 
 const DISPLAYED_FEATURE_TYPES: ImdfFeatureType[] = [
   "level",
@@ -53,8 +53,6 @@ const DISPLAYED_FEATURE_TYPES: ImdfFeatureType[] = [
   "opening",
   "venue",
 ];
-
-export interface IndoorControlOptions {}
 
 export default class IndoorControl extends Base {
   private selectedLevel: number;

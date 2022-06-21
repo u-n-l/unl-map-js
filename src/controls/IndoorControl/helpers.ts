@@ -1,6 +1,6 @@
 import { Record } from "../../api/records/models/Record";
 import { polygonFeature } from "../Base/helpers";
-import { FacilityCategory } from "./FacilityCategory";
+import { FacilityCategory } from "./models/FacilityCategory";
 
 export const getIsFacility = (feature: GeoJSON.Feature) => {
   if (!feature.properties || !feature.properties.category) {

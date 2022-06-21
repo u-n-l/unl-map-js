@@ -1,12 +1,23 @@
 import Base from "../Base/Base";
 import ControlButton from "../components/ControlButton";
-import { getButtonIcon, mapTilesTooltip } from "./mapTilesTooltip";
+import {
+  getButtonIcon,
+  mapTilesTooltip,
+} from "./components/MapTilesTooltip/mapTilesTooltip";
 import { getStyle, MapTilesStyle } from "../../Map/styles/MapTilesStyle";
 
 export interface MapTilesControlOptions {
   displayControlsDefault: boolean;
   styles?: MapTilesStyle[];
 }
+
+const TILES_DEFAULT_OPTIONS: MapTilesStyle[] = [
+  "vectorial",
+  "satellite",
+  "terrain",
+  "traffic",
+  "base",
+];
 
 export default class MapTilesControl extends Base {
   private displayControlsDefault: boolean;
@@ -19,7 +30,7 @@ export default class MapTilesControl extends Base {
     super();
 
     this.displayControlsDefault = options.displayControlsDefault;
-    this.styles = options?.styles ?? this.defaultOptions;
+    this.styles = options?.styles ?? TILES_DEFAULT_OPTIONS;
     this.mapTilesButtons = [];
 
     this.button = new ControlButton().setIcon(
@@ -38,7 +49,18 @@ export default class MapTilesControl extends Base {
     );
   }
 
-  private insert() {
+  private handleClickAway = (event: MouseEvent) => {
+    //@ts-ignore
+    var isClickInsideTooltip = tooltip.contains(event.target);
+    //@ts-ignore
+    var isClickOnMapTilesButton = mapTilesButton.node.contains(event.target);
+    if (!isClickOnMapTilesButton && !isClickInsideTooltip) {
+      //@ts-ignore
+      tooltip?.style.display = "none";
+    }
+  };
+
+  private insert = () => {
     this.button.onClick(this.toggleMapTiles);
     this.button.node.style.position = "relative";
     this.button.node.appendChild(this.tooltip);
@@ -49,21 +71,8 @@ export default class MapTilesControl extends Base {
     const tooltip = this.tooltip;
     const mapTilesButton = this.button;
 
-    document.addEventListener("click", function (event) {
-      //@ts-ignore
-      var isClickInsideTooltip = tooltip.contains(event.target);
-      //@ts-ignore
-      var isClickOnMapTilesButton = mapTilesButton.node.contains(event.target);
-      if (!isClickOnMapTilesButton && !isClickInsideTooltip) {
-        //@ts-ignore
-        tooltip?.style.display = "none";
-      }
-    });
-  }
-
-  private get defaultOptions(): MapTilesStyle[] {
-    return ["vectorial", "satellite", "terrain", "traffic", "base"];
-  }
+    document.addEventListener("click", this.handleClickAway);
+  };
 
   private toggleMapTiles = () => {
     if (this.tooltip.style.display === "block") {
@@ -110,5 +119,7 @@ export default class MapTilesControl extends Base {
     }
   };
 
-  protected onRemoveControl = () => {};
+  protected onRemoveControl = () => {
+    document.removeEventListener("click", this.handleClickAway);
+  };
 }

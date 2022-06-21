@@ -1,9 +1,9 @@
-import baseTiles from "../../icons/ts/BaseTilesIcon";
-import vectorialTiles from "../../icons/ts/VectorialTilesIcon";
-import satelliteTiles from "../../icons/ts/SatelliteTilesIcon";
-import terrainTiles from "../../icons/ts/TerrainTilesIcon";
-import trafficTiles from "../../icons/ts/TrafficTilesIcon";
-import { MapTilesStyle } from "../../Map/styles/MapTilesStyle";
+import baseTiles from "../../../../icons/ts/BaseTilesIcon";
+import vectorialTiles from "../../../../icons/ts/VectorialTilesIcon";
+import satelliteTiles from "../../../../icons/ts/SatelliteTilesIcon";
+import terrainTiles from "../../../../icons/ts/TerrainTilesIcon";
+import trafficTiles from "../../../../icons/ts/TrafficTilesIcon";
+import { MapTilesStyle } from "../../../../Map/styles/MapTilesStyle";
 
 export const getButtonIcon = (style: MapTilesStyle) => {
   switch (style) {

@@ -1,4 +1,4 @@
-export enum MapIconName {
+export enum IndoorMapIconName {
   VENUE_MARKER_ICON = "venue-marker-icon",
   VENUE_UNIT = "venue-unit-marker-icon",
   SMALL_VENUE_UNIT = "small-venue-unit-marker-icon",
