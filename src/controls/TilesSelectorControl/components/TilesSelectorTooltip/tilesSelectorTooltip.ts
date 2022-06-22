@@ -3,7 +3,7 @@ import vectorialTiles from "../../../../icons/ts/VectorialTilesIcon";
 import satelliteTiles from "../../../../icons/ts/SatelliteTilesIcon";
 import terrainTiles from "../../../../icons/ts/TerrainTilesIcon";
 import trafficTiles from "../../../../icons/ts/TrafficTilesIcon";
-import { MapTiles } from "../../../../Map/styles/MapTiles";
+import { MapTiles } from "../../styles/MapTiles";
 
 export const getButtonIcon = (tiles: MapTiles) => {
   switch (tiles) {

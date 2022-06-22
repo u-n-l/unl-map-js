@@ -1,21 +1,11 @@
-import {
-  ControlPosition,
-  DragPanOptions,
-  LngLatBoundsLike,
-  LngLatLike,
-  Map,
-  MapOptions,
-  RequestTransformFunction,
-  StyleOptions,
-  StyleSpecification,
-} from "maplibre-gl";
+import { ControlPosition, Map, MapOptions } from "maplibre-gl";
+import { getStyle } from "../controls/TilesSelectorControl/styles/MapTiles";
 import {
   DraftShapesControl,
   GridControl,
   IndoorControl,
   TilesSelectorControl,
 } from "../controls";
-import { getStyle } from "./styles/MapTiles";
 import ZoomLevel from "./models/ZoomLevel";
 
 const DEFAULT_GRID_CONTROL_POSITION = "top-right";
@@ -43,7 +33,6 @@ class UnlMap extends Map {
   constructor(options: UnlMapOptions) {
     super({
       ...options,
-      //@ts-ignore
       style: options.style ?? getStyle(),
       minZoom: options.minZoom ?? ZoomLevel.MIN_ZOOM,
       maxZoom: options.maxZoom ?? ZoomLevel.MAX_ZOOM,
