@@ -48,6 +48,7 @@ import { MapIcon } from "../models/MapIcon";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
 import { venueRecordsList } from "../LibraryControl/venueRecordsList";
 import LibraryControl from "../LibraryControl/LibraryControl";
+import ZoomLevel from "../../map/zoomLevels";
 
 const DISPLAYED_FEATURE_TYPES: ImdfFeatureType[] = [
   "level",
@@ -142,6 +143,7 @@ export default class IndoorControl extends Base {
   };
 
   fetchImdfVenueData = (venueId: string) => {
+    console.log("gere", venueId);
     this.unlApi?.venuesApi
       .getImdfFeatures(
         this.map.getVpmId(),
@@ -256,6 +258,19 @@ export default class IndoorControl extends Base {
     }
   };
 
+  handleVenueSelect = (venuId: string, latitude: number, longitude: number) => {
+    this.fetchImdfVenueData(venuId);
+
+    this.map.flyTo({
+      center: [longitude, latitude],
+      zoom: ZoomLevel.DEFAULT_ZOOM,
+      bearing: 0,
+      speed: 0.9,
+      curve: 2,
+      essential: true,
+    });
+  };
+
   fetchVenueRecords = () => {
     this.unlApi?.recordsApi
       .getAll(this.map.getVpmId(), RecordFeatureType.VENUE, {
@@ -265,7 +280,10 @@ export default class IndoorControl extends Base {
         if (records && records.items) {
           this.venueRecords = this.venueRecords!.concat(records.items);
 
-          this.venueRecordsList = venueRecordsList(this.venueRecords);
+          this.venueRecordsList = venueRecordsList(
+            this.venueRecords,
+            this.handleVenueSelect
+          );
           this.map.getContainer().appendChild(this.venueRecordsList);
 
           this.updateVenueMarkerAndFootprintSources(this.venueRecords);

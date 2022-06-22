@@ -1,6 +1,13 @@
 import { Record } from "../../api/records/models/Record";
 
-export const venueRecordsList = (records: Record[]) => {
+export const venueRecordsList = (
+  records: Record[],
+  handleVenueSelect: (
+    venueId: string,
+    latitude: number,
+    longitude: number
+  ) => void
+) => {
   const wrapper = document.createElement("div");
   wrapper.classList.add("mapbox-control-venues-list-root");
   wrapper.setAttribute("id", "grid-venues-list");
@@ -18,6 +25,10 @@ export const venueRecordsList = (records: Record[]) => {
           Object.keys(record.geojson.properties.name)[0]
         ]
       )
+    );
+    //@ts-ignore
+    option.addEventListener("click", () =>
+      handleVenueSelect(record.venueId!, record.latitude, record.longitude)
     );
     list.appendChild(option);
   });
