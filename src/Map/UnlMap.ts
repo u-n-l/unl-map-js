@@ -4,6 +4,7 @@ import {
   LngLatBoundsLike,
   LngLatLike,
   Map,
+  MapOptions,
   RequestTransformFunction,
   StyleOptions,
   StyleSpecification,
@@ -22,56 +23,16 @@ const DEFAULT_INDOOR_MAPS_CONTROL_POSITION = "top-right";
 const DEFAULT_TILES_SELECTOR_CONTROL_POSITION = "top-left";
 const DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON = "top-left";
 
-export type UnlMapOptions = {
-  //additional options
+export type UnlMapOptions = Omit<
+  MapOptions,
+  "maplibreLogo" | "logoPosition"
+> & {
   apiKey: string;
   vpmId: string;
   gridControl?: boolean;
   indoorMapsControl?: boolean;
   tilesSelectorControl?: boolean;
   draftShapesControl?: boolean;
-  // maplibreLogo, logoPosition and style were removed from the original MapOptions
-  hash?: boolean | string;
-  interactive?: boolean;
-  container: HTMLElement | string;
-  bearingSnap?: number;
-  attributionControl?: boolean;
-  customAttribution?: string | Array<string>;
-  failIfMajorPerformanceCaveat?: boolean;
-  preserveDrawingBuffer?: boolean;
-  antialias?: boolean;
-  refreshExpiredTiles?: boolean;
-  maxBounds?: LngLatBoundsLike;
-  scrollZoom?: boolean;
-  minZoom?: number | null;
-  maxZoom?: number | null;
-  minPitch?: number | null;
-  maxPitch?: number | null;
-  boxZoom?: boolean;
-  dragRotate?: boolean;
-  dragPan?: DragPanOptions | boolean;
-  keyboard?: boolean;
-  doubleClickZoom?: boolean;
-  touchZoomRotate?: boolean;
-  touchPitch?: boolean;
-  trackResize?: boolean;
-  center?: LngLatLike;
-  zoom?: number;
-  bearing?: number;
-  pitch?: number;
-  renderWorldCopies?: boolean;
-  maxTileCacheSize?: number;
-  transformRequest?: RequestTransformFunction;
-  locale?: any;
-  fadeDuration?: number;
-  crossSourceCollisions?: boolean;
-  collectResourceTiming?: boolean;
-  clickTolerance?: number;
-  bounds?: LngLatBoundsLike;
-  fitBoundsOptions?: Object;
-  localIdeographFontFamily?: string;
-  pitchWithRotate?: boolean;
-  pixelRatio?: number;
 };
 
 class UnlMap extends Map {
@@ -83,7 +44,7 @@ class UnlMap extends Map {
     super({
       ...options,
       //@ts-ignore
-      style: getStyle(),
+      style: options.style ?? getStyle(),
       minZoom: options.minZoom ?? ZoomLevel.MIN_ZOOM,
       maxZoom: options.maxZoom ?? ZoomLevel.MAX_ZOOM,
       maplibreLogo: false,
