@@ -4,7 +4,7 @@ import {
   getButtonIcon,
   mapTilesTooltip,
 } from "./components/TilesSelectorTooltip/tilesSelectorTooltip";
-import { getStyle, MapTiles } from "../../Map/styles/MapTiles";
+import { getStyle, MapTiles } from "./styles/MapTiles";
 
 export interface TilesSelectorControlOptions {
   displayControlsDefault?: boolean;
