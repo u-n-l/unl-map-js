@@ -4,24 +4,30 @@ import {
   LngLatBoundsLike,
   LngLatLike,
   Map,
+  MapOptions,
   RequestTransformFunction,
+  StyleOptions,
+  StyleSpecification,
 } from "maplibre-gl";
 import {
   DraftShapesControl,
   GridControl,
   IndoorControl,
-  MapTilesControl,
   LibraryControl,
+  TilesSelectorControl,
 } from "../controls";
-import { getStyle } from "./styles/MapTilesStyle";
-import ZoomLevel from "./zoomLevels";
+import { getStyle } from "./styles/MapTiles";
+import ZoomLevel from "./models/ZoomLevel";
 
 const DEFAULT_GRID_CONTROL_POSITION = "top-right";
 const DEFAULT_INDOOR_MAPS_CONTROL_POSITION = "top-right";
 const DEFAULT_TILES_SELECTOR_CONTROL_POSITION = "top-left";
 const DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON = "top-left";
 
-export type UnlMapOptions = {
+export type UnlMapOptions = Omit<
+  MapOptions,
+  "maplibreLogo" | "logoPosition"
+> & {
   apiKey: string;
   vpmId: string;
   gridControl?: boolean;
@@ -32,62 +38,20 @@ export type UnlMapOptions = {
   mapTilesControl?: boolean;
   mapTilesControlPosition?: ControlPosition;
   displayMapTilesControlDefault?: boolean;
+  tilesSelectorControl?: boolean;
   draftShapesControl?: boolean;
-  draftShapesControlPosition?: ControlPosition;
-  hash?: boolean | string;
-  interactive?: boolean;
-  container: HTMLElement | string;
-  bearingSnap?: number;
-  attributionControl?: boolean;
-  customAttribution?: string | Array<string>;
-  failIfMajorPerformanceCaveat?: boolean;
-  preserveDrawingBuffer?: boolean;
-  antialias?: boolean;
-  refreshExpiredTiles?: boolean;
-  maxBounds?: LngLatBoundsLike;
-  scrollZoom?: boolean;
-  minZoom?: number | null;
-  maxZoom?: number | null;
-  minPitch?: number | null;
-  maxPitch?: number | null;
-  boxZoom?: boolean;
-  dragRotate?: boolean;
-  dragPan?: DragPanOptions | boolean;
-  keyboard?: boolean;
-  doubleClickZoom?: boolean;
-  touchZoomRotate?: boolean;
-  touchPitch?: boolean;
-  trackResize?: boolean;
-  center?: LngLatLike;
-  zoom?: number;
-  bearing?: number;
-  pitch?: number;
-  renderWorldCopies?: boolean;
-  maxTileCacheSize?: number;
-  transformRequest?: RequestTransformFunction;
-  locale?: any;
-  fadeDuration?: number;
-  crossSourceCollisions?: boolean;
-  collectResourceTiming?: boolean;
-  clickTolerance?: number;
-  bounds?: LngLatBoundsLike;
-  fitBoundsOptions?: Object;
-  localIdeographFontFamily?: string;
-  pitchWithRotate?: boolean;
-  pixelRatio?: number;
 };
 
 class UnlMap extends Map {
   apiKey: string;
   vpmId: string;
   mapTilesControlPosition: ControlPosition;
-  displayMapTilesControlDefault: boolean;
 
   constructor(options: UnlMapOptions) {
     super({
       ...options,
       //@ts-ignore
-      style: getStyle(),
+      style: options.style ?? getStyle(),
       minZoom: options.minZoom ?? ZoomLevel.MIN_ZOOM,
       maxZoom: options.maxZoom ?? ZoomLevel.MAX_ZOOM,
       maplibreLogo: false,
@@ -96,11 +60,7 @@ class UnlMap extends Map {
 
     this.apiKey = options.apiKey;
     this.vpmId = options.vpmId;
-    this.mapTilesControlPosition =
-      options.mapTilesControlPosition ??
-      DEFAULT_TILES_SELECTOR_CONTROL_POSITION;
-    this.displayMapTilesControlDefault =
-      options.displayMapTilesControlDefault ?? true;
+    this.mapTilesControlPosition = DEFAULT_TILES_SELECTOR_CONTROL_POSITION;
 
     if (options.indoorMapsControl) {
       this.addControl(
@@ -109,10 +69,10 @@ class UnlMap extends Map {
           DEFAULT_INDOOR_MAPS_CONTROL_POSITION
       );
     }
-    if (options.mapTilesControl) {
+    if (options.tilesSelectorControl) {
       this.addControl(
-        new MapTilesControl({
-          displayControlsDefault: this.displayMapTilesControlDefault,
+        new TilesSelectorControl({
+          displayControlsDefault: true,
         }),
         this.mapTilesControlPosition
       );
@@ -120,15 +80,11 @@ class UnlMap extends Map {
     if (options.draftShapesControl) {
       this.addControl(
         new DraftShapesControl(),
-        options.draftShapesControlPosition ??
-          DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON
+        DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON
       );
     }
     if (options.gridControl) {
-      this.addControl(
-        new GridControl(),
-        options.gridControlPosition ?? DEFAULT_GRID_CONTROL_POSITION
-      );
+      this.addControl(new GridControl(), DEFAULT_GRID_CONTROL_POSITION);
     }
   }
 
@@ -142,10 +98,6 @@ class UnlMap extends Map {
 
   getMapTilesControlPosition = () => {
     return this.mapTilesControlPosition;
-  };
-
-  getDisplayMapTilesControlsDefault = () => {
-    return this.displayMapTilesControlDefault;
   };
 }
 

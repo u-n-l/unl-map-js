@@ -1,5 +1,5 @@
 import { LayerSpecification } from "maplibre-gl";
-import ZoomLevel from "../../map/zoomLevels";
+import ZoomLevel from "../../Map/models/ZoomLevel";
 import {
   VENUE_FOOTPRINT_SOURCE,
   VENUE_LEVEL_SOURCE,

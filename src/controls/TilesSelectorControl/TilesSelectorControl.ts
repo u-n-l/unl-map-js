@@ -1,34 +1,48 @@
 import Base from "../Base/Base";
-import ControlButton from "../components/ControlButton";
-import { getButtonIcon, mapTilesTooltip } from "./mapTilesTooltip";
-import { getStyle, MapTilesStyle } from "../../Map/styles/MapTilesStyle";
+import ControlButton from "../components/ControlButton/ControlButton";
+import {
+  getButtonIcon,
+  mapTilesTooltip,
+} from "./components/TilesSelectorTooltip/tilesSelectorTooltip";
+import { getStyle, MapTiles } from "../../Map/styles/MapTiles";
 
-export interface MapTilesControlOptions {
-  displayControlsDefault: boolean;
-  styles?: MapTilesStyle[];
+export interface TilesSelectorControlOptions {
+  displayControlsDefault?: boolean;
+  tiles?: MapTiles[];
 }
 
-export default class MapTilesControl extends Base {
-  displayControlsDefault: boolean;
-  styles: MapTilesStyle[];
-  button: ControlButton;
-  tooltip: HTMLDivElement;
-  mapTilesButtons: HTMLButtonElement[];
+const TILES_DEFAULT_OPTIONS: MapTiles[] = [
+  "vectorial",
+  "satellite",
+  "terrain",
+  "traffic",
+  "base",
+];
 
-  constructor(options: MapTilesControlOptions) {
+export default class TilesSelectorControl extends Base {
+  private displayControlsDefault: boolean;
+  private tiles: MapTiles[];
+  private button: ControlButton;
+  private tooltip: HTMLDivElement;
+  private mapTilesButtons: HTMLButtonElement[];
+
+  constructor(options?: TilesSelectorControlOptions) {
     super();
 
-    this.displayControlsDefault = options.displayControlsDefault;
-    this.styles = options?.styles ?? this.defaultOptions;
+    this.displayControlsDefault =
+      options?.displayControlsDefault !== undefined
+        ? options.displayControlsDefault
+        : true;
+    this.tiles = options?.tiles ?? TILES_DEFAULT_OPTIONS;
     this.mapTilesButtons = [];
 
     this.button = new ControlButton().setIcon(
       //@ts-ignore
-      getButtonIcon(this.defaultOptions[0])
+      getButtonIcon(TILES_DEFAULT_OPTIONS[0])
     );
 
     this.tooltip = mapTilesTooltip(
-      this.styles,
+      this.tiles,
       (style) => {
         this.setStyle(style);
         //@ts-ignore
@@ -38,34 +52,29 @@ export default class MapTilesControl extends Base {
     );
   }
 
-  insert() {
+  private insert = () => {
     this.button.onClick(this.toggleMapTiles);
     this.button.node.style.position = "relative";
     this.button.node.appendChild(this.tooltip);
     this.setTooltipPosition();
 
     this.addButton(this.button);
-
     const tooltip = this.tooltip;
-    const mapTilesButton = this.button;
+    const button = this.button;
 
-    document.addEventListener("click", function (event) {
+    document.addEventListener("click", (event: MouseEvent) => {
       //@ts-ignore
       var isClickInsideTooltip = tooltip.contains(event.target);
       //@ts-ignore
-      var isClickOnMapTilesButton = mapTilesButton.node.contains(event.target);
+      var isClickOnMapTilesButton = button.node.contains(event.target);
       if (!isClickOnMapTilesButton && !isClickInsideTooltip) {
         //@ts-ignore
         tooltip?.style.display = "none";
       }
     });
-  }
+  };
 
-  get defaultOptions(): MapTilesStyle[] {
-    return ["vectorial", "satellite", "terrain", "traffic", "base"];
-  }
-
-  toggleMapTiles = () => {
+  private toggleMapTiles = () => {
     if (this.tooltip.style.display === "block") {
       this.tooltip.style.display = "none";
     } else {
@@ -73,7 +82,7 @@ export default class MapTilesControl extends Base {
     }
   };
 
-  setTooltipPosition = () => {
+  private setTooltipPosition = () => {
     switch (this.map.getMapTilesControlPosition()) {
       case "bottom-left":
         this.tooltip.style.marginLeft = "40px";
@@ -98,17 +107,19 @@ export default class MapTilesControl extends Base {
     }
   };
 
-  setStyle = (style: MapTilesStyle) => {
+  setStyle = (style: MapTiles) => {
     const styleFile = getStyle(style);
     //@ts-ignore
     this.map.setStyle(styleFile);
   };
 
-  onAddControl = () => {
+  protected onAddControl = () => {
     if (this.displayControlsDefault) {
       this.insert();
     }
   };
 
-  onRemoveControl = () => {};
+  protected onRemoveControl = () => {
+    // document.removeEventListener("click", this.handleClickAway);
+  };
 }

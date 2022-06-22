@@ -1,10 +1,10 @@
 import UnlMap from "../../map/UnlMap";
-import ControlButton from "../components/ControlButton";
+import ControlButton from "../components/ControlButton/ControlButton";
 
 class Base {
-  node: HTMLDivElement;
+  protected node: HTMLDivElement;
   //@ts-ignore
-  map: UnlMap;
+  protected map: UnlMap;
 
   constructor() {
     this.node = document.createElement("div");
@@ -13,27 +13,27 @@ class Base {
     this.node.classList.add("mapbox-control");
   }
 
-  onAddControl = () => {
+  protected onAddControl = () => {
     //to be extended
   };
 
-  onRemoveControl = () => {
+  protected onRemoveControl = () => {
     //to be extended
   };
 
-  addButton = (...buttons: ControlButton[]) => {
+  protected addButton = (...buttons: ControlButton[]) => {
     buttons.forEach((button) => this.node.appendChild(button.node));
   };
 
-  removeButton = (...buttons: ControlButton[]) => {
+  protected removeButton = (...buttons: ControlButton[]) => {
     buttons.forEach((button) => this.node.removeChild(button.node));
   };
 
-  addClassName = (className: string) => {
+  protected addClassName = (className: string) => {
     this.node.classList.add(className);
   };
 
-  removeClassName = (className: string) => {
+  protected removeClassName = (className: string) => {
     this.node.classList.remove(className);
   };
 
