@@ -52,19 +52,6 @@ export default class TilesSelectorControl extends Base {
     );
   }
 
-  private handleClickAway = (event: MouseEvent) => {
-    //@ts-ignore
-    var isClickInsideTooltip = this.tooltip.contains(event.target);
-    //@ts-ignore
-    var isClickOnMapTilesButton = this.mapTilesButton.node.contains(
-      event.target
-    );
-    if (!isClickOnMapTilesButton && !isClickInsideTooltip) {
-      //@ts-ignore
-      tooltip?.style.display = "none";
-    }
-  };
-
   private insert = () => {
     this.button.onClick(this.toggleMapTiles);
     this.button.node.style.position = "relative";
@@ -72,7 +59,19 @@ export default class TilesSelectorControl extends Base {
     this.setTooltipPosition();
 
     this.addButton(this.button);
-    document.addEventListener("click", this.handleClickAway);
+    const tooltip = this.tooltip;
+    const button = this.button;
+
+    document.addEventListener("click", (event: MouseEvent) => {
+      //@ts-ignore
+      var isClickInsideTooltip = tooltip.contains(event.target);
+      //@ts-ignore
+      var isClickOnMapTilesButton = button.node.contains(event.target);
+      if (!isClickOnMapTilesButton && !isClickInsideTooltip) {
+        //@ts-ignore
+        tooltip?.style.display = "none";
+      }
+    });
   };
 
   private toggleMapTiles = () => {
@@ -121,6 +120,6 @@ export default class TilesSelectorControl extends Base {
   };
 
   protected onRemoveControl = () => {
-    document.removeEventListener("click", this.handleClickAway);
+    // document.removeEventListener("click", this.handleClickAway);
   };
 }
