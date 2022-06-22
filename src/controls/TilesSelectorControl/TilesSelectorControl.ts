@@ -1,34 +1,48 @@
 import Base from "../Base/Base";
-import ControlButton from "../components/ControlButton";
-import { getButtonIcon, mapTilesTooltip } from "./mapTilesTooltip";
-import { getStyle, MapTilesStyle } from "../../Map/styles/MapTilesStyle";
+import ControlButton from "../components/ControlButton/ControlButton";
+import {
+  getButtonIcon,
+  mapTilesTooltip,
+} from "./components/TilesSelectorTooltip/tilesSelectorTooltip";
+import { getStyle, MapTiles } from "../../Map/styles/MapTiles";
 
-export interface MapTilesControlOptions {
-  displayControlsDefault: boolean;
-  styles?: MapTilesStyle[];
+export interface TilesSelectorControlOptions {
+  displayControlsDefault?: boolean;
+  tiles?: MapTiles[];
 }
 
-export default class MapTilesControl extends Base {
+const TILES_DEFAULT_OPTIONS: MapTiles[] = [
+  "vectorial",
+  "satellite",
+  "terrain",
+  "traffic",
+  "base",
+];
+
+export default class TilesSelectorControl extends Base {
   private displayControlsDefault: boolean;
-  private styles: MapTilesStyle[];
+  private tiles: MapTiles[];
   private button: ControlButton;
   private tooltip: HTMLDivElement;
   private mapTilesButtons: HTMLButtonElement[];
 
-  constructor(options: MapTilesControlOptions) {
+  constructor(options?: TilesSelectorControlOptions) {
     super();
 
-    this.displayControlsDefault = options.displayControlsDefault;
-    this.styles = options?.styles ?? this.defaultOptions;
+    this.displayControlsDefault =
+      options?.displayControlsDefault !== undefined
+        ? options.displayControlsDefault
+        : true;
+    this.tiles = options?.tiles ?? TILES_DEFAULT_OPTIONS;
     this.mapTilesButtons = [];
 
     this.button = new ControlButton().setIcon(
       //@ts-ignore
-      getButtonIcon(this.defaultOptions[0])
+      getButtonIcon(TILES_DEFAULT_OPTIONS[0])
     );
 
     this.tooltip = mapTilesTooltip(
-      this.styles,
+      this.tiles,
       (style) => {
         this.setStyle(style);
         //@ts-ignore
@@ -38,32 +52,27 @@ export default class MapTilesControl extends Base {
     );
   }
 
-  private insert() {
+  private insert = () => {
     this.button.onClick(this.toggleMapTiles);
     this.button.node.style.position = "relative";
     this.button.node.appendChild(this.tooltip);
     this.setTooltipPosition();
 
     this.addButton(this.button);
-
     const tooltip = this.tooltip;
-    const mapTilesButton = this.button;
+    const button = this.button;
 
-    document.addEventListener("click", function (event) {
+    document.addEventListener("click", (event: MouseEvent) => {
       //@ts-ignore
       var isClickInsideTooltip = tooltip.contains(event.target);
       //@ts-ignore
-      var isClickOnMapTilesButton = mapTilesButton.node.contains(event.target);
+      var isClickOnMapTilesButton = button.node.contains(event.target);
       if (!isClickOnMapTilesButton && !isClickInsideTooltip) {
         //@ts-ignore
         tooltip?.style.display = "none";
       }
     });
-  }
-
-  private get defaultOptions(): MapTilesStyle[] {
-    return ["vectorial", "satellite", "terrain", "traffic", "base"];
-  }
+  };
 
   private toggleMapTiles = () => {
     if (this.tooltip.style.display === "block") {
@@ -98,7 +107,7 @@ export default class MapTilesControl extends Base {
     }
   };
 
-  setStyle = (style: MapTilesStyle) => {
+  setStyle = (style: MapTiles) => {
     const styleFile = getStyle(style);
     //@ts-ignore
     this.map.setStyle(styleFile);
@@ -110,5 +119,7 @@ export default class MapTilesControl extends Base {
     }
   };
 
-  protected onRemoveControl = () => {};
+  protected onRemoveControl = () => {
+    // document.removeEventListener("click", this.handleClickAway);
+  };
 }

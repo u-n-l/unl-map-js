@@ -41,11 +41,11 @@ import {
   VENUE_UNIT_MARKERS_SOURCE,
 } from "./sources";
 import { Record } from "../../api/records/models/Record";
-import ControlButton from "../components/ControlButton";
+import ControlButton from "../components/ControlButton/ControlButton";
 import { featureCollection } from "../Base/helpers";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
-import mapIcons from "./mapIcons";
-import { MapIcon } from "../models/MapIcon";
+import mapIcons from "./indoorMapIcons";
+import { MapIcon } from "../../Map/models/MapIcon";
 
 const DISPLAYED_FEATURE_TYPES: ImdfFeatureType[] = [
   "level",
@@ -54,7 +54,7 @@ const DISPLAYED_FEATURE_TYPES: ImdfFeatureType[] = [
   "venue",
 ];
 
-export interface IndoorControlOptions {}
+const MAX_NUMBER_OF_VENUES = 1000;
 
 export default class IndoorControl extends Base {
   private selectedLevel: number;
@@ -263,7 +263,9 @@ export default class IndoorControl extends Base {
 
   private fetchVenueRecords = () => {
     this.unlApi?.recordsApi
-      .getAll(this.map.getVpmId(), RecordFeatureType.VENUE)
+      .getAll(this.map.getVpmId(), RecordFeatureType.VENUE, {
+        limit: MAX_NUMBER_OF_VENUES,
+      })
       .then((records) => {
         if (records && records.items) {
           this.updateVenueMarkerAndFootprintSources(records.items);

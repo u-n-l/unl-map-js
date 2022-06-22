@@ -1,5 +1,5 @@
 import UnlMap from "../../map/UnlMap";
-import ControlButton from "../components/ControlButton";
+import ControlButton from "../components/ControlButton/ControlButton";
 
 class Base {
   protected node: HTMLDivElement;

@@ -1,8 +1,8 @@
 import { LngLat, LngLatBounds } from "maplibre-gl";
 import UnlCore from "unl-core";
-import ZoomLevel from "../../map/zoomLevels";
-import Cell from "./Cell";
-import CellPrecision from "./CellPrecision";
+import ZoomLevel from "../../Map/models/ZoomLevel";
+import Cell from "./models/Cell";
+import CellPrecision from "./models/CellPrecision";
 
 const MAX_NUMBER_OF_LINES = 10000;
 
@@ -154,7 +154,6 @@ export const locationIdToBoundsCoordinates = (
 };
 
 export const getMinGridZoom = (cellPrecision: CellPrecision) => {
-  debugger;
   switch (+cellPrecision) {
     case CellPrecision.GEOHASH_LENGTH_10:
       return ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_10;
@@ -177,7 +176,6 @@ export const getMinGridZoom = (cellPrecision: CellPrecision) => {
     case CellPrecision.GEOHASH_LENGTH_1:
       return ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_1;
     default:
-      console.log("return default");
       return ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_9;
   }
 };

@@ -1,6 +1,6 @@
-import closeIcon from "../../icons/ts/CloseIcon";
-import CellPrecision from "./CellPrecision";
-import { getFormattedCellDimensions } from "./helpers";
+import closeIcon from "../../../../icons/ts/CloseIcon";
+import CellPrecision from "../../models/CellPrecision";
+import { getFormattedCellDimensions } from "../../helpers";
 
 const gridSelectorModal = (
   currentPrecision: CellPrecision,
@@ -87,9 +87,6 @@ const gridSelectorModal = (
     let newValue = geohashSelector.value;
 
     cellSize = getFormattedCellDimensions(<any>newValue).split("x");
-
-    console.log("newValue", newValue);
-    console.log("cellSize", cellSize);
 
     widthValue.innerHTML = cellSize[0].trim();
     heightValue.innerHTML = cellSize[1].trim();

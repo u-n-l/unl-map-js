@@ -4,14 +4,14 @@ import terrainTiles from "./mapstyles_terrain.json";
 import trafficTiles from "./mapstyles_traffic.json";
 import baseTiles from "./mapstyles_base.json";
 
-export type MapTilesStyle =
+export type MapTiles =
   | "vectorial"
   | "satellite"
   | "terrain"
   | "traffic"
   | "base";
 
-export const getStyle = (style?: MapTilesStyle) => {
+export const getStyle = (style?: MapTiles) => {
   switch (style) {
     case "vectorial":
       return vectorialTiles;

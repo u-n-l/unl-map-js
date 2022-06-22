@@ -6,24 +6,6 @@
   border-style: double;
 }
 
-.mapbox-control-cell {
-  &-popup {
-    position: absolute;
-    padding-top: 5px;
-    transform: translate(-50%, 0);
-  }
-  &-content {
-    position: relative;
-    padding: 8px 14px;
-    font-size: 1rem;
-    font-family: sans-serif;
-    background: white;
-    border-radius: 4px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-    white-space: nowrap;
-  }
-}
-
 .mapbox-control-grid-selector-modal {
   &-root {
     @include size(100%, 100%);
