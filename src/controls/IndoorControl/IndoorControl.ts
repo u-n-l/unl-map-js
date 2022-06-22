@@ -54,6 +54,8 @@ const DISPLAYED_FEATURE_TYPES: ImdfFeatureType[] = [
   "venue",
 ];
 
+const MAX_NUMBER_OF_VENUES = 1000;
+
 export default class IndoorControl extends Base {
   private selectedLevel: number;
   private imdfVenueData: {
@@ -261,7 +263,9 @@ export default class IndoorControl extends Base {
 
   private fetchVenueRecords = () => {
     this.unlApi?.recordsApi
-      .getAll(this.map.getVpmId(), RecordFeatureType.VENUE)
+      .getAll(this.map.getVpmId(), RecordFeatureType.VENUE, {
+        limit: MAX_NUMBER_OF_VENUES,
+      })
       .then((records) => {
         if (records && records.items) {
           this.updateVenueMarkerAndFootprintSources(records.items);
