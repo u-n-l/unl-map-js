@@ -1,5 +1,5 @@
-import ControlButton from "../components/ControlButton";
 import Base from "../Base/Base";
+import ControlButton from "../components/ControlButton/ControlButton";
 import libraryDrawIcon from "../../icons/ts/LibraryIcon";
 import UnlApi from "../../api/UnlApi";
 import { Record } from "../../api/records/models/Record";
