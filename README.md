@@ -10,7 +10,7 @@ unl-map-js is a mapping library for developers of web applications, extending an
 
 - Drawing tools for creating, updating and deleting draft shapes;
 
-See [Maplibre docs](<(https://github.com/maplibre/maplibre-gl-js)>) for a complete reference of the map API.
+See [Maplibre docs](https://github.com/maplibre/maplibre-gl-js) for a complete reference of the map API.
 
 # Getting started
 
