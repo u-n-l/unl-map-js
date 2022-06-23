@@ -10,6 +10,8 @@ unl-map-js is a mapping library for developers of web applications, extending an
 
 - Drawing tools for creating, updating and deleting draft shapes;
 
+See (MapApi.md)[https://github.com/u-n-l/unl-map-js/blob/main/docs/map] for a complete reference of the map API.
+
 # Getting started
 
 ## Installing
@@ -93,6 +95,8 @@ center: [0, 0],
 zoom: 1,
 });
 ```
+
+See (Authentication.md)[https://github.com/u-n-l/unl-map-js/blob/main/docs/authentication] for instructions on how to generate an `apiKey` and `vpmId` to get started with the UnlSdk.
 
 # Custom controls
 

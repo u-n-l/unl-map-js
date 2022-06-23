@@ -1,0 +1,1 @@
+# capabilities inherited from maplibre;
