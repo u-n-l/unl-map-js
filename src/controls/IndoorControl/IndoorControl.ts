@@ -43,9 +43,12 @@ import {
 import { Record } from "../../api/records/models/Record";
 import ControlButton from "../components/ControlButton/ControlButton";
 import { featureCollection } from "../Base/helpers";
+import { venueRecordsList } from "../LibraryControl/venueRecordsList";
+import LibraryControl from "../LibraryControl/LibraryControl";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
 import mapIcons from "./indoorMapIcons";
 import { MapIcon } from "../../Map/models/MapIcon";
+import ZoomLevel from "../../map/models/ZoomLevel";
 
 const DISPLAYED_FEATURE_TYPES: ImdfFeatureType[] = [
   "level",
@@ -54,7 +57,11 @@ const DISPLAYED_FEATURE_TYPES: ImdfFeatureType[] = [
   "venue",
 ];
 
-const MAX_NUMBER_OF_VENUES = 1000;
+export const MAX_NUMBER_OF_VENUES = 10000;
+
+export interface IndoorControlOptions {
+  showLibrary?: boolean;
+}
 
 export default class IndoorControl extends Base {
   private selectedLevel: number;
@@ -62,14 +69,23 @@ export default class IndoorControl extends Base {
     [level: number]: ImdfVenueData | undefined;
   };
   private levelButtons: ControlButton[];
+  private venueRecords: Record[];
   private unlApi?: UnlApi;
+  private venueRecordsList?: HTMLDivElement;
+  private showLibrary?: boolean;
+  private libraryControl: LibraryControl;
 
-  constructor() {
+  constructor(options: IndoorControlOptions) {
     super();
 
     this.selectedLevel = 0;
     this.imdfVenueData = {};
     this.levelButtons = [];
+    this.venueRecords = [];
+    this.venueRecordsList = undefined;
+    this.showLibrary = options.showLibrary ?? false;
+
+    this.libraryControl = new LibraryControl();
   }
 
   private handleLevelSelection = (level: number) => {
@@ -241,6 +257,48 @@ export default class IndoorControl extends Base {
     }
   };
 
+  private handleVenueSelect = (
+    venuId: string,
+    latitude: number,
+    longitude: number
+  ) => {
+    this.fetchImdfVenueData(venuId);
+
+    this.map.flyTo({
+      center: [longitude, latitude],
+      zoom: ZoomLevel.DEFAULT_ZOOM,
+      bearing: 0,
+      speed: 0.9,
+      curve: 1.5,
+      essential: true,
+    });
+  };
+
+  private fetchVenueRecords = () => {
+    this.unlApi?.recordsApi
+      .getAll(this.map.getVpmId(), RecordFeatureType.VENUE, {
+        limit: MAX_NUMBER_OF_VENUES,
+      })
+      .then((records) => {
+        if (records && records.items) {
+          this.venueRecords = this.venueRecords!.concat(records.items);
+
+          this.venueRecordsList = venueRecordsList(
+            this.venueRecords,
+            this.handleVenueSelect
+          );
+          this.map.getContainer().appendChild(this.venueRecordsList);
+
+          this.updateVenueMarkerAndFootprintSources(this.venueRecords);
+          if (this.showLibrary) {
+            this.map.addControl(this.libraryControl, "bottom-left");
+          } else {
+            this.map.removeControl(this.libraryControl);
+          }
+        }
+      });
+  };
+
   private updateVenueMarkerAndFootprintSources = (records: Record[]) => {
     const venueMarkersSource: maplibregl.GeoJSONSource = this.map.getSource(
       VENUE_MARKERS_SOURCE
@@ -259,18 +317,6 @@ export default class IndoorControl extends Base {
       const featureColl = venuesRecordsToFeatureCollection(false, records);
       venueFootprintSource.setData(featureColl);
     }
-  };
-
-  private fetchVenueRecords = () => {
-    this.unlApi?.recordsApi
-      .getAll(this.map.getVpmId(), RecordFeatureType.VENUE, {
-        limit: MAX_NUMBER_OF_VENUES,
-      })
-      .then((records) => {
-        if (records && records.items) {
-          this.updateVenueMarkerAndFootprintSources(records.items);
-        }
-      });
   };
 
   private loadMapIcons = () => {
@@ -324,13 +370,13 @@ export default class IndoorControl extends Base {
 
   private handleMapLoad = () => {
     this.initSourcesAndLayers();
-    this.fetchVenueRecords();
     this.updateImdfDataSources();
   };
 
   onAddControl = () => {
     this.unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
     this.map.on("load", this.loadMapIcons);
+    this.map.on("load", this.fetchVenueRecords);
     this.map.on("styledata", this.handleMapLoad);
     this.map.on("click", VENUE_MARKERS_SYMBOL_LAYER, this.handleVenueClick);
     this.map.on("click", VENUE_FOOTPRINT_FILL_LAYER, this.handleVenueClick);

@@ -4,6 +4,7 @@ import {
   DraftShapesControl,
   GridControl,
   IndoorControl,
+  LibraryControl,
   TilesSelectorControl,
 } from "../controls";
 import ZoomLevel from "./models/ZoomLevel";
@@ -20,7 +21,13 @@ export type UnlMapOptions = Omit<
   apiKey: string;
   vpmId: string;
   gridControl?: boolean;
+  libraryControl?: boolean;
+  gridControlPosition?: ControlPosition;
   indoorMapsControl?: boolean;
+  indoorMapsControlPosition?: ControlPosition;
+  mapTilesControl?: boolean;
+  mapTilesControlPosition?: ControlPosition;
+  displayMapTilesControlDefault?: boolean;
   tilesSelectorControl?: boolean;
   draftShapesControl?: boolean;
 };
@@ -46,8 +53,9 @@ class UnlMap extends Map {
 
     if (options.indoorMapsControl) {
       this.addControl(
-        new IndoorControl(),
-        DEFAULT_INDOOR_MAPS_CONTROL_POSITION
+        new IndoorControl({ showLibrary: options.libraryControl }),
+        options.indoorMapsControlPosition ??
+          DEFAULT_INDOOR_MAPS_CONTROL_POSITION
       );
     }
     if (options.tilesSelectorControl) {

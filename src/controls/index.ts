@@ -10,3 +10,4 @@ export { MapTiles } from "./TilesSelectorControl/styles/MapTiles";
 export { default as TilesSelectorControl } from "./TilesSelectorControl/TilesSelectorControl";
 export { default as CellPrecision } from "./GridControl/models/CellPrecision";
 export { default as DraftShapesControl } from "./DraftShapesControl/DraftShapesControl";
+export { default as LibraryControl } from "./LibraryControl/LibraryControl";
