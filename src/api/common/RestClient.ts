@@ -3,7 +3,10 @@ import { RequestMethod } from "./models/RequestMethod";
 import { UnlApiConfig } from "./models/UnlApiConfig";
 import { prepareUrl } from "./utils";
 
-const BASE_URL = "https://sandbox.studio.unl.global/api/v1/";
+export const X_UNL_VPM_ID = "x-unl-vpm-id";
+export const X_UNL_API_KEY = "x-unl-api-key";
+
+const BASE_URL = "https://alpha.studio.unl.global/api/v1/";
 
 export default class RestClient {
   public readonly apiKey: string;
@@ -72,7 +75,7 @@ export default class RestClient {
   private async getHeaders(isMultipartFormData?: boolean) {
     const headers: any = {};
 
-    headers["x-unl-api-key"] = this.apiKey;
+    headers[X_UNL_API_KEY] = this.apiKey;
 
     if (!isMultipartFormData) {
       headers["Content-Type"] = "application/json";

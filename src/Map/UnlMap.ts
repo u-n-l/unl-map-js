@@ -1,4 +1,9 @@
-import { ControlPosition, Map, MapOptions } from "maplibre-gl";
+import {
+  ControlPosition,
+  Map,
+  MapOptions,
+  ResourceTypeEnum,
+} from "maplibre-gl";
 import { getStyle } from "../controls/TilesSelectorControl/styles/MapTiles";
 import {
   DraftShapesControl,
@@ -7,6 +12,7 @@ import {
   TilesSelectorControl,
 } from "../controls";
 import ZoomLevel from "./models/ZoomLevel";
+import { X_UNL_API_KEY, X_UNL_VPM_ID } from "../api/common/RestClient";
 
 const DEFAULT_GRID_CONTROL_POSITION = "top-right";
 const DEFAULT_INDOOR_MAPS_CONTROL_POSITION = "top-right";
@@ -38,6 +44,22 @@ class UnlMap extends Map {
       maxZoom: options.maxZoom ?? ZoomLevel.MAX_ZOOM,
       maplibreLogo: false,
       logoPosition: undefined,
+      transformRequest: (url?: string, resourceType?: ResourceTypeEnum) => {
+        const unlTilesRequestRegEx = new RegExp(
+          "https://(.*\\.)?tiles\\.unl\\.\\global/.*"
+        );
+        if (unlTilesRequestRegEx.test(url || "")) {
+          return {
+            url: url!,
+            // headers: {
+            //   [X_UNL_API_KEY]: options.apiKey,
+            //   [X_UNL_VPM_ID]: options.vpmId,
+            // },
+            credentials: "same-origin",
+          };
+        }
+        return { url: url || "" };
+      },
     });
 
     this.apiKey = options.apiKey;

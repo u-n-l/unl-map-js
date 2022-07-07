@@ -1,8 +1,8 @@
-import vectorialTiles from "./mapstyles_vectorial.json";
-import satelliteTiles from "./mapstyles_satellite.json";
-import terrainTiles from "./mapstyles_terrain.json";
-import trafficTiles from "./mapstyles_traffic.json";
-import baseTiles from "./mapstyles_base.json";
+import base from "./base";
+import satellite from "./satellite";
+import terrain from "./terrain";
+import traffic from "./traffic";
+import vectorial from "./vectorial";
 
 export type MapTiles =
   | "vectorial"
@@ -14,16 +14,16 @@ export type MapTiles =
 export const getStyle = (style?: MapTiles) => {
   switch (style) {
     case "vectorial":
-      return vectorialTiles;
+      return vectorial;
     case "satellite":
-      return satelliteTiles;
+      return satellite;
     case "terrain":
-      return terrainTiles;
+      return terrain;
     case "traffic":
-      return trafficTiles;
+      return traffic;
     case "base":
-      return baseTiles;
+      return base;
     default:
-      return vectorialTiles;
+      return vectorial;
   }
 };
