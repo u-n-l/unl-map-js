@@ -6,7 +6,7 @@ import { prepareUrl } from "./utils";
 export const X_UNL_VPM_ID = "x-unl-vpm-id";
 export const X_UNL_API_KEY = "x-unl-api-key";
 
-const BASE_URL = "https://sandbox.unl.global/api/v1/";
+const BASE_URL = "https://alpha.studio.unl.global/api/v1/";
 
 export default class RestClient {
   public readonly apiKey: string;
