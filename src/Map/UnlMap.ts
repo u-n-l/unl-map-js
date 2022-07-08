@@ -51,10 +51,10 @@ class UnlMap extends Map {
         if (unlTilesRequestRegEx.test(url || "")) {
           return {
             url: url!,
-            // headers: {
-            //   [X_UNL_API_KEY]: options.apiKey,
-            //   [X_UNL_VPM_ID]: options.vpmId,
-            // },
+            headers: {
+              [X_UNL_API_KEY]: options.apiKey,
+              [X_UNL_VPM_ID]: options.vpmId,
+            },
             credentials: "same-origin",
           };
         }

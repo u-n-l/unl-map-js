@@ -4,7 +4,7 @@ export default {
     "raster-tiles": {
       type: "raster",
       maxzoom: 19,
-      tiles: [`https://tiles.unl.global/v1/raster/1/terrain/{z}/{x}/{y}`],
+      tiles: [`https://alpha.tiles.unl.global/v1/raster/1/terrain/{z}/{x}/{y}`],
       tileSize: 512,
     },
   },

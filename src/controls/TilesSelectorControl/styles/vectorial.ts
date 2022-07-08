@@ -6,7 +6,7 @@ export default {
     omv: {
       type: "vector",
       maxzoom: 17,
-      tiles: [`https://tiles.unl.global/v1/vector/1/{z}/{x}/{y}`],
+      tiles: [`https://alpha.tiles.unl.global/v1/vector/1/{z}/{x}/{y}`],
     },
   },
   glyphs: "https://assets.vector.hereapi.com/fonts/{fontstack}/{range}.pbf",
