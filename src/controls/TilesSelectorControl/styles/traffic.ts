@@ -4,7 +4,7 @@ export default {
     traffic: {
       type: "raster",
       maxzoom: 19,
-      tiles: [`https://alpha.tiles.unl.global/v1/raster/1/traffic/{z}/{x}/{y}`],
+      tiles: [`https://tiles.unl.global/v1/raster/1/traffic/{z}/{x}/{y}`],
       tileSize: 256,
     },
   },

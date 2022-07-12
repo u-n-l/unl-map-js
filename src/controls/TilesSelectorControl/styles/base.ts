@@ -4,7 +4,7 @@ export default {
   sources: {
     omv: {
       type: "vector",
-      tiles: [`https://alpha.tiles.unl.global/v1/vector/1/{z}/{x}/{y}`],
+      tiles: [`https://tiles.unl.global/v1/vector/1/{z}/{x}/{y}`],
     },
   },
   glyphs: "https://assets.vector.hereapi.com/fonts/{fontstack}/{range}.pbf",
