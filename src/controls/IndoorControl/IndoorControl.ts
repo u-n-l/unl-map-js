@@ -63,6 +63,8 @@ export default class IndoorControl extends Base {
   };
   private levelButtons: ControlButton[];
   private unlApi?: UnlApi;
+  private venueRecords: Record[];
+  private shouldFetchRecords: boolean;
 
   constructor() {
     super();
@@ -70,6 +72,8 @@ export default class IndoorControl extends Base {
     this.selectedLevel = 0;
     this.imdfVenueData = {};
     this.levelButtons = [];
+    this.venueRecords = [];
+    this.shouldFetchRecords = true;
   }
 
   private handleLevelSelection = (level: number) => {
@@ -262,15 +266,22 @@ export default class IndoorControl extends Base {
   };
 
   private fetchVenueRecords = () => {
-    this.unlApi?.recordsApi
-      .getAll(this.map.getVpmId(), RecordFeatureType.VENUE, {
-        limit: MAX_NUMBER_OF_VENUES,
-      })
-      .then((records) => {
-        if (records && records.items) {
-          this.updateVenueMarkerAndFootprintSources(records.items);
-        }
-      });
+    if (this.shouldFetchRecords) {
+      this.shouldFetchRecords = false;
+
+      this.unlApi?.recordsApi
+        .getAll(this.map.getVpmId(), RecordFeatureType.VENUE, {
+          limit: MAX_NUMBER_OF_VENUES,
+        })
+        .then((records) => {
+          if (records && records.items) {
+            this.venueRecords = records.items;
+            this.updateVenueMarkerAndFootprintSources(records.items);
+          }
+        });
+    }
+
+    this.updateVenueMarkerAndFootprintSources(this.venueRecords);
   };
 
   private loadMapIcons = () => {
@@ -322,7 +333,7 @@ export default class IndoorControl extends Base {
       this.map.addLayer(venueMarkersSymbolLayer);
   };
 
-  private handleMapLoad = () => {
+  private handleStyleDataChange = () => {
     this.initSourcesAndLayers();
     this.fetchVenueRecords();
     this.updateImdfDataSources();
@@ -331,7 +342,7 @@ export default class IndoorControl extends Base {
   onAddControl = () => {
     this.unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
     this.map.on("load", this.loadMapIcons);
-    this.map.on("styledata", this.handleMapLoad);
+    this.map.on("styledata", this.handleStyleDataChange);
     this.map.on("click", VENUE_MARKERS_SYMBOL_LAYER, this.handleVenueClick);
     this.map.on("click", VENUE_FOOTPRINT_FILL_LAYER, this.handleVenueClick);
   };
@@ -339,7 +350,7 @@ export default class IndoorControl extends Base {
   onRemoveControl = () => {
     this.map.off("click", VENUE_MARKERS_SOURCE, this.handleVenueClick);
     this.map.off("click", VENUE_FOOTPRINT_SOURCE, this.handleVenueClick);
-    this.map.off("styledata", this.handleMapLoad);
+    this.map.off("styledata", this.handleStyleDataChange);
 
     this.map.removeLayer(VENUE_FOOTPRINT_FILL_LAYER);
     this.map.removeSource(VENUE_FOOTPRINT_SOURCE);

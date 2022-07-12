@@ -47,6 +47,7 @@ export default class DraftShapesControl extends Base {
   private unlApi?: UnlApi;
   private selectedDraftShapeId?: string;
   private clusterPrecision: CellPrecision;
+  private shouldFetchRecords: boolean;
 
   constructor(options?: DraftShapesControlOptions) {
     super();
@@ -83,15 +84,19 @@ export default class DraftShapesControl extends Base {
         this.handleDraftShapeDelete();
       });
     this.draftShapes = [];
+    this.shouldFetchRecords = true;
     this.clusterPrecision =
       options?.clusterPrecision ?? CellPrecision.GEOHASH_LENGTH_9;
   }
 
   private initSourcesAndLayers = () => {
-    this.map.addSource(DRAFT_SHAPES_SOURCE, draftShapesSource);
+    this.map.getSource(DRAFT_SHAPES_SOURCE) === undefined &&
+      this.map.addSource(DRAFT_SHAPES_SOURCE, draftShapesSource);
 
-    this.map.addLayer(draftShapesFillLayer);
-    this.map.addLayer(draftShapesLineLayer);
+    this.map.getLayer(DRAFT_SHAPES_FILL_LAYER) === undefined &&
+      this.map.addLayer(draftShapesFillLayer);
+    this.map.getLayer(DRAFT_SHAPES_LINE_LAYER) === undefined &&
+      this.map.addLayer(draftShapesLineLayer);
   };
 
   private updateDraftShapesSource = (records: Record[]) => {
@@ -114,16 +119,22 @@ export default class DraftShapesControl extends Base {
   };
 
   private fetchDraftShapes = () => {
-    this.unlApi?.recordsApi
-      .getAll(this.map.getVpmId(), RecordFeatureType.DRAFT_SHAPE, {
-        limit: MAX_NUMBER_OF_DRAFT_SHAPES,
-      })
-      .then((records) => {
-        if (records && records.items) {
-          this.draftShapes = records.items;
-          this.updateDraftShapesSource(this.draftShapes);
-        }
-      });
+    if (this.shouldFetchRecords) {
+      this.shouldFetchRecords = false;
+
+      this.unlApi?.recordsApi
+        .getAll(this.map.getVpmId(), RecordFeatureType.DRAFT_SHAPE, {
+          limit: MAX_NUMBER_OF_DRAFT_SHAPES,
+        })
+        .then((records) => {
+          if (records && records.items) {
+            this.draftShapes = records.items;
+            this.updateDraftShapesSource(this.draftShapes);
+          }
+        });
+    }
+
+    this.updateDraftShapesSource(this.draftShapes);
   };
 
   private handleDrawCreate = (event: DrawCreateEvent) => {
@@ -251,9 +262,12 @@ export default class DraftShapesControl extends Base {
     this.map.on("click", DRAFT_SHAPES_LINE_LAYER, this.handleDraftShapeClick);
   };
 
-  private handleMapLoad = () => {
+  private handleStyleDataChange = () => {
     this.initSourcesAndLayers();
     this.fetchDraftShapes();
+  };
+
+  private handleMapLoad = () => {
     this.initDrawControl();
   };
 
@@ -267,6 +281,7 @@ export default class DraftShapesControl extends Base {
     this.deleteButton.node.style.display = "none";
 
     this.map.on("load", this.handleMapLoad);
+    this.map.on("styledata", this.handleStyleDataChange);
   };
 
   onRemoveControl = () => {
@@ -275,7 +290,9 @@ export default class DraftShapesControl extends Base {
 
     this.map.off("click", DRAFT_SHAPES_FILL_LAYER, this.handleDraftShapeClick);
     this.map.off("click", DRAFT_SHAPES_LINE_LAYER, this.handleDraftShapeClick);
+
     this.map.off("load", this.handleMapLoad);
+    this.map.off("styledata", this.handleStyleDataChange);
 
     this.map.removeLayer(DRAFT_SHAPES_FILL_LAYER);
     this.map.removeLayer(DRAFT_SHAPES_LINE_LAYER);
