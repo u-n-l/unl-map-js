@@ -22,8 +22,9 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "lib"),
     filename: "unl-map-js.js",
-    library: "asyncAssetsLoader",
+    library: "UnlSdk",
     libraryTarget: "umd",
+    libraryExport: "default",
     globalObject: "this",
   },
 };
