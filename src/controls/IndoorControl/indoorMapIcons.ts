@@ -1,5 +1,5 @@
 /*istanbul ignore file*/
-import { MapIcon } from "../../Map/models/MapIcon";
+import { MapIcon } from "../../unlMap/models/MapIcon";
 import { IndoorMapIconName } from "./models/IndoorMapIconName";
 
 const indoorMapIcons: MapIcon[] = [

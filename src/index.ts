@@ -1,6 +1,6 @@
 import * as Maplibre from "maplibre-gl";
 import * as Controls from "./controls";
-import UnlMap from "./map/UnlMap";
+import UnlMap from "./unlMap/UnlMap";
 
 const exported = {
   ...Maplibre,

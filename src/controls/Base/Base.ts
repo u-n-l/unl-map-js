@@ -1,4 +1,4 @@
-import UnlMap from "../../map/UnlMap";
+import UnlMap from "../../unlMap/UnlMap";
 import ControlButton from "../components/ControlButton/ControlButton";
 
 class Base {
