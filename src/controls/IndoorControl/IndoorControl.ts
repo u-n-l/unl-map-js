@@ -45,7 +45,7 @@ import ControlButton from "../components/ControlButton/ControlButton";
 import { featureCollection } from "../Base/helpers";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
 import mapIcons from "./indoorMapIcons";
-import { MapIcon } from "../../unlMap/models/MapIcon";
+import { MapIcon } from "../../map/models/MapIcon";
 
 const DISPLAYED_FEATURE_TYPES: ImdfFeatureType[] = [
   "level",
