@@ -6,7 +6,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "prepublish": "npm run build",
-    "build": "tsc && sass src/global.scss:lib/unl-map-js.css",
+    "build": "tsc && sass src/global.scss:lib/unl-map-js.css && webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -17,7 +17,10 @@
     "@types/unl-core": "^3.0.0-alpha.2",
     "@types/url-join": "^4.0.1",
     "sass": "1.48.0",
-    "typescript": "^4.6.3"
+    "ts-loader": "^9.3.1",
+    "typescript": "^4.6.3",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.10.0"
   },
   "dependencies": {
     "@mapbox/mapbox-gl-draw": "1.3.0",
