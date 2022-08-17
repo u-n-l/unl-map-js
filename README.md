@@ -174,7 +174,7 @@ const map = new UnlSdk.Map({
 ...
 });
 
-map.addControl(new UnlSdk.TileSelectorControl({ tiles: ["vectorial", "satellite"] }), "bottom-right");
+map.addControl(new UnlSdk.TilesSelectorControl({ tiles: ["vectorial", "satellite"] }), "bottom-right");
 ```
 
 If the second approach is chosen, the following options can be specified during the `TilesSelectorControl` initialisation:
