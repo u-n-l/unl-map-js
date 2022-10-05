@@ -1,10 +1,17 @@
+import {
+  ENDPOINTS_VERSION,
+  TILES_BASE_URL,
+} from "../../../api/common/RestClient";
+
 export default {
   version: 8,
   sources: {
     "raster-tiles": {
       type: "raster",
       maxzoom: 19,
-      tiles: [`https://tiles.unl.global/v1/raster/1/terrain/{z}/{x}/{y}`],
+      tiles: [
+        `${TILES_BASE_URL}/${ENDPOINTS_VERSION}/raster/1/terrain/{z}/{x}/{y}`,
+      ],
       tileSize: 512,
     },
   },

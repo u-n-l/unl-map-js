@@ -4,7 +4,10 @@ import {
   MapOptions,
   ResourceTypeEnum,
 } from "maplibre-gl";
-import { getStyle } from "../controls/TilesSelectorControl/styles/MapTiles";
+import {
+  getStyle,
+  MapTiles,
+} from "../controls/TilesSelectorControl/styles/MapTiles";
 import {
   DraftShapesControl,
   GridControl,
@@ -13,6 +16,7 @@ import {
 } from "../controls";
 import ZoomLevel from "./models/ZoomLevel";
 import { X_UNL_API_KEY, X_UNL_VPM_ID } from "../api/common/RestClient";
+import CustomAttributionControl from "../controls/CustomAttributionControl/CustomAttributionControl";
 
 const DEFAULT_GRID_CONTROL_POSITION = "top-right";
 const DEFAULT_INDOOR_MAPS_CONTROL_POSITION = "top-right";
@@ -35,6 +39,7 @@ class UnlMap extends Map {
   apiKey: string;
   vpmId: string;
   mapTilesControlPosition: ControlPosition;
+  currentTile: MapTiles;
 
   constructor(options: UnlMapOptions) {
     super({
@@ -89,6 +94,10 @@ class UnlMap extends Map {
     if (options.gridControl) {
       this.addControl(new GridControl(), DEFAULT_GRID_CONTROL_POSITION);
     }
+
+    this.currentTile = "vectorial";
+
+    this.addControl(new CustomAttributionControl());
   }
 
   getApiKey = () => {
@@ -97,6 +106,14 @@ class UnlMap extends Map {
 
   getVpmId = () => {
     return this.vpmId;
+  };
+
+  setCurrentTilesOption = (tile: MapTiles) => {
+    this.currentTile = tile;
+  };
+
+  getCurrentTilesOption = () => {
+    return this.currentTile;
   };
 
   getMapTilesControlPosition = () => {

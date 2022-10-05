@@ -6,16 +6,23 @@ import { prepareUrl } from "./utils";
 export const X_UNL_VPM_ID = "x-unl-vpm-id";
 export const X_UNL_API_KEY = "x-unl-api-key";
 
-const BASE_URL = "https://studio.unl.global/api/v1/";
+export const ENDPOINTS_VERSION = "v1";
+export const TILES_EDNPOINTS_VERSION = "v2alpha";
+
+export const DEFAULT_BASE_URL = "https://alpha.api.unl.global/";
+export const TILES_BASE_URL = "https://alpha.tiles.unl.global/";
 
 export default class RestClient {
   public readonly apiKey: string;
+  public readonly vpmId: string;
 
   constructor(unlApiConfig: UnlApiConfig) {
     this.apiKey = unlApiConfig.apiKey;
+    this.vpmId = unlApiConfig.vpmId;
   }
 
   public get<T>(
+    baseUrl: string,
     url: string,
     urlParameterMap?: object,
     queryStringParameters?: object,
@@ -24,6 +31,7 @@ export default class RestClient {
   ): Promise<T> {
     return this.request(
       RequestMethod.GET,
+      baseUrl,
       url,
       urlParameterMap,
       queryStringParameters,
@@ -35,6 +43,7 @@ export default class RestClient {
   }
 
   public post<T>(
+    baseUrl: string,
     url: string,
     urlParameterMap?: object,
     body?: object,
@@ -42,6 +51,7 @@ export default class RestClient {
   ): Promise<T> {
     return this.request(
       RequestMethod.POST,
+      baseUrl,
       url,
       urlParameterMap,
       {},
@@ -52,6 +62,7 @@ export default class RestClient {
   }
 
   public put<T>(
+    baseUrl: string,
     url: string,
     urlParameterMap?: object,
     body?: object,
@@ -59,6 +70,7 @@ export default class RestClient {
   ): Promise<T> {
     return this.request(
       RequestMethod.PUT,
+      baseUrl,
       url,
       urlParameterMap,
       {},
@@ -68,14 +80,19 @@ export default class RestClient {
     );
   }
 
-  public delete<T>(url: string, urlParameterMap?: object): Promise<T> {
-    return this.request(RequestMethod.DELETE, url, urlParameterMap);
+  public delete<T>(
+    baseUrl: string,
+    url: string,
+    urlParameterMap?: object
+  ): Promise<T> {
+    return this.request(RequestMethod.DELETE, baseUrl, url, urlParameterMap);
   }
 
   private async getHeaders(isMultipartFormData?: boolean) {
     const headers: any = {};
 
     headers[X_UNL_API_KEY] = this.apiKey;
+    headers[X_UNL_VPM_ID] = this.vpmId;
 
     if (!isMultipartFormData) {
       headers["Content-Type"] = "application/json";
@@ -88,6 +105,7 @@ export default class RestClient {
 
   private async request<T>(
     method: string,
+    baseUrl: string,
     url: string,
     urlParameterMap?: object,
     queryStringParameters?: object,
@@ -97,7 +115,7 @@ export default class RestClient {
     customHeader?: object
   ): Promise<any> {
     const requestUrl = prepareUrl(
-      BASE_URL,
+      baseUrl,
       url,
       urlParameterMap,
       queryStringParameters
