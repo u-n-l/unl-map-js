@@ -1,42 +1,41 @@
+import { AttributionControl } from "maplibre-gl";
 import { Copyright } from "../../api/tiles/models/Copyright";
 import { SourceId } from "../../api/tiles/models/SourceId";
 import UnlApi from "../../api/UnlApi";
 import Base from "../Base/Base";
-import { getCustomAttribution, getSurfaceTile, getTileType } from "./helpers";
+import {
+  DEFAULT_ATTRIBUTION,
+  getCustomAttribution,
+  getSurfaceTile,
+  getTileType,
+} from "./helpers";
 
 export default class CustomAttributionControl extends Base {
   private unlApi?: UnlApi;
   private isFetchingCopyrigts: boolean;
+  private customAttribution: AttributionControl;
   private copyrights: { [style: string]: Copyright[] };
 
   constructor() {
     super();
     this.copyrights = {};
     this.isFetchingCopyrigts = false;
+    this.customAttribution = new AttributionControl({
+      customAttribution: DEFAULT_ATTRIBUTION,
+    });
   }
 
   handleMoveEnd = () => {
-    this.map._controls.forEach((control) => {
-      if (
-        //@ts-ignore
-        control.options &&
-        //@ts-ignore
-        ("customAttribution" in control.options || "_attribHTML" in control)
-      ) {
-        const mapBounds = this.map.getBounds();
-        const zoom = this.map.getZoom();
-        const newAttribution = getCustomAttribution(
-          mapBounds,
-          zoom,
-          this.copyrights[String(this.map.getCurrentTilesOption())]
-        );
+    const mapBounds = this.map.getBounds();
+    const zoom = this.map.getZoom();
+    const newAttribution = getCustomAttribution(
+      mapBounds,
+      zoom,
+      this.copyrights[String(this.map.getCurrentTilesOption())]
+    );
 
-        //@ts-ignore
-        control.options.customAttribution = String(newAttribution);
-        //@ts-ignore
-        control._updateAttributions();
-      }
-    });
+    this.customAttribution.options.customAttribution = newAttribution;
+    this.customAttribution._updateAttributions();
   };
 
   updateCopyrights = () => {
@@ -80,10 +79,12 @@ export default class CustomAttributionControl extends Base {
 
     this.map.on("moveend", this.handleMoveEnd);
     this.map.on("styledata", this.updateCopyrights);
+    this.map.addControl(this.customAttribution);
   };
 
   onRemoveControl = () => {
     this.map.off("moveend", this.handleMoveEnd);
     this.map.off("styledata", this.updateCopyrights);
+    this.map.removeControl(this.customAttribution);
   };
 }

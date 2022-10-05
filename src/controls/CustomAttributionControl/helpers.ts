@@ -66,7 +66,7 @@ export const getCustomAttribution = (
   zoom?: number,
   copyrights?: Copyright[]
 ): string => {
-  let attribution = "";
+  let attribution = DEFAULT_ATTRIBUTION;
 
   if (!copyrights || !zoom || !bounds) {
     return attribution;
@@ -85,11 +85,11 @@ export const getCustomAttribution = (
         ) !== undefined;
 
       if (intersectedBox && !attribution.includes(copyright.label)) {
-        attribution += `${copyright.label}, `;
+        attribution += `, ${copyright.label}`;
         return;
       }
     }
   });
 
-  return attribution.slice(0, -2);
+  return attribution;
 };

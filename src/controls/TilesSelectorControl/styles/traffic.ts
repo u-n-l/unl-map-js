@@ -2,7 +2,6 @@ import {
   ENDPOINTS_VERSION,
   TILES_BASE_URL,
 } from "../../../api/common/RestClient";
-import { DEFAULT_ATTRIBUTION } from "../../CustomAttributionControl/helpers";
 
 export default {
   version: 8,
@@ -13,7 +12,6 @@ export default {
         `${TILES_BASE_URL}/${ENDPOINTS_VERSION}/raster/1/traffic/{z}/{x}/{y}`,
       ],
       tileSize: 256,
-      attribution: DEFAULT_ATTRIBUTION,
     },
   },
   glyphs: "https://assets.vector.hereapi.com/fonts/{fontstack}/{range}.pbf",
