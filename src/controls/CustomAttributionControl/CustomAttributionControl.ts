@@ -1,90 +1,75 @@
-import { AttributionControl, IControl } from "maplibre-gl";
 import { Copyright } from "../../api/tiles/models/Copyright";
 import { SourceId } from "../../api/tiles/models/SourceId";
 import UnlApi from "../../api/UnlApi";
 import Base from "../Base/Base";
-import {
-  DEFAULT_ATTRIBUTION,
-  getCustomAttribution,
-  getSurfaceTile,
-  getTileType,
-} from "./helpers";
+import { getCustomAttribution, getSurfaceTile, getTileType } from "./helpers";
 
 export default class CustomAttributionControl extends Base {
-  private attributionControl: IControl;
   private unlApi?: UnlApi;
+  private isFetchingCopyrigts: boolean;
   private copyrights: { [style: string]: Copyright[] };
 
   constructor() {
     super();
     this.copyrights = {};
-    this.attributionControl = new AttributionControl({
-      customAttribution: DEFAULT_ATTRIBUTION,
-    });
+    this.isFetchingCopyrigts = false;
   }
 
   handleMoveEnd = () => {
-    // this.map._controls.forEach((control) => {
-    //   //@ts-ignore
-    //   if (control.options && control.options.customAttribution) {
-    //     const mapBounds = this.map.getBounds();
-    //     const zoom = this.map.getZoom();
-    //     const newAttribution = getCustomAttribution(
-    //       mapBounds,
-    //       zoom,
-    //       this.copyrights[String(this.map.getCurrentTilesOption)]
-    //     );
+    this.map._controls.forEach((control) => {
+      if (
+        //@ts-ignore
+        control.options &&
+        //@ts-ignore
+        ("customAttribution" in control.options || "_attribHTML" in control)
+      ) {
+        const mapBounds = this.map.getBounds();
+        const zoom = this.map.getZoom();
+        const newAttribution = getCustomAttribution(
+          mapBounds,
+          zoom,
+          this.copyrights[String(this.map.getCurrentTilesOption())]
+        );
 
-    //     console.log("COPYRIGHT:", newAttribution);
-
-    //     //@ts-ignore
-    //     control.options.customAttribution = newAttribution;
-    //   }
-    // });
-
-    console.log("COPYRIGHT: ", this.attributionControl);
-    const mapBounds = this.map.getBounds();
-    const zoom = this.map.getZoom();
-    const newAttribution = getCustomAttribution(
-      mapBounds,
-      zoom,
-      this.copyrights[String(this.map.getCurrentTilesOption)]
-    );
-
-    console.log("COPYRIGHT:", newAttribution);
-
-    //@ts-ignore
-    this.attributionControl.options.customAttribution = newAttribution;
-    //@ts-ignore
-    this.attributionControl._attribHTML = newAttribution;
+        //@ts-ignore
+        control.options.customAttribution = String(newAttribution);
+        //@ts-ignore
+        control._updateAttributions();
+      }
+    });
   };
 
   updateCopyrights = () => {
-    const currentTilesOption = this.map.getCurrentTilesOption();
+    if (this.isFetchingCopyrigts) {
+      return;
+    }
 
-    if (!this.copyrights[currentTilesOption]) {
+    const currentTilesOption = this.map.getCurrentTilesOption();
+    if (!this.copyrights[currentTilesOption] && !this.isFetchingCopyrigts) {
+      this.isFetchingCopyrigts = true;
       const tileType = getTileType(currentTilesOption);
       const surfaceTile = getSurfaceTile(currentTilesOption);
 
-      const copyrights = this.unlApi?.tilesApi
+      this.unlApi?.tilesApi
         .getCopyrights(SourceId.HERE, tileType, surfaceTile)
-        .then((copyrights) => {
-          if (copyrights) {
+        .then((response) => {
+          if (response) {
             const newCopyrights = {
-              ...copyrights,
+              ...this.copyrights,
             };
 
             newCopyrights[String(currentTilesOption)] = [
-              ...(Object.values(copyrights).flat() as Copyright[]),
+              ...(Object.values(response).flat() as Copyright[]),
             ];
 
             this.copyrights = newCopyrights;
+            this.handleMoveEnd();
           }
+        })
+        .finally(() => {
+          this.isFetchingCopyrigts = false;
         });
     }
-
-    console.log("COPYRIGHTS: ", currentTilesOption);
-    console.log("COPYRIGHTS: ", this.copyrights);
   };
 
   onAddControl = () => {
@@ -95,13 +80,10 @@ export default class CustomAttributionControl extends Base {
 
     this.map.on("moveend", this.handleMoveEnd);
     this.map.on("styledata", this.updateCopyrights);
-
-    this.map.addControl(this.attributionControl);
   };
 
   onRemoveControl = () => {
     this.map.off("moveend", this.handleMoveEnd);
     this.map.off("styledata", this.updateCopyrights);
-    this.map.removeControl(this.attributionControl);
   };
 }

@@ -2,6 +2,7 @@ import {
   ENDPOINTS_VERSION,
   TILES_BASE_URL,
 } from "../../../api/common/RestClient";
+import { DEFAULT_ATTRIBUTION } from "../../CustomAttributionControl/helpers";
 
 export default {
   version: 8,
@@ -10,6 +11,7 @@ export default {
     omv: {
       type: "vector",
       tiles: [`${TILES_BASE_URL}/${ENDPOINTS_VERSION}/vector/1/{z}/{x}/{y}`],
+      attribution: DEFAULT_ATTRIBUTION,
     },
   },
   glyphs: "https://assets.vector.hereapi.com/fonts/{fontstack}/{range}.pbf",
