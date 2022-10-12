@@ -2,6 +2,7 @@ import { UnlApiConfig } from "../common/models/UnlApiConfig";
 import { PaginationResponse } from "../common/models/PaginationResponse";
 import { PaginationParams } from "../common/models/PaginationParams";
 import { BaseAPI } from "../common/BaseApi";
+import { DEFAULT_BASE_URL, ENDPOINTS_VERSION } from "../common/RestClient";
 import { Record } from "./models/Record";
 
 export default class RecordsApi extends BaseAPI {
@@ -15,7 +16,8 @@ export default class RecordsApi extends BaseAPI {
     };
 
     return this.restClient.post<Record>(
-      "projects/{project_id}/records",
+      DEFAULT_BASE_URL,
+      `${ENDPOINTS_VERSION}projects/{project_id}/records`,
       pathParamMap,
       {
         geojson: feature,
@@ -38,7 +40,8 @@ export default class RecordsApi extends BaseAPI {
     };
 
     return this.restClient.get<PaginationResponse<Record>>(
-      "projects/{project_id}/records",
+      DEFAULT_BASE_URL,
+      `${ENDPOINTS_VERSION}/projects/{project_id}/records`,
       pathParamMap,
       queryStringParameters
     );
@@ -55,7 +58,8 @@ export default class RecordsApi extends BaseAPI {
     };
 
     return this.restClient.put<Record>(
-      "projects/{project_id}/records/{record_id}",
+      DEFAULT_BASE_URL,
+      `${ENDPOINTS_VERSION}/projects/{project_id}/records/{record_id}`,
       pathParamMap,
       {
         geojson: feature,
@@ -70,7 +74,8 @@ export default class RecordsApi extends BaseAPI {
     };
 
     return this.restClient.delete<Record>(
-      "projects/{project_id}/records/{record_id}",
+      DEFAULT_BASE_URL,
+      `${ENDPOINTS_VERSION}/projects/{project_id}/records/{record_id}`,
       pathParamMap
     );
   }

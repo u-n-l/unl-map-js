@@ -272,7 +272,10 @@ export default class DraftShapesControl extends Base {
   };
 
   onAddControl = () => {
-    this.unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
+    this.unlApi = new UnlApi({
+      apiKey: this.map.getApiKey(),
+      vpmId: this.map.getVpmId(),
+    });
 
     this.addButton(this.polygonButton);
     this.addButton(this.circleButton);

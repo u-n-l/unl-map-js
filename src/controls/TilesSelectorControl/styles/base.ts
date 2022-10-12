@@ -1,10 +1,16 @@
+import {
+  ENDPOINTS_VERSION,
+  TILES_BASE_URL,
+} from "../../../api/common/RestClient";
+
 export default {
   version: 8,
   name: "Base map",
   sources: {
     omv: {
       type: "vector",
-      tiles: [`https://tiles.unl.global/v1/vector/1/{z}/{x}/{y}`],
+      tiles: [`${TILES_BASE_URL}/${ENDPOINTS_VERSION}/vector/1/{z}/{x}/{y}`],
+      maxzoom: 17,
     },
   },
   glyphs: "https://assets.vector.hereapi.com/fonts/{fontstack}/{range}.pbf",

@@ -340,7 +340,10 @@ export default class IndoorControl extends Base {
   };
 
   onAddControl = () => {
-    this.unlApi = new UnlApi({ apiKey: this.map.getApiKey() });
+    this.unlApi = new UnlApi({
+      apiKey: this.map.getApiKey(),
+      vpmId: this.map.getVpmId(),
+    });
     this.map.on("load", this.loadMapIcons);
     this.map.on("styledata", this.handleStyleDataChange);
     this.map.on("click", VENUE_MARKERS_SYMBOL_LAYER, this.handleVenueClick);

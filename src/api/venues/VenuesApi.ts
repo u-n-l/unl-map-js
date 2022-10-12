@@ -1,6 +1,7 @@
 import { UnlApiConfig } from "../common/models/UnlApiConfig";
 import { BaseAPI } from "../common/BaseApi";
 import { ImdfFeatureType } from "./models/ImdfFeatureType";
+import { DEFAULT_BASE_URL, ENDPOINTS_VERSION } from "../common/RestClient";
 import ImdfFeature from "./models/ImdfFeature";
 
 export default class VenuesApi extends BaseAPI {
@@ -21,7 +22,8 @@ export default class VenuesApi extends BaseAPI {
     const queryParams = { levelOrdinal, type: includedFeatureTypes?.join() };
 
     return this.restClient.get<ImdfFeature[]>(
-      "projects/{project_id}/imdf/{venue_id}",
+      DEFAULT_BASE_URL,
+      `${ENDPOINTS_VERSION}/projects/{project_id}/imdf/{venue_id}`,
       pathParamMap,
       queryParams
     );

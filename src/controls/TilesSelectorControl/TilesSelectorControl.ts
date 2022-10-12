@@ -109,8 +109,10 @@ export default class TilesSelectorControl extends Base {
 
   setStyle = (style: MapTiles) => {
     const styleFile = getStyle(style);
+
     //@ts-ignore
     this.map.setStyle(styleFile);
+    this.map.setCurrentTilesOption(style);
   };
 
   protected onAddControl = () => {
