@@ -72,20 +72,24 @@
   &-select {
     padding: 8px;
     padding-right: 16px;
+    cursor: pointer;
   }
   &-close-button {
     background: transparent;
     border: transparent;
     padding-top: 8px;
+    cursor: pointer;
   }
   &-select-button {
     @extend %modal-button;
     background-color: $primary-color;
     color: white;
+    cursor: pointer;
   }
   &-cancel-button {
     @extend %modal-button;
     background-color: white;
     color: $primary-color;
+    cursor: pointer;
   }
 }
