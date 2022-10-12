@@ -8,9 +8,9 @@ unl-map-js is a mapping library for developers of web applications, extending an
 
 - Indoor maps overlay in the [IMDF](https://register.apple.com/resources/imdf/) format;
 
-- Drawing tools for creating, updating and deleting draft shapes;
+- Drawing tools for creating, updating and deleting clusters;
 
-See [Maplibre docs](https://github.com/maplibre/maplibre-gl-js) for a complete reference of the map API.
+See [Unl Map Js docs](https://u-n-l.github.io/unl-map-js-docs/api/) for a complete reference of the package.
 
 # Getting started
 
@@ -33,21 +33,22 @@ import UnlSdk from "unl_map_sdk";
 #### When using CDN
 
 ```
-<script src='../v1.0.0/unl-map-js.js'></script>
+<script src="https://unpkg.com/unl-map-js@latest/lib/unl-map-js.js"></script>
 ```
 
 ### CSS
 
-#### When using modules
+Include the following CSS files in the <head> of your HTML file.
 
 ```
-import 'unl-map-js/lib/unl-map-js.css'
-```
-
-#### When using CDN
-
-```
-<link rel='stylesheet' href='../unl-map-js/v1.0.0/unl-map-js.css' type='text/css' />
+<link
+  href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css"
+  rel="stylesheet"
+/>
+<link
+  href="https://unpkg.com/unl-map-js@latest/lib/unl-map-js.css"
+  rel="stylesheet"
+/>
 ```
 
 ### Typescript
@@ -67,7 +68,14 @@ Typescript definition files are included as part of this package.
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" type="text/css" href="../lib/unl-map-js.css" />
+    <link
+      href="https://unpkg.com/maplibre-gl@2.1.9/dist/maplibre-gl.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/unl-map-js@0.0.1/lib/unl-map-js.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="styles.css" />
     <title>Hello world</title>
   </head>
