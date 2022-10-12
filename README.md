@@ -38,7 +38,7 @@ import UnlSdk from "unl_map_sdk";
 
 ### CSS
 
-Include the following CSS files in the <head> of your HTML file.
+Include the following CSS files in the `<head>` of your HTML file.
 
 ```
 <link
@@ -157,9 +157,9 @@ If GridControl is enabled, the cell will get highlighted by clicking on the map.
 | 2         | 3          |
 | 1         | 2          |
 
-![Grid lines and cell](https://github.com/u-n-l/unl-map-js/blob/main/docs/gifs/grid_lines.gif?raw=true)
+![Grid lines and cell](https://github.com/u-n-l/unl-map-js-docs/blob/main/docs/gifs/grid_lines.gif?raw=true)
 
-![Grid precision selection](https://github.com/u-n-l/unl-map-js/blob/main/docs/gifs/grid_selector.gif?raw=true)
+![Grid precision selection](https://github.com/u-n-l/unl-map-js-docs/blob/main/docs/gifs/grid_selector.gif?raw=true)
 
 ## Tiles selector
 
@@ -192,7 +192,7 @@ If the second approach is chosen, the following options can be specified during 
 | tiles                  | MapTiles[] | ["vectorial", "traffic", "terrain", "satellite", "base"] | The options that will be included in the tiles selector |
 | displayControlsDefault | boolean    | true                                                     | Display the default tile selector UI                    |
 
-![Tiles selector](https://github.com/u-n-l/unl-map-js/blob/main/docs/gifs/tile_selector.gif?raw=true)
+![Tiles selector](https://github.com/u-n-l/unl-map-js-docs/blob/main/docs/gifs/tile_selector.gif?raw=true)
 
 ### API Methods
 
@@ -235,7 +235,7 @@ map.addControl(new UnlSdk.IndoorControl(), "bottom-right");
 
 Enabling the indoor maps overlay, will fetch the venue maps and render the marker and outer area of the venues that were uploaded in the VPM whose id is passed as part of the map initialisation. By clicking on a venue, the full venue data will be downloaded, rendering the venue units and facilities, along with the level selector buttons.
 
-![Indoor maps overlay](https://github.com/u-n-l/unl-map-js/blob/main/docs/gifs/indoor_overlays.gif?raw=true)
+![Indoor maps overlay](https://github.com/u-n-l/unl-map-js-docs/blob/main/docs/gifs/indoor_overlays.gif?raw=true)
 
 ## Draft shapes
 
@@ -255,4 +255,4 @@ map.addControl(new UnlSdk.DraftShapesControl(), "bottom-right");
 
 Enabling the draft shapes control, will fetch and render all the shapes added in the VPM whose id is passed during the map initialisation. Additionally, by clicking on a shape, it can be moved, edited or deleted. New shapes can be created: polygon, circle or rectangles, via the three corresponding control buttons and they will get saved in the same VPM.
 
-![Draft shapes creation & editing and delete](https://github.com/u-n-l/unl-map-js/blob/main/docs/gifs/draft_shapes.gif?raw=true)
+![Draft shapes creation & editing and delete](https://github.com/u-n-l/unl-map-js-docs/blob/main/docs/gifs/draft_shapes.gif?raw=true)
