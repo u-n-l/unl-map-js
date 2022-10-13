@@ -104,7 +104,7 @@ zoom: 1,
 });
 ```
 
-See [UNL Developer Portal](https://developer.unl.global/docs/) for instructions on how to generate an `apiKey` and `vpmId` to get started with the UnlSdk.
+See [SDK Authentication Docs](https://u-n-l.github.io/unl-map-js-docs/authentication/) for instructions on how to generate an `apiKey` and `vpmId` to get started with the UnlSdk.
 
 # Custom controls
 
