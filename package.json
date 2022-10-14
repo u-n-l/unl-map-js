@@ -1,6 +1,6 @@
 {
   "name": "unl-map-js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "UNL Map Javascript SDK ",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
