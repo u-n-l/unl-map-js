@@ -38,7 +38,6 @@ export type UnlMapOptions = Omit<
 class UnlMap extends Map {
   apiKey: string;
   vpmId: string;
-  mapTilesControlPosition: ControlPosition;
   currentTile: MapTiles;
 
   constructor(options: UnlMapOptions) {
@@ -69,7 +68,6 @@ class UnlMap extends Map {
 
     this.apiKey = options.apiKey;
     this.vpmId = options.vpmId;
-    this.mapTilesControlPosition = DEFAULT_TILES_SELECTOR_CONTROL_POSITION;
 
     if (options.indoorMapsControl) {
       this.addControl(
@@ -82,7 +80,7 @@ class UnlMap extends Map {
         new TilesSelectorControl({
           displayControlsDefault: true,
         }),
-        this.mapTilesControlPosition
+        DEFAULT_TILES_SELECTOR_CONTROL_POSITION
       );
     }
     if (options.draftShapesControl) {
@@ -114,10 +112,6 @@ class UnlMap extends Map {
 
   getCurrentTilesOption = () => {
     return this.currentTile;
-  };
-
-  getMapTilesControlPosition = () => {
-    return this.mapTilesControlPosition;
   };
 }
 
