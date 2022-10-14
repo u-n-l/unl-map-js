@@ -5,6 +5,8 @@ import terrainTiles from "../../../../icons/ts/TerrainTilesIcon";
 import trafficTiles from "../../../../icons/ts/TrafficTilesIcon";
 import { MapTiles } from "../../styles/MapTiles";
 
+export const TOOLTIP_MARGIN = 10;
+
 export const getButtonIcon = (tiles: MapTiles) => {
   switch (tiles) {
     case "vectorial":

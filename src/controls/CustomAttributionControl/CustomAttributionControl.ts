@@ -25,7 +25,7 @@ export default class CustomAttributionControl extends Base {
     });
   }
 
-  handleMoveEnd = () => {
+  private handleMoveEnd = () => {
     const mapBounds = this.map.getBounds();
     const zoom = this.map.getZoom();
     const newAttribution = getCustomAttribution(
@@ -38,7 +38,7 @@ export default class CustomAttributionControl extends Base {
     this.customAttribution._updateAttributions();
   };
 
-  updateCopyrights = () => {
+  private updateCopyrights = () => {
     if (this.isFetchingCopyrigts) {
       return;
     }
@@ -71,7 +71,7 @@ export default class CustomAttributionControl extends Base {
     }
   };
 
-  onAddControl = () => {
+  protected onAddControl = () => {
     this.unlApi = new UnlApi({
       apiKey: this.map.getApiKey(),
       vpmId: this.map.getVpmId(),
@@ -82,7 +82,7 @@ export default class CustomAttributionControl extends Base {
     this.map.addControl(this.customAttribution);
   };
 
-  onRemoveControl = () => {
+  protected onRemoveControl = () => {
     this.map.off("moveend", this.handleMoveEnd);
     this.map.off("styledata", this.updateCopyrights);
     this.map.removeControl(this.customAttribution);

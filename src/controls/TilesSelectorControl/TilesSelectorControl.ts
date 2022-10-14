@@ -3,6 +3,7 @@ import ControlButton from "../components/ControlButton/ControlButton";
 import {
   getButtonIcon,
   mapTilesTooltip,
+  TOOLTIP_MARGIN,
 } from "./components/TilesSelectorTooltip/tilesSelectorTooltip";
 import { getStyle, MapTiles } from "./styles/MapTiles";
 
@@ -56,7 +57,6 @@ export default class TilesSelectorControl extends Base {
     this.button.onClick(this.toggleMapTiles);
     this.button.node.style.position = "relative";
     this.button.node.appendChild(this.tooltip);
-    this.setTooltipPosition();
 
     this.addButton(this.button);
     const tooltip = this.tooltip;
@@ -74,36 +74,29 @@ export default class TilesSelectorControl extends Base {
     });
   };
 
+  private adjustTooltipPosition = () => {
+    const buttonRect = this.button.node.getBoundingClientRect();
+    const tooltipPosition = `${buttonRect.width + TOOLTIP_MARGIN}px`;
+
+    if (buttonRect.x > window.innerWidth / 2) {
+      this.tooltip.style.right = tooltipPosition;
+    } else {
+      this.tooltip.style.left = tooltipPosition;
+    }
+
+    if (buttonRect.y > window.innerHeight / 2) {
+      this.tooltip.style.bottom = "0";
+    } else {
+      this.tooltip.style.top = "0";
+    }
+  };
+
   private toggleMapTiles = () => {
     if (this.tooltip.style.display === "block") {
       this.tooltip.style.display = "none";
     } else {
       this.tooltip.style.display = "block";
-    }
-  };
-
-  private setTooltipPosition = () => {
-    switch (this.map.getMapTilesControlPosition()) {
-      case "bottom-left":
-        this.tooltip.style.marginLeft = "40px";
-        this.tooltip.style.bottom = "0px";
-        this.tooltip.style.left = "0px";
-        break;
-      case "bottom-right":
-        this.tooltip.style.marginRight = "40px";
-        this.tooltip.style.bottom = "0px";
-        this.tooltip.style.right = "0px";
-        break;
-      case "top-left":
-        this.tooltip.style.marginLeft = "40px";
-        this.tooltip.style.top = "0px";
-        this.tooltip.style.left = "0px";
-        break;
-      case "top-right":
-        this.tooltip.style.marginRight = "40px";
-        this.tooltip.style.top = "0px";
-        this.tooltip.style.right = "0px";
-        break;
+      this.adjustTooltipPosition();
     }
   };
 
