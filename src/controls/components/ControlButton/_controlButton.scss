@@ -1,9 +1,0 @@
-.mapbox-control {
-  button {
-    @include flexContainer(null, center, center);
-
-    &.-active {
-      background: rgba(0, 0, 0, 0.03);
-    }
-  }
-}
