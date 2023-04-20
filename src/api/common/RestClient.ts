@@ -9,11 +9,8 @@ export const X_UNL_API_KEY = "x-unl-api-key";
 export const ENDPOINTS_VERSION = "v1";
 export const TILES_EDNPOINTS_VERSION = "v2alpha";
 
-// export const DEFAULT_BASE_URL = "https://api.unl.global/";
-// export const TILES_BASE_URL = "https://tiles.unl.global/";
-
-export const DEFAULT_BASE_URL = "https://sandbox.api.unl.global/";
-export const TILES_BASE_URL = "https://sandbox.tiles.unl.global/";
+export const DEFAULT_BASE_URL = "https://api.unl.global/";
+export const TILES_BASE_URL = "https://tiles.unl.global/";
 
 export default class RestClient {
   public readonly apiKey: string;
