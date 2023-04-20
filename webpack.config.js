@@ -3,14 +3,6 @@ const path = require("path");
 module.exports = {
   mode: "production",
   entry: "./src/index.ts",
-  resolve: {
-    fallback: {
-      path: false,
-      fs: false,
-      buffer: require.resolve("buffer"),
-    },
-    extensions: [".tsx", ".ts", ".js"],
-  },
   module: {
     rules: [
       {
@@ -19,6 +11,13 @@ module.exports = {
         exclude: /node_modules/,
       },
     ],
+  },
+  resolve: {
+    extensions: [".tsx", ".ts", ".js"],
+    fallback: {
+      fs: false,
+      path: false,
+    },
   },
   output: {
     path: path.resolve(__dirname, "lib"),

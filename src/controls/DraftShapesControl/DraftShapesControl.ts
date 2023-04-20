@@ -5,7 +5,7 @@ import MapboxDraw, {
   DrawModeChageEvent,
   DrawUpdateEvent,
 } from "@mapbox/mapbox-gl-draw";
-import { DragCircleMode } from "mapbox-gl-draw-circle";
+// import { DragCircleMode } from "mapbox-gl-draw-circle";
 import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
 import { Record } from "../../api/records/models/Record";
@@ -56,7 +56,7 @@ export default class DraftShapesControl extends Base {
       displayControlsDefault: false,
       modes: {
         ...MapboxDraw.modes,
-        draw_circle: DragCircleMode,
+        // draw_circle: DragCircleMode,
         draw_rectangle: DrawRectangle,
       },
     });
