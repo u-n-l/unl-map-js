@@ -2,15 +2,13 @@ import { FilterSpecification, MapMouseEvent } from "maplibre-gl";
 import { Feature, GeoJsonProperties, Geometry } from "geojson";
 import MapboxDraw, {
   DrawCreateEvent,
-  DrawModeChageEvent,
+  DrawModeChangeEvent,
   DrawUpdateEvent,
 } from "@mapbox/mapbox-gl-draw";
-// import { DragCircleMode } from "mapbox-gl-draw-circle";
 import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
 import { Record } from "../../api/records/models/Record";
 import polygonDraw from "../../icons/ts/PolygonDraw";
-import cricleDraw from "../../icons/ts/CricleDraw";
 import rectangleDraw from "../../icons/ts/RectangleDraw";
 import deleteIcon from "../../icons/ts/DeleteIcon";
 import ControlButton from "../components/ControlButton/ControlButton";
@@ -35,7 +33,6 @@ const MAX_NUMBER_OF_DRAFT_SHAPES = 1000;
 
 export default class DraftShapesControl extends Base {
   private polygonButton: ControlButton;
-  private circleButton: ControlButton;
   private rectangleButton: ControlButton;
   private deleteButton: ControlButton;
   private draw: MapboxDraw;
@@ -56,7 +53,6 @@ export default class DraftShapesControl extends Base {
       displayControlsDefault: false,
       modes: {
         ...MapboxDraw.modes,
-        // draw_circle: DragCircleMode,
         draw_rectangle: DrawRectangle,
       },
     });
@@ -65,12 +61,6 @@ export default class DraftShapesControl extends Base {
       .setIcon(polygonDraw())
       .onClick(() => {
         this.draw.changeMode("draw_polygon");
-      });
-    this.circleButton = new ControlButton()
-      .setIcon(cricleDraw())
-      .onClick(() => {
-        //@ts-ignore
-        this.draw.changeMode("draw_circle");
       });
     this.rectangleButton = new ControlButton()
       .setIcon(rectangleDraw())
@@ -168,7 +158,7 @@ export default class DraftShapesControl extends Base {
     };
   };
 
-  private handleModeChange = (event: DrawModeChageEvent) => {
+  private handleModeChange = (event: DrawModeChangeEvent) => {
     if (event.mode === "simple_select" && this.updatedDraftShape) {
       this.unlApi?.recordsApi
         .update(
@@ -279,7 +269,6 @@ export default class DraftShapesControl extends Base {
     });
 
     this.addButton(this.polygonButton);
-    this.addButton(this.circleButton);
     this.addButton(this.rectangleButton);
     this.addButton(this.deleteButton);
     this.deleteButton.node.style.display = "none";
