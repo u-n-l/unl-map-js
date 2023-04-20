@@ -247,6 +247,7 @@ export default class DraftShapesControl extends Base {
         }),
       ])
     );
+
     this.draw.changeMode("simple_select");
   };
 
