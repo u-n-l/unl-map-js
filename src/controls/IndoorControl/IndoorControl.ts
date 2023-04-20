@@ -295,6 +295,7 @@ export default class IndoorControl extends Base {
           if (error || !image) {
             return;
           }
+
           this.map.addImage(icon.name, image);
         }
       );
