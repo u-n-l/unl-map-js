@@ -2,6 +2,7 @@ import fetch from "isomorphic-fetch";
 import { RequestMethod } from "./models/RequestMethod";
 import { UnlApiConfig } from "./models/UnlApiConfig";
 import { prepareUrl } from "./utils";
+import Environment from "../../map/models/Environment";
 
 export const X_UNL_VPM_ID = "x-unl-vpm-id";
 export const X_UNL_API_KEY = "x-unl-api-key";
@@ -9,16 +10,22 @@ export const X_UNL_API_KEY = "x-unl-api-key";
 export const ENDPOINTS_VERSION = "v1";
 export const TILES_EDNPOINTS_VERSION = "v2alpha";
 
+export const HTTPS_STRING = "https://";
 export const DEFAULT_BASE_URL = "https://api.unl.global/";
 export const TILES_BASE_URL = "https://tiles.unl.global/";
+
+export const SANDBOX_TILES_BASE_URL = "https://sandbox.tiles.unl.global/";
+export const SANDBOX_URL_PREFIX = "https://sandbox.";
 
 export default class RestClient {
   public readonly apiKey: string;
   public readonly vpmId: string;
+  public readonly env: Environment;
 
   constructor(unlApiConfig: UnlApiConfig) {
     this.apiKey = unlApiConfig.apiKey;
     this.vpmId = unlApiConfig.vpmId;
+    this.env = unlApiConfig.env;
   }
 
   public get<T>(
@@ -117,6 +124,7 @@ export default class RestClient {
     const requestUrl = prepareUrl(
       baseUrl,
       url,
+      this.env,
       urlParameterMap,
       queryStringParameters
     );

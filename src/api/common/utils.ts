@@ -1,4 +1,6 @@
 import urljoin from "url-join";
+import Environment from "../../map/models/Environment";
+import { HTTPS_STRING, SANDBOX_URL_PREFIX } from "./RestClient";
 
 const prepareQueryParams = (params: any) => {
   let queryParameterString = "";
@@ -19,6 +21,7 @@ const prepareQueryParams = (params: any) => {
 export const prepareUrl = (
   baseUrl: string,
   url: string,
+  env: Environment,
   urlParameterMap?: any,
   queryStringParameters?: any
 ): URL => {
@@ -32,7 +35,14 @@ export const prepareUrl = (
     }
   }
 
-  modifiedUrl = urljoin(baseUrl, modifiedUrl);
+  let envBaseUrl = baseUrl;
+
+  if (env == Environment.SANDBOX) {
+    const splitBaseUrl = baseUrl.split(HTTPS_STRING);
+    envBaseUrl = SANDBOX_URL_PREFIX + splitBaseUrl[1];
+  }
+
+  modifiedUrl = urljoin(envBaseUrl, modifiedUrl);
 
   if (queryStringParameters) {
     const queryString = prepareQueryParams(queryStringParameters);
