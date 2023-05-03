@@ -1,9 +1,4 @@
-import {
-  ControlPosition,
-  Map,
-  MapOptions,
-  ResourceTypeEnum,
-} from "maplibre-gl";
+import { Map, MapOptions, ResourceTypeEnum } from "maplibre-gl";
 import {
   getStyle,
   MapTiles,
@@ -15,6 +10,8 @@ import {
   TilesSelectorControl,
 } from "../controls";
 import ZoomLevel from "./models/ZoomLevel";
+import Environment from "./models/Environment";
+
 import { X_UNL_API_KEY, X_UNL_VPM_ID } from "../api/common/RestClient";
 import CustomAttributionControl from "../controls/CustomAttributionControl/CustomAttributionControl";
 
@@ -33,17 +30,19 @@ export type UnlMapOptions = Omit<
   indoorMapsControl?: boolean;
   tilesSelectorControl?: boolean;
   draftShapesControl?: boolean;
+  env?: Environment;
 };
 
 class UnlMap extends Map {
   apiKey: string;
   vpmId: string;
+  env: Environment;
   currentTile: MapTiles;
 
   constructor(options: UnlMapOptions) {
     super({
       ...options,
-      style: options.style ?? getStyle(),
+      style: options.style ?? getStyle(undefined, options.env),
       minZoom: options.minZoom ?? ZoomLevel.MIN_ZOOM,
       maxZoom: options.maxZoom ?? ZoomLevel.MAX_ZOOM,
       maplibreLogo: false,
@@ -68,6 +67,7 @@ class UnlMap extends Map {
 
     this.apiKey = options.apiKey;
     this.vpmId = options.vpmId;
+    this.env = options.env ?? Environment.PROD;
 
     if (options.indoorMapsControl) {
       this.addControl(
@@ -104,6 +104,10 @@ class UnlMap extends Map {
 
   getVpmId = () => {
     return this.vpmId;
+  };
+
+  getEnv = () => {
+    return this.env;
   };
 
   setCurrentTilesOption = (tile: MapTiles) => {
