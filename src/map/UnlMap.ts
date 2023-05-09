@@ -1,4 +1,9 @@
-import { Map, MapOptions, ResourceTypeEnum } from "maplibre-gl";
+import {
+  Map,
+  MapOptions,
+  ResourceTypeEnum,
+  StyleSpecification,
+} from "maplibre-gl";
 import {
   getStyle,
   MapTiles,
@@ -22,7 +27,7 @@ const DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON = "top-left";
 
 export type UnlMapOptions = Omit<
   MapOptions,
-  "maplibreLogo" | "logoPosition"
+  "maplibreLogo" | "logoPosition" | "style"
 > & {
   apiKey: string;
   vpmId: string;
@@ -31,6 +36,7 @@ export type UnlMapOptions = Omit<
   tilesSelectorControl?: boolean;
   draftShapesControl?: boolean;
   env?: Environment;
+  style?: StyleSpecification | string;
 };
 
 class UnlMap extends Map {
@@ -42,6 +48,7 @@ class UnlMap extends Map {
   constructor(options: UnlMapOptions) {
     super({
       ...options,
+      //@ts-ignore
       style: options.style ?? getStyle(undefined, options.env),
       minZoom: options.minZoom ?? ZoomLevel.MIN_ZOOM,
       maxZoom: options.maxZoom ?? ZoomLevel.MAX_ZOOM,
