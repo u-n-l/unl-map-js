@@ -3,6 +3,7 @@ import vectorialTiles from "../../../../icons/ts/VectorialTilesIcon";
 import satelliteTiles from "../../../../icons/ts/SatelliteTilesIcon";
 import terrainTiles from "../../../../icons/ts/TerrainTilesIcon";
 import trafficTiles from "../../../../icons/ts/TrafficTilesIcon";
+import richTiles from "../../../../icons/ts/RichTilesIcon";
 import { MapTiles } from "../../styles/MapTiles";
 
 export const TOOLTIP_MARGIN = 10;
@@ -19,6 +20,8 @@ export const getButtonIcon = (tiles: MapTiles) => {
       return trafficTiles();
     case "base":
       return baseTiles();
+    case "rich":
+      return richTiles();
     default:
       vectorialTiles();
   }
