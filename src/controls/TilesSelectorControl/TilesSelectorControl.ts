@@ -14,6 +14,7 @@ export interface TilesSelectorControlOptions {
 
 const TILES_DEFAULT_OPTIONS: MapTiles[] = [
   "vectorial",
+  "rich",
   "satellite",
   "terrain",
   "traffic",

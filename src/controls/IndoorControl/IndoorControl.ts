@@ -285,21 +285,23 @@ export default class IndoorControl extends Base {
   };
 
   private loadMapIcons = () => {
-    mapIcons.forEach((icon: MapIcon) => {
-      this.map.loadImage(
-        icon.image,
-        (
-          error?: Error | null,
-          image?: HTMLImageElement | ImageBitmap | null
-        ) => {
-          if (error || !image) {
-            return;
-          }
+    if (this.map) {
+      mapIcons.forEach((icon: MapIcon) => {
+        this.map.loadImage(
+          icon.image,
+          (
+            error?: Error | null,
+            image?: HTMLImageElement | ImageBitmap | null
+          ) => {
+            if (error || !image || this.map.hasImage(icon.name)) {
+              return;
+            }
 
-          this.map.addImage(icon.name, image);
-        }
-      );
-    });
+            this.map.addImage(icon.name, image);
+          }
+        );
+      });
+    }
   };
 
   private initSourcesAndLayers = () => {
@@ -335,6 +337,7 @@ export default class IndoorControl extends Base {
   };
 
   private handleStyleDataChange = () => {
+    this.loadMapIcons();
     this.initSourcesAndLayers();
     this.fetchVenueRecords();
     this.updateImdfDataSources();

@@ -4,13 +4,15 @@ import satellite from "./satellite";
 import terrain from "./terrain";
 import traffic from "./traffic";
 import vectorial from "./vectorial";
+import rich from "./rich";
 
 export type MapTiles =
   | "vectorial"
   | "satellite"
   | "terrain"
   | "traffic"
-  | "base";
+  | "base"
+  | "rich";
 
 export const getStyle = (style?: MapTiles, env?: Environment) => {
   switch (style) {
@@ -24,6 +26,8 @@ export const getStyle = (style?: MapTiles, env?: Environment) => {
       return traffic(env);
     case "base":
       return base(env);
+    case "rich":
+      return rich(env);
     default:
       return vectorial(env);
   }
