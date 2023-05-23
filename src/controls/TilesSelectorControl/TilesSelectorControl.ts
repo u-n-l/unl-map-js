@@ -8,13 +8,13 @@ import {
 import { getStyle, MapTiles } from "./styles/MapTiles";
 
 export interface TilesSelectorControlOptions {
+  tiles: MapTiles[];
   displayControlsDefault?: boolean;
-  tiles?: MapTiles[];
 }
 
-const TILES_DEFAULT_OPTIONS: MapTiles[] = [
-  "vectorial",
+export const TILES_DEFAULT_OPTIONS: MapTiles[] = [
   "rich",
+  "vectorial",
   "satellite",
   "terrain",
   "traffic",
@@ -28,19 +28,19 @@ export default class TilesSelectorControl extends Base {
   private tooltip: HTMLDivElement;
   private mapTilesButtons: HTMLButtonElement[];
 
-  constructor(options?: TilesSelectorControlOptions) {
+  constructor(options: TilesSelectorControlOptions) {
     super();
 
     this.displayControlsDefault =
       options?.displayControlsDefault !== undefined
         ? options.displayControlsDefault
         : true;
-    this.tiles = options?.tiles ?? TILES_DEFAULT_OPTIONS;
     this.mapTilesButtons = [];
+    this.tiles = options.tiles;
 
     this.button = new ControlButton().setIcon(
       //@ts-ignore
-      getButtonIcon(TILES_DEFAULT_OPTIONS[0])
+      getButtonIcon(this.tiles[0])
     );
 
     this.tooltip = mapTilesTooltip(
@@ -73,6 +73,8 @@ export default class TilesSelectorControl extends Base {
         tooltip?.style.display = "none";
       }
     });
+
+    this.setStyle(this.tiles[0]);
   };
 
   private adjustTooltipPosition = () => {
