@@ -8,6 +8,7 @@ import Environment from "../../../map/models/Environment";
 export default (env?: Environment) => {
   return {
     version: 8,
+    name: "UNL_Traffic_1_Default",
     sources: {
       traffic: {
         type: "raster",

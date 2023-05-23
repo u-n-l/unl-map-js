@@ -8,7 +8,7 @@ import Environment from "../../../map/models/Environment";
 export default (env?: Environment) => {
   return {
     version: 8,
-    name: "UNL Rich Stylesheet",
+    name: "UNL_Street_1_Rich",
     sources: {
       omv: {
         type: "vector",
