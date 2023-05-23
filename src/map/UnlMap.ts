@@ -4,10 +4,13 @@ import {
   ResourceTypeEnum,
   StyleSpecification,
 } from "maplibre-gl";
+import CustomAttributionControl from "../controls/CustomAttributionControl/CustomAttributionControl";
+import { TILES_DEFAULT_OPTIONS } from "../controls/TilesSelectorControl/TilesSelectorControl";
 import {
   getStyle,
   MapTiles,
 } from "../controls/TilesSelectorControl/styles/MapTiles";
+import { X_UNL_API_KEY, X_UNL_VPM_ID } from "../api/common/RestClient";
 import {
   DraftShapesControl,
   GridControl,
@@ -16,9 +19,6 @@ import {
 } from "../controls";
 import ZoomLevel from "./models/ZoomLevel";
 import Environment from "./models/Environment";
-
-import { X_UNL_API_KEY, X_UNL_VPM_ID } from "../api/common/RestClient";
-import CustomAttributionControl from "../controls/CustomAttributionControl/CustomAttributionControl";
 
 const DEFAULT_GRID_CONTROL_POSITION = "top-right";
 const DEFAULT_INDOOR_MAPS_CONTROL_POSITION = "top-right";
@@ -37,6 +37,7 @@ export type UnlMapOptions = Omit<
   draftShapesControl?: boolean;
   env?: Environment;
   style?: StyleSpecification | string;
+  tiles?: MapTiles[];
 };
 
 class UnlMap extends Map {
@@ -72,6 +73,12 @@ class UnlMap extends Map {
       },
     });
 
+    const tiles =
+      options.tiles && options.tiles.length > 0
+        ? options.tiles
+        : TILES_DEFAULT_OPTIONS;
+    this.currentTile = tiles[0];
+
     this.apiKey = options.apiKey;
     this.vpmId = options.vpmId;
     this.env = options.env ?? Environment.PROD;
@@ -82,9 +89,10 @@ class UnlMap extends Map {
         DEFAULT_INDOOR_MAPS_CONTROL_POSITION
       );
     }
-    if (options.tilesSelectorControl) {
+    if (options.tilesSelectorControl && !options.style) {
       this.addControl(
         new TilesSelectorControl({
+          tiles,
           displayControlsDefault: true,
         }),
         DEFAULT_TILES_SELECTOR_CONTROL_POSITION
@@ -99,8 +107,6 @@ class UnlMap extends Map {
     if (options.gridControl) {
       this.addControl(new GridControl(), DEFAULT_GRID_CONTROL_POSITION);
     }
-
-    this.currentTile = "vectorial";
 
     this.addControl(new CustomAttributionControl());
   }

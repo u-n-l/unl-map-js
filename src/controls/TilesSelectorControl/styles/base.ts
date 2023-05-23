@@ -8,7 +8,7 @@ import Environment from "../../../map/models/Environment";
 export default (env?: Environment) => {
   return {
     version: 8,
-    name: "Base map",
+    name: "UNL_Light_1_Default",
     sources: {
       omv: {
         type: "vector",

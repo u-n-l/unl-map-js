@@ -8,7 +8,7 @@ import Environment from "../../../map/models/Environment";
 export default (env?: Environment) => {
   return {
     version: 8,
-    name: "HERE Berlin",
+    name: "UNL_Street_1_Default",
     metadata: {},
     sources: {
       omv: {
