@@ -42,7 +42,7 @@ Include the following CSS files in the `<head>` of your HTML file.
 
 ```
 <link
-  href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css"
+  href="https://unpkg.com/maplibre-gl@2.1.9/dist/maplibre-gl.css"
   rel="stylesheet"
 />
 <link
@@ -69,7 +69,7 @@ Typescript definition files are included as part of this package.
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
-      href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css"
+      href="https://unpkg.com/maplibre-gl@2.1.9/dist/maplibre-gl.css"
       rel="stylesheet"
     />
     <link
@@ -187,10 +187,10 @@ map.addControl(new UnlSdk.TilesSelectorControl({ tiles: ["vectorial", "satellite
 
 If the second approach is chosen, the following options can be specified during the `TilesSelectorControl` initialisation:
 
-| Option                 | Type       | Default                                                  | Description                                             |
-| ---------------------- | ---------- | -------------------------------------------------------- | ------------------------------------------------------- |
-| tiles                  | MapTiles[] | ["vectorial", "traffic", "terrain", "satellite", "base"] | The options that will be included in the tiles selector |
-| displayControlsDefault | boolean    | true                                                     | Display the default tile selector UI                    |
+| Option                 | Type       | Default                                                          | Description                                             |
+| ---------------------- | ---------- | ---------------------------------------------------------------- | ------------------------------------------------------- |
+| tiles                  | MapTiles[] | ["rich", "vectorial", "traffic", "terrain", "satellite", "base"] | The options that will be included in the tiles selector |
+| displayControlsDefault | boolean    | true                                                             | Display the default tile selector UI                    |
 
 ![Tiles selector](https://github.com/u-n-l/unl-map-js-docs/blob/main/docs/gifs/tile_selector.gif?raw=true)
 
@@ -202,7 +202,7 @@ If the second approach is chosen, the following options can be specified during 
 
 This method takes a `MapTile` parameter and updates the selected tile from the map.
 
-The supported MapTile values are: `vector`, `traffic`, `terrain`, `satellite`, `base`.
+The supported MapTile values are: `rich`, `vector`, `traffic`, `terrain`, `satellite`, `base`.
 
 Example
 

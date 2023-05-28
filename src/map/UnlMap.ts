@@ -19,11 +19,16 @@ import {
 } from "../controls";
 import ZoomLevel from "./models/ZoomLevel";
 import Environment from "./models/Environment";
+import TogglePoisVisibilityControl from "../controls/TogglePoisVisibilityControl/TogglePoisVisibilityControl";
+import { isVectorialIncluded } from "../controls/TilesSelectorControl/helpers";
+import mapIcons from "./mapIcons";
+import { MapIcon } from "./models/MapIcon";
 
 const DEFAULT_GRID_CONTROL_POSITION = "top-right";
 const DEFAULT_INDOOR_MAPS_CONTROL_POSITION = "top-right";
 const DEFAULT_TILES_SELECTOR_CONTROL_POSITION = "top-left";
-const DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON = "top-left";
+const DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON_POSITION = "top-left";
+const DEFAULT_TOGGLE_POIS_VISIBILITY_CONTROL_BUTTON_POSITION = "top-right";
 
 export type UnlMapOptions = Omit<
   MapOptions,
@@ -35,6 +40,7 @@ export type UnlMapOptions = Omit<
   indoorMapsControl?: boolean;
   tilesSelectorControl?: boolean;
   draftShapesControl?: boolean;
+  togglePoisVisibilityControl?: boolean;
   env?: Environment;
   style?: StyleSpecification | string;
   tiles?: MapTiles[];
@@ -82,6 +88,20 @@ class UnlMap extends Map {
     this.apiKey = options.apiKey;
     this.vpmId = options.vpmId;
     this.env = options.env ?? Environment.PROD;
+    this.on("styledata", this.loadMapIcons);
+    this.on("load", this.loadMapIcons);
+
+    const shouldEnableTogglePoisControl =
+      options.togglePoisVisibilityControl &&
+      !options.style &&
+      (!options.tiles || isVectorialIncluded(options.tiles));
+
+    if (shouldEnableTogglePoisControl) {
+      this.addControl(
+        new TogglePoisVisibilityControl(),
+        DEFAULT_TOGGLE_POIS_VISIBILITY_CONTROL_BUTTON_POSITION
+      );
+    }
 
     if (options.indoorMapsControl) {
       this.addControl(
@@ -89,6 +109,7 @@ class UnlMap extends Map {
         DEFAULT_INDOOR_MAPS_CONTROL_POSITION
       );
     }
+
     if (options.tilesSelectorControl && !options.style) {
       this.addControl(
         new TilesSelectorControl({
@@ -98,12 +119,14 @@ class UnlMap extends Map {
         DEFAULT_TILES_SELECTOR_CONTROL_POSITION
       );
     }
+
     if (options.draftShapesControl) {
       this.addControl(
         new DraftShapesControl(),
-        DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON
+        DEFAULT_DRAFT_SHAPES_CONTROL_BUTTON_POSITION
       );
     }
+
     if (options.gridControl) {
       this.addControl(new GridControl(), DEFAULT_GRID_CONTROL_POSITION);
     }
@@ -129,6 +152,24 @@ class UnlMap extends Map {
 
   getCurrentTilesOption = () => {
     return this.currentTile;
+  };
+
+  private loadMapIcons = () => {
+    mapIcons.forEach((icon: MapIcon) => {
+      this.loadImage(
+        icon.image,
+        (
+          error?: Error | null,
+          image?: HTMLImageElement | ImageBitmap | null
+        ) => {
+          if (error || !image || this.hasImage(icon.name)) {
+            return;
+          }
+
+          this.addImage(icon.name, image);
+        }
+      );
+    });
   };
 }
 

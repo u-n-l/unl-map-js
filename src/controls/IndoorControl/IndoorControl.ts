@@ -44,8 +44,6 @@ import { Record } from "../../api/records/models/Record";
 import ControlButton from "../components/ControlButton/ControlButton";
 import { featureCollection } from "../Base/helpers";
 import { RecordFeatureType } from "../../api/records/models/RecordFeatureType";
-import mapIcons from "./indoorMapIcons";
-import { MapIcon } from "../../map/models/MapIcon";
 
 const DISPLAYED_FEATURE_TYPES: ImdfFeatureType[] = [
   "level",
@@ -284,26 +282,6 @@ export default class IndoorControl extends Base {
     this.updateVenueMarkerAndFootprintSources(this.venueRecords);
   };
 
-  private loadMapIcons = () => {
-    if (this.map) {
-      mapIcons.forEach((icon: MapIcon) => {
-        this.map.loadImage(
-          icon.image,
-          (
-            error?: Error | null,
-            image?: HTMLImageElement | ImageBitmap | null
-          ) => {
-            if (error || !image || this.map.hasImage(icon.name)) {
-              return;
-            }
-
-            this.map.addImage(icon.name, image);
-          }
-        );
-      });
-    }
-  };
-
   private initSourcesAndLayers = () => {
     this.map.getSource(VENUE_FOOTPRINT_SOURCE) === undefined &&
       this.map.addSource(VENUE_FOOTPRINT_SOURCE, venueFootprintSource);
@@ -337,7 +315,6 @@ export default class IndoorControl extends Base {
   };
 
   private handleStyleDataChange = () => {
-    this.loadMapIcons();
     this.initSourcesAndLayers();
     this.fetchVenueRecords();
     this.updateImdfDataSources();
@@ -349,8 +326,6 @@ export default class IndoorControl extends Base {
       vpmId: this.map.getVpmId(),
       env: this.map.getEnv(),
     });
-    this.map.on("load", this.loadMapIcons);
-    this.map.on("styledata", this.handleStyleDataChange);
     this.map.on("click", VENUE_MARKERS_SYMBOL_LAYER, this.handleVenueClick);
     this.map.on("click", VENUE_FOOTPRINT_FILL_LAYER, this.handleVenueClick);
   };

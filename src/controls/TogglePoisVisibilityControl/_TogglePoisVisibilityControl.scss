@@ -1,0 +1,9 @@
+.control-button {
+  &-enabled {
+    background-color: black !important;
+  }
+
+  &-disabled {
+    background-color: transparent !important;
+  }
+}
