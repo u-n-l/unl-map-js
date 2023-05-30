@@ -23,13 +23,14 @@ export default class TogglePoisVisibilityControl extends Base {
       return;
     } else {
       if (this.arePoisVisible) {
-        this.addAndShowLayers;
+        this.addAndShowLayers();
       }
     }
 
     const zoomLevel = this.map.getZoom();
     if (zoomLevel >= ZoomLevel.MIN_GRID_ZOOM_GEOHASH_LENGTH_7) {
       this.showFeature();
+      this.arePoisVisible && this.enablePoisVisibility();
     } else {
       this.hideFeature();
     }
