@@ -1,6 +1,7 @@
 enum Environment {
-  SANDBOX = "sandbox",
-  PROD = "prod",
+  STAGING = 'alpha',
+  SANDBOX = 'sandbox',
+  PROD = 'prod',
 }
 
 export default Environment;
