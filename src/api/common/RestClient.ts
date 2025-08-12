@@ -1,21 +1,25 @@
-import fetch from "isomorphic-fetch";
-import { RequestMethod } from "./models/RequestMethod";
-import { UnlApiConfig } from "./models/UnlApiConfig";
-import { prepareUrl } from "./utils";
-import Environment from "../../map/models/Environment";
+import fetch from 'isomorphic-fetch';
+import { RequestMethod } from './models/RequestMethod';
+import { UnlApiConfig } from './models/UnlApiConfig';
+import { prepareUrl } from './utils';
+import Environment from '../../map/models/Environment';
 
-export const X_UNL_VPM_ID = "x-unl-vpm-id";
-export const X_UNL_API_KEY = "x-unl-api-key";
+export const X_UNL_VPM_ID = 'x-unl-vpm-id';
+export const X_UNL_API_KEY = 'x-unl-api-key';
 
-export const ENDPOINTS_VERSION = "v1";
-export const TILES_EDNPOINTS_VERSION = "v2alpha";
+export const ENDPOINTS_VERSION = 'v1';
+export const ENDPOINTS_VERSION_2 = 'v2';
+export const TILES_ENDPOINTS_VERSION = 'v2alpha';
 
-export const HTTPS_STRING = "https://";
-export const DEFAULT_BASE_URL = "https://api.unl.global/";
-export const TILES_BASE_URL = "https://tiles.unl.global/";
+export const HTTPS_STRING = 'https://';
+export const DEFAULT_BASE_URL = 'https://api.unl.global/';
+export const TILES_BASE_URL = 'https://tiles.unl.global/';
 
-export const SANDBOX_TILES_BASE_URL = "https://sandbox.tiles.unl.global/";
-export const SANDBOX_URL_PREFIX = "https://sandbox.";
+export const STAGING_TILES_BASE_URL = 'https://alpha.tiles.unl.global/';
+export const SANDBOX_TILES_BASE_URL = 'https://sandbox.tiles.unl.global/';
+
+export const SANDBOX_URL_PREFIX = 'https://sandbox.';
+export const STAGING_URL_PREFIX = 'https://alpha.';
 
 export default class RestClient {
   public readonly apiKey: string;
@@ -102,10 +106,10 @@ export default class RestClient {
     headers[X_UNL_VPM_ID] = this.vpmId;
 
     if (!isMultipartFormData) {
-      headers["Content-Type"] = "application/json";
+      headers['Content-Type'] = 'application/json';
     }
 
-    headers["Accept"] = "application/json";
+    headers['Accept'] = 'application/json';
 
     return headers;
   }
