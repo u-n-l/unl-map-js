@@ -161,6 +161,24 @@ If GridControl is enabled, the cell will get highlighted by clicking on the map.
 
 ![Grid precision selection](https://github.com/u-n-l/unl-map-js-docs/blob/main/docs/gifs/grid_selector.gif?raw=true)
 
+### Map Event
+
+Fires a precisionChange event on the map instance whenever the precision value is updated.
+
+##### Example
+
+```js
+// Listen for precision changes on the map
+map.on('precisionChange', (e) => {
+  console.log('New precision:', e.precision);
+  // e.precision is a CellPrecision value
+});
+```
+
+##### Event Data:
+
+- precision (number): Updated precision value
+
 ## Tiles selector
 
 Tile selector control can be enabled during the `UnlSdk.Map` initialisation by passing the `tilesSelectorControl` option `true`. With this approach, the tile selector control will be initialised with the default options. The control's default position is `'top-left'`.
@@ -209,12 +227,12 @@ Example
 ```js
 const tilesSelectorControl = new UnlSdk.TilesSelectorControl(
   { displayControlsDefault: false },
-  "top-left"
+  'top-left'
 );
 
 map.addControl(tilesSelectorControl);
 
-mapTilesControl.setStyle("terrain");
+mapTilesControl.setStyle('terrain');
 ```
 
 ## Indoor maps overlay

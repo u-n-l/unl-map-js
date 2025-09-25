@@ -91,6 +91,7 @@ export default class GridControl extends Base {
     this.map.setLayerZoomRange(GRID_LINES_LAYER, newMinGridZoom, 24);
     this.map.setLayerZoomRange(GRID_CELL_LINE_LAYER, newMinGridZoom, 24);
     this.map.setLayerZoomRange(GRID_CELL_FILL_LAYER, newMinGridZoom, 24);
+    this.map.fire('precisionChange', { precision: newPrecision });
   };
 
   private insert = () => {
